@@ -1,0 +1,247 @@
+/* Cards */
+.card {
+    background-color: var(--bg-card);
+    border-radius: var(--border-radius);
+    border: 1px solid transparent;
+    padding: 20px;
+    box-shadow: var(--shadow-sm);
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast), border-color var(--transition-fast);
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    background-color: var(--bg-card-hover);
+    border-color: var(--border-color);
+}
+
+/* Buttons */
+.btn {
+    border: none;
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color var(--transition-fast), transform var(--transition-fast), border-color var(--transition-fast);
+    font-size: 0.95rem;
+}
+
+.btn:active {
+    transform: scale(0.98);
+}
+
+.btn-primary {
+    background-color: var(--accent-red);
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #c92a35;
+}
+
+.btn-secondary {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+}
+
+.btn-secondary:hover {
+    background-color: var(--bg-card-hover);
+    border-color: var(--text-secondary);
+}
+
+.btn-danger {
+    background-color: #d32f2f;
+    color: white;
+}
+
+.btn-danger:hover {
+    background-color: #b71c1c;
+}
+
+.btn-icon {
+    background: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    padding: 8px;
+    border-radius: 6px;
+}
+
+.btn-icon:hover {
+    background-color: var(--bg-card-hover);
+    color: var(--text-primary);
+    border-color: var(--text-muted);
+}
+
+.btn-close {
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: color var(--transition-fast);
+    padding: 5px;
+    line-height: 1;
+}
+
+.btn-close:hover {
+    color: var(--text-primary);
+}
+
+/* Text Utilities */
+.text-positive {
+    color: var(--accent-green);
+}
+
+.text-negative {
+    color: var(--accent-red);
+}
+
+.text-muted {
+    color: var(--text-secondary);
+}
+
+.text-sm {
+    font-size: 0.85rem;
+}
+
+.text-lg {
+    font-size: 1.25rem;
+    font-weight: bold;
+}
+
+/* Modal Animations */
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.modal-content {
+    animation: modalFadeIn 0.3s ease-out forwards;
+    background-color: var(--bg-card) !important;
+    border: 1px solid var(--border-color) !important;
+    box-shadow: var(--shadow-lg) !important;
+}
+
+/* Form Elements */
+input,
+select {
+    background-color: var(--bg-primary) !important;
+    border: 1px solid var(--border-color) !important;
+    color: var(--text-primary) !important;
+    border-radius: 8px !important;
+    padding: 12px !important;
+    outline: none;
+    transition: border-color var(--transition-fast);
+    width: 100%;
+    box-sizing: border-box;
+}
+
+input:focus,
+select:focus {
+    border-color: var(--accent-red) !important;
+}
+
+/* Strict Visual Replication Classes */
+
+.modal-strict {
+    background: linear-gradient(180deg, #111111 0%, #1a1a1a 100%) !important;
+    border: 1px solid #2a2a2a !important;
+    box-shadow: 0 24px 48px rgba(0, 0, 0, 0.5) !important;
+    border-radius: 16px !important;
+}
+
+.input-strict {
+    background-color: #1a1a1a !important;
+    border: 1px solid #333 !important;
+    color: white !important;
+    border-radius: 8px !important;
+    padding: 12px 16px !important;
+    font-size: 0.95rem !important;
+    transition: all 0.2s ease !important;
+}
+
+.input-strict:focus {
+    border-color: var(--accent-red) !important;
+    box-shadow: 0 0 0 1px var(--accent-red) !important;
+    outline: none !important;
+}
+
+.btn-pill-strict {
+    background-color: var(--accent-red) !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 9999px !important;
+    /* Fully rounded pill */
+    padding: 10px 24px !important;
+    font-weight: 600 !important;
+    font-size: 0.95rem !important;
+    transition: background-color 0.2s ease !important;
+    cursor: pointer !important;
+}
+
+.btn-pill-strict:hover {
+    background-color: #c92a35 !important;
+}
+
+.btn-close-square {
+    width: 32px;
+    height: 32px;
+    background-color: #1a1a1a !important;
+    border: 1px solid #333 !important;
+    border-radius: 6px !important;
+    color: white !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    padding: 0;
+    line-height: 1;
+    font-size: 1.2rem;
+}
+
+.btn-close-square:hover {
+    background-color: #252525 !important;
+    border-color: #444 !important;
+}
+
+/* Dark Mode Utilities */
+.modal-dark {
+    background: linear-gradient(180deg, #0f0f0f 0%, #141414 100%) !important;
+    border: 1px solid #2a2a2a !important;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8) !important;
+    border-radius: 16px !important;
+}
+
+.input-dark {
+    background-color: #1a1a1a !important;
+    border: 1px solid #333 !important;
+    color: white !important;
+    border-radius: 10px !important;
+    padding: 14px !important;
+}
+
+.input-dark:focus {
+    border-color: var(--accent-red) !important;
+    box-shadow: 0 0 0 2px rgba(219, 41, 45, 0.2) !important;
+}
+
+.btn-pill {
+    border-radius: 50px !important;
+    padding: 10px 24px !important;
+}
+
+.stat-card-dark {
+    background-color: #1a1a1a;
+    border-radius: 12px;
+    padding: 15px;
+    border: 1px solid transparent;
+}

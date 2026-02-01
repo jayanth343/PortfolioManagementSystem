@@ -1,0 +1,63 @@
+.holdings-page {
+    padding: 40px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.holdings-section {
+    margin-bottom: 40px;
+}
+
+.holdings-section h2 {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    color: var(--text-secondary);
+}
+
+.holdings-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+@media (max-width: 768px) {
+    .holdings-list {
+        grid-template-columns: 1fr;
+    }
+}
+
+.asset-card {
+    display: flex;
+    flex-direction: column;
+    background-color: var(--bg-card);
+    padding: 20px;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: transform var(--transition-fast), background-color var(--transition-fast);
+    border: 1px solid transparent;
+}
+
+.asset-card:hover {
+    transform: scale(1.01);
+    background-color: var(--bg-card-hover);
+    border-color: var(--border-color);
+}
+
+.back-link {
+    transition: all var(--transition-fast);
+}
+
+.back-link:hover {
+    background-color: var(--bg-card-hover);
+    color: var(--text-primary) !important;
+    border-color: var(--text-primary) !important;
+}
+
+.stat-card {
+    border: 1px solid transparent;
+    transition: border-color var(--transition-fast);
+}
+
+.stat-card:hover {
+    border-color: var(--border-color);
+}
