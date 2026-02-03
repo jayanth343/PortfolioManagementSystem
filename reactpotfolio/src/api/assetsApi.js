@@ -4,8 +4,8 @@ let mockAssets = [
         companyName: 'Apple Inc.',
         symbol: 'AAPL',
         quantity: 10,
-        currentValue: '$1,850.00',
-        percentageChange: '+23.33%',
+        currentValue: 1850.00,
+        percentageChange: 23.33,
         assetType: 'Stocks'
     },
     {
@@ -13,8 +13,8 @@ let mockAssets = [
         companyName: 'Tesla Inc.',
         symbol: 'TSLA',
         quantity: 5,
-        currentValue: '$1,200.00',
-        percentageChange: '-5.12%',
+        currentValue: 1200.00,
+        percentageChange: -5.12,
         assetType: 'Stocks'
     },
     {
@@ -22,8 +22,8 @@ let mockAssets = [
         companyName: 'Vanguard 500',
         symbol: 'VOO',
         quantity: 20,
-        currentValue: '$9,000.00',
-        percentageChange: '+18.42%',
+        currentValue: 9000.00,
+        percentageChange: 18.42,
         assetType: 'Mutual Funds'
     },
     {
@@ -31,8 +31,8 @@ let mockAssets = [
         companyName: 'Gold ETF',
         symbol: 'GLD',
         quantity: 50,
-        currentValue: '$10,750.00',
-        percentageChange: '+26.47%',
+        currentValue: 10750.00,
+        percentageChange: 26.47,
         assetType: 'Commodities'
     },
     {
@@ -40,8 +40,8 @@ let mockAssets = [
         companyName: 'Bitcoin',
         symbol: 'BTC',
         quantity: 0.5,
-        currentValue: '$31,000.00',
-        percentageChange: '+106.67%',
+        currentValue: 31000.00,
+        percentageChange: 106.67,
         assetType: 'Crypto'
     }
 ];
@@ -57,13 +57,14 @@ export const getAssets = async () => {
 export const addAsset = async (assetData) => {
     return new Promise((resolve) => {
         setTimeout(() => {
+            const currentValue = assetData.quantity * assetData.buyPrice;
             const newAsset = {
-                id: mockAssets.length + 1,
+                id: Date.now(), // Normalized unique ID
                 companyName: assetData.companyName,
                 symbol: assetData.symbol.toUpperCase(),
                 quantity: assetData.quantity,
-                currentValue: `$${(assetData.quantity * assetData.buyPrice).toFixed(2)}`,
-                percentageChange: '+0.00%', // Initial change
+                currentValue: currentValue,
+                percentageChange: 0, // Initial change
                 assetType: assetData.assetType
             };
             mockAssets.push(newAsset);
@@ -78,5 +79,45 @@ export const sellAsset = async (assetId) => {
             mockAssets = mockAssets.filter(asset => asset.id !== assetId);
             resolve(true);
         }, 600);
+    });
+};
+
+// Helper function to increase asset quantity (for future transaction integration)
+export const increaseAssetQuantity = async (symbol, quantity) => {
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
+            const assetIndex = mockAssets.findIndex(a => a.symbol === symbol.toUpperCase());
+            if (assetIndex !== -1) {
+                const asset = mockAssets[assetIndex];
+                const currentPrice = asset.currentValue / asset.quantity;
+                asset.quantity += quantity;
+                asset.currentValue = asset.quantity * currentPrice;
+                resolve(asset);
+            } else {
+                reject(new Error("Asset not found"));
+            }
+        }, 200);
+    });
+};
+
+// Helper function to decrease asset quantity (for future transaction integration)
+export const decreaseAssetQuantity = async (symbol, quantity) => {
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
+            const assetIndex = mockAssets.findIndex(a => a.symbol === symbol.toUpperCase());
+            if (assetIndex !== -1) {
+                const asset = mockAssets[assetIndex];
+                if (asset.quantity >= quantity) {
+                    const currentPrice = asset.currentValue / asset.quantity;
+                    asset.quantity -= quantity;
+                    asset.currentValue = asset.quantity * currentPrice;
+                    resolve(asset);
+                } else {
+                    reject(new Error("Insufficient quantity"));
+                }
+            } else {
+                reject(new Error("Asset not found"));
+            }
+        }, 200);
     });
 };
