@@ -1,9 +1,7 @@
 package org.hsbc.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+
 
 @Entity
 public class PmsEntity
@@ -17,13 +15,15 @@ public class PmsEntity
     double buyPrice;
     double currentPrice;
     double buyingValue;
+    String currency;
+    String exchange;
+    String industry;
     String assetType;
+
     public PmsEntity() {
     }
 
-
-
-    public PmsEntity(long id, String companyName, String symbol, int quantity, double buyPrice, double currentPrice, double buyingValue, String assetType) {
+    public PmsEntity(long id, String companyName, String symbol, int quantity, double buyPrice, double currentPrice, double buyingValue, String currency, String exchange, String industry, String assetType) {
         this.id = id;
         this.companyName = companyName;
         this.symbol = symbol;
@@ -31,6 +31,22 @@ public class PmsEntity
         this.buyPrice = buyPrice;
         this.currentPrice = currentPrice;
         this.buyingValue = buyingValue;
+        this.currency = currency;
+        this.exchange = exchange;
+        this.industry = industry;
+        this.assetType = assetType;
+    }
+
+    public PmsEntity(String companyName, String symbol, int quantity, double buyPrice, double currentPrice, double buyingValue, String currency, String exchange, String industry, String assetType) {
+        this.companyName = companyName;
+        this.symbol = symbol;
+        this.quantity = quantity;
+        this.buyPrice = buyPrice;
+        this.currentPrice = currentPrice;
+        this.buyingValue = buyingValue;
+        this.currency = currency;
+        this.exchange = exchange;
+        this.industry = industry;
         this.assetType = assetType;
     }
 
@@ -90,6 +106,30 @@ public class PmsEntity
         this.buyingValue = buyingValue;
     }
 
+    public String getCurrency() {
+        return currency;
+    }
+
+    public void setCurrency(String currency) {
+        this.currency = currency;
+    }
+
+    public String getExchange() {
+        return exchange;
+    }
+
+    public void setExchange(String exchange) {
+        this.exchange = exchange;
+    }
+
+    public String getIndustry() {
+        return industry;
+    }
+
+    public void setIndustry(String industry) {
+        this.industry = industry;
+    }
+
     public String getAssetType() {
         return assetType;
     }
@@ -108,9 +148,10 @@ public class PmsEntity
                 ", buyPrice=" + buyPrice +
                 ", currentPrice=" + currentPrice +
                 ", buyingValue=" + buyingValue +
-                "assetType='" + assetType + '\'' +
+                ", currency='" + currency + '\'' +
+                ", exchange='" + exchange + '\'' +
+                ", industry='" + industry + '\'' +
+                ", assetType='" + assetType + '\'' +
                 '}';
     }
-
-
 }
