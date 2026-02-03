@@ -3,40 +3,6 @@
 ## Overview
 This is a simplified Flask data API that provides financial data using yfinance. The architecture has been streamlined to remove unnecessary complexity while maintaining all core functionality.
 
-## Key Changes
-
-### ✅ What Was Removed
-- ❌ `models/` folder - No dataclass models (returns plain dictionaries)
-- ❌ `routes/` folder - Routes moved directly into service file
-- ❌ `utils/` folder - No helper decorators (simple error handling in routes)
-- ❌ Complex route structure with nested blueprints
-
-### ✅ What Remains
-- ✔️ `app.py` - Simple Flask app factory
-- ✔️ `config.py` - Configuration settings
-- ✔️ `services/stock_service.py` - **All business logic + routes in one file**
-- ✔️ `services/yfinance_search_service.py` - Optional search functionality
-
-## Architecture Benefits
-
-1. **Simplicity** - Everything is in one place
-2. **No Abstraction Overhead** - Direct service-to-route connection
-3. **Easy to Understand** - Linear code flow without layers
-4. **Fewer Files** - Reduced complexity
-5. **Maintained Functionality** - All core features intact
-
-## File Structure
-
-```
-PFM/
-├── app.py                          # Flask app with blueprint registration
-├── config.py                       # Environment configuration
-├── requirements.txt                # Dependencies
-└── services/
-    ├── stock_service.py            # Core service + Flask routes
-    └── yfinance_search_service.py  # Optional search (can be removed)
-```
-
 ## How It Works
 
 ### 1. Service Layer (StockService class)
@@ -119,35 +85,3 @@ All responses return JSON:
 ```bash
 python app.py
 ```
-
-### Production:
-```bash
-gunicorn -w 4 -b 0.0.0.0:5000 "app:create_app()"
-```
-
-## Core Functionality Preserved
-
-✅ Stock data (BSE/NASDAQ/NYSE)
-✅ Crypto data with price changes
-✅ Mutual fund data with returns
-✅ Historical data for charting
-✅ News integration
-✅ Search functionality
-✅ Error handling
-✅ CORS support
-✅ Logging
-
-## What Makes This "Simple"
-
-1. **Single Responsibility per File** - Each file has one clear purpose
-2. **No Over-Engineering** - No decorators, validators, or complex middleware
-3. **Direct Calls** - Route → Service method (no intermediary layers)
-4. **Plain Dicts** - No dataclass conversion overhead
-5. **Minimal Dependencies** - Flask, yfinance, CORS, that's it
-
-This architecture is perfect for:
-- Learning Flask
-- Microservice architecture
-- Quick prototyping
-- Integration with Spring Boot backend
-- Small to medium-scale applications
