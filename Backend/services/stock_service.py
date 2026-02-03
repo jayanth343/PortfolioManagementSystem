@@ -9,6 +9,7 @@ import html
 import json
 import time
 import threading
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 
 logger = logging.getLogger(__name__)
@@ -34,7 +35,7 @@ class StockService:
             previous_close = float(history['Close'].iloc[-2])
             
             # Fetch news
-            news = StockService._format_news(stock.get_news(count=5) if hasattr(stock, 'news') else [],)
+            news = StockService.format_news(stock.get_news(count=5) if hasattr(stock, 'news') else [],)
             
             # Get recommendations
             recommendations = []
@@ -388,64 +389,162 @@ class StockService:
     
     @staticmethod
     def get_news(symbol):
+        """Get formatted news for a symbol using the standard format_news function"""
         try:
             ticker = yf.Ticker(symbol)
-            news = ticker.news
-            result_list = []
-            for item in news[:5]:
-                content = item.get("content", {})
-                click_url = content.get("clickThroughUrl")
-                raw_description = content.get("description", "")
-                # Remove HTML tags
-                clean_description = re.sub(r'<[^>]*>', '', raw_description) if raw_description else ""
-                # Decode HTML entities (like &nbsp;, &#39;, etc.)
-                clean_description = html.unescape(clean_description)
-                # Remove extra backslashes
-                clean_description = clean_description.replace('\\', '')    
-                entry = {
-                    "title": content.get("title"),
-                    "description": clean_description,
-                    "summary": content.get("summary"),
-                    "publication_date": content.get("pubDate"),
-                    "url": click_url.get("url") if click_url else None,
-                }
-                result_list.append(entry)
-            return json.dumps(result_list, indent=4)
+            news = ticker.get_news(count=5) if hasattr(ticker, 'news') else []
+            formatted = StockService.format_news(news)
+            return formatted
             
         except Exception as e:
             logger.error(f"Error fetching news for {symbol}: {str(e)}")
+            return []
+    
+    @staticmethod
+    def get_performers_from_portfolio(holdings: List[Dict]):
+        """
+        Get top 5 best and worst performers from a list of holdings
+        holdings: List of dicts with 'ticker' and 'buyPrice' keys
+        Uses parallel processing for faster execution
+        """
+        from datetime import datetime
+        
+        def fetch_stock_performance(holding):
+            """Helper function to fetch a single stock's performance"""
+            ticker = holding.get('ticker', '').strip().upper()
+            buy_price = holding.get('buyPrice')
+            
+            if not ticker or buy_price is None or buy_price <= 0:
+                logger.warning(f"Invalid holding data: {holding}")
+                return None
+            
+            try:
+                stock = yf.Ticker(ticker)
+                history = stock.history(period="1d")
+                
+                if history.empty:
+                    logger.warning(f"No price data for {ticker}")
+                    return None
+                
+                current_price = float(history['Close'].iloc[-1])
+                info = stock.info
+                
+                gain_loss = current_price - buy_price
+                gain_loss_percent = (gain_loss / buy_price) * 100 if buy_price > 0 else 0
+                
+                return {
+                    'symbol': ticker,
+                    'name': info.get('longName', info.get('shortName', ticker)),
+                    'price': round(current_price, 2),
+                    'buyPrice': round(buy_price, 2),
+                    'gainLoss': round(gain_loss, 2),
+                    'gainLossPercent': round(gain_loss_percent, 2)
+                }
+                
+            except Exception as e:
+                logger.error(f"Error fetching data for {ticker}: {e}")
+                return None
+        
+        try:
+            performances = []
+            
+
+            with ThreadPoolExecutor(max_workers=20) as executor:
+                future_to_holding = {executor.submit(fetch_stock_performance, holding): holding 
+                                    for holding in holdings}
+                
+                for future in as_completed(future_to_holding):
+                    result = future.result()
+                    if result:
+                        performances.append(result)
+            
+            if not performances:
+                return None
+            
+            # Sort by gain/loss percentage
+            sorted_performances = sorted(performances, key=lambda x: x['gainLossPercent'], reverse=True)
+            
+            # Get top 5 best and worst
+            best_performers = sorted_performances[:5]
+            worst_performers = sorted_performances[-5:][::-1]  # Reverse to show worst first
+            
+            # Combine with type indicator
+            data = []
+            for performer in best_performers:
+                data.append({
+                    'symbol': performer['symbol'],
+                    'name': performer['name'],
+                    'price': performer['price'],
+                    'buyPrice': performer['buyPrice'],
+                    'gainLoss': performer['gainLoss'],
+                    'gainLossPercent': performer['gainLossPercent'],
+                    'type': 'best'
+                })
+            
+            for performer in worst_performers:
+                data.append({
+                    'symbol': performer['symbol'],
+                    'name': performer['name'],
+                    'price': performer['price'],
+                    'buyPrice': performer['buyPrice'],
+                    'gainLoss': performer['gainLoss'],
+                    'gainLossPercent': performer['gainLossPercent'],
+                    'type': 'worst'
+                })
+            
+            return {
+                'datetime': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+                'data': data
+            }
+            
+        except Exception as e:
+            logger.error(f"Error in get_performers_from_portfolio: {str(e)}")
             return None
     
     @staticmethod
-    def _format_news(news_items: List):
+    def format_news(news_items: List):
         formatted_news = []
         for item in news_items:
             try:
-                content = item.get('content', {})
-                thumbnail = None
-                thumbnail_data = content.get('thumbnail', {})
-                if thumbnail_data and thumbnail_data.get('resolutions'):
-                    resolutions = thumbnail_data.get('resolutions', [])
-                    if resolutions:
-                        thumbnail = resolutions[0].get('url')
-                provider = content.get('provider', {})
-                canonical_url = content.get('canonicalUrl', {})
-                formatted_news.append({
-                    'title': content.get('title'),
-                    'summary': content.get('summary'),
-                    'date': content.get('pubDate'),
-                    'publisher': provider.get('displayName'),
-                    'publishedAt': content.get('pubDate'),
-                    'link': canonical_url.get('url'),
-                    'type': content.get('contentType'),
-                    'thumbnail': thumbnail
-                })
+                # Check if news item has 'content' wrapper (old format) or direct fields (new format)
+                if 'content' in item:
+                    # Old format with content wrapper
+                    content = item.get('content', {})
+                    thumbnail = None
+                    thumbnail_data = content.get('thumbnail', {})
+                    if thumbnail_data and thumbnail_data.get('resolutions'):
+                        resolutions = thumbnail_data.get('resolutions', [])
+                        if resolutions:
+                            thumbnail = resolutions[0].get('url')
+                    provider = content.get('provider', {})
+                    canonical_url = content.get('canonicalUrl', {})
+                    formatted_news.append({
+                        'title': content.get('title'),
+                        'summary': content.get('summary'),
+                        'date': content.get('pubDate'),
+                        'publisher': provider.get('displayName'),
+                        'publishedAt': content.get('pubDate'),
+                        'link': canonical_url.get('url'),
+                        'type': content.get('contentType'),
+                        'thumbnail': thumbnail
+                    })
+                else:
+                    # New format - fields already at top level
+                    formatted_news.append({
+                        'title': item.get('title'),
+                        'summary': item.get('summary'),
+                        'date': item.get('date'),
+                        'publisher': item.get('publisher'),
+                        'publishedAt': item.get('publishedAt'),
+                        'link': item.get('link'),
+                        'type': item.get('type'),
+                        'thumbnail': item.get('thumbnail')
+                    })
             except Exception as e:
                 logger.debug(f"Error formatting news item: {e}")
                 continue
                 
         return formatted_news
-
 
 
 def register_routes(app):
@@ -524,11 +623,30 @@ def register_routes(app):
     def get_news_route(symbol):
         try:
             news = StockService.get_news(symbol.upper())
-            if news is None:
-                return jsonify({'error': 'News not found'}), 404
             return jsonify(news), 200
         except Exception as e:
             logger.error(f"Error in get_news: {e}")
+            return jsonify({'error': str(e)}), 500
+
+    @app.route('/api/portfolio/performers', methods=['POST'])
+    def get_portfolio_performers_route():
+        """Analyze portfolio and return top 5 best and worst performers"""
+        try:
+            data = request.get_json()
+            if not data or 'holdings' not in data:
+                return jsonify({'error': 'holdings array required in request body'}), 400
+            
+            holdings = data.get('holdings', [])
+            if not isinstance(holdings, list) or len(holdings) == 0:
+                return jsonify({'error': 'holdings must be a non-empty array'}), 400
+            
+            result = StockService.get_performers_from_portfolio(holdings)
+            if not result:
+                return jsonify({'error': 'Unable to analyze portfolio performers'}), 404
+            
+            return jsonify(result), 200
+        except Exception as e:
+            logger.error(f"Error in get_portfolio_performers: {e}")
             return jsonify({'error': str(e)}), 500
 
 

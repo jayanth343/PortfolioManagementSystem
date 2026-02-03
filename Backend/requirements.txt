@@ -81,3 +81,5 @@ flask-socketio==5.3.6
 python-socketio==5.11.1
 yarg==0.1.9
 yfinance==1.1.0
+transformers==4.36.0
+torch==2.1.0
