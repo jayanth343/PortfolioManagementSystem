@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Stock Price WebSocket Test</title>
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        input {
+            flex: 1;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        .unsubscribe-btn {
+            background-color: #f44336;
+        }
+        .unsubscribe-btn:hover {
+            background-color: #da190b;
+        }
+        .status {
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            text-align: center;
+            font-weight: bold;
+        }
+        .connected {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .disconnected {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        .price-display {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .price-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .price-item:last-child {
+            border-bottom: none;
+        }
+        .label {
+            font-weight: bold;
+            color: #666;
+        }
+        .value {
+            color: #333;
+            font-size: 18px;
+        }
+        .ticker-name {
+            font-size: 24px;
+            color: #2196F3;
+            margin-bottom: 10px;
+        }
+        .positive {
+            color: #4CAF50;
+        }
+        .negative {
+            color: #f44336;
+        }
+        .logs {
+            margin-top: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+        }
+        .log-entry {
+            margin-bottom: 5px;
+            padding: 3px;
+        }
+        .log-info { color: #2196F3; }
+        .log-success { color: #4CAF50; }
+        .log-error { color: #f44336; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📈 Live Stock Price Stream</h1>
+        
+        <div id="status" class="status disconnected">
+            Disconnected
+        </div>
+        
+        <div class="input-group">
+            <input type="text" id="tickerInput" placeholder="Enter ticker symbol (e.g., AAPL, MSFT, GOOGL)" />
+            <button id="subscribeBtn" onclick="subscribeTicker()">Subscribe</button>
+            <button id="unsubscribeBtn" class="unsubscribe-btn" onclick="unsubscribeTicker()" disabled>Unsubscribe</button>
+        </div>
+        
+        <div id="priceDisplay" class="price-display" style="display: none;">
+            <div class="ticker-name" id="tickerName">-</div>
+            <div style="color: #666; margin-bottom: 15px; font-size: 14px;" id="stockName">-</div>
+            <div class="price-item">
+                <span class="label">Current Price:</span>
+                <span class="value" id="currentPrice">-</span>
+            </div>
+            <div class="price-item">
+                <span class="label">Change:</span>
+                <span class="value" id="change">-</span>
+            </div>
+            <div class="price-item">
+                <span class="label">Open:</span>
+                <span class="value" id="openPrice">-</span>
+            </div>
+            <div class="price-item">
+                <span class="label">High:</span>
+                <span class="value" id="highPrice">-</span>
+            </div>
+            <div class="price-item">
+                <span class="label">Low:</span>
+                <span class="value" id="lowPrice">-</span>
+            </div>
+            <div class="price-item">
+                <span class="label">Volume:</span>
+                <span class="value" id="volume">-</span>
+            </div>
+            <div class="price-item">
+                <span class="label">Last Updated:</span>
+                <span class="value" id="timestamp">-</span>
+            </div>
+        </div>
+        
+        <div class="logs" id="logs">
+            <strong>Connection Logs:</strong><br>
+        </div>
+    </div>
+
+    <script>
+        let socket;
+        let isSubscribed = false;
+
+        function addLog(message, type = 'info') {
+            const logsDiv = document.getElementById('logs');
+            const timestamp = new Date().toLocaleTimeString();
+            const logClass = `log-${type}`;
+            logsDiv.innerHTML += `<div class="log-entry ${logClass}">[${timestamp}] ${message}</div>`;
+            logsDiv.scrollTop = logsDiv.scrollHeight;
+        }
+
+        function updateStatus(connected) {
+            const statusDiv = document.getElementById('status');
+            if (connected) {
+                statusDiv.textContent = 'Connected';
+                statusDiv.className = 'status connected';
+            } else {
+                statusDiv.textContent = 'Disconnected';
+                statusDiv.className = 'status disconnected';
+            }
+        }
+
+        // Initialize WebSocket connection
+        function initWebSocket() {
+            socket = io('http://localhost:5000');
+
+            socket.on('connect', () => {
+                addLog('Connected to server', 'success');
+                updateStatus(true);
+            });
+
+            socket.on('connected', (data) => {
+                addLog(data.message, 'success');
+            });
+
+            socket.on('disconnect', () => {
+                addLog('Disconnected from server', 'error');
+                updateStatus(false);
+                isSubscribed = false;
+                updateButtons();
+            });
+
+            socket.on('subscribed', (data) => {
+                addLog(`Subscribed to ${data.ticker}`, 'success');
+                isSubscribed = true;
+                updateButtons();
+                document.getElementById('priceDisplay').style.display = 'block';
+            });
+
+            socket.on('unsubscribed', (data) => {
+                addLog(data.message, 'info');
+                isSubscribed = false;
+                updateButtons();
+                document.getElementById('priceDisplay').style.display = 'none';
+            });
+
+            socket.on('price_update', (data) => {
+                updatePriceDisplay(data);
+                addLog(`Price update: ${data.ticker} - $${data.price}`, 'info');
+            });
+
+            socket.on('error', (data) => {
+                addLog(`Error: ${data.message}`, 'error');
+            });
+        }
+
+        function updatePriceDisplay(data) {
+            console.log('Updating price display with data:', data);
+            document.getElementById('tickerName').textContent = data.ticker;
+            document.getElementById('stockName').textContent = data.name || '-';
+            
+            const currencySymbols = {
+                'USD': '$',
+                'EUR': '€',
+                'GBP': '£',
+                'INR': '₹'
+            };
+            const currencySymbol = currencySymbols[data.currency] || data.currency + ' ';
+            
+            document.getElementById('currentPrice').textContent = `${currencySymbol}${data.price}`;
+            
+            const changeElement = document.getElementById('change');
+            const changeText = `${currencySymbol}${data.change} (${data.changePercent}%)`;
+            changeElement.textContent = changeText;
+            changeElement.className = `value ${data.change >= 0 ? 'positive' : 'negative'}`;
+            
+            document.getElementById('openPrice').textContent = `${currencySymbol}${data.open}`;
+            document.getElementById('highPrice').textContent = `${currencySymbol}${data.high}`;
+            document.getElementById('lowPrice').textContent = `${currencySymbol}${data.low}`;
+            document.getElementById('volume').textContent = data.volume.toLocaleString();
+            
+            // Timestamp is now a string from DataFrame
+            document.getElementById('timestamp').textContent = data.timestamp;
+        }
+
+        function subscribeTicker() {
+            const ticker = document.getElementById('tickerInput').value.trim().toUpperCase();
+            if (!ticker) {
+                addLog('Please enter a ticker symbol', 'error');
+                return;
+            }
+            
+            addLog(`Subscribing to ${ticker}...`, 'info');
+            console.log(`Subscribing to ${ticker}...`);
+            socket.emit('subscribe_ticker', { ticker: ticker });
+        }
+
+        function unsubscribeTicker() {
+            socket.emit('unsubscribe_ticker');
+        }
+
+        function updateButtons() {
+            document.getElementById('subscribeBtn').disabled = isSubscribed;
+            document.getElementById('unsubscribeBtn').disabled = !isSubscribed;
+        }
+
+        // Allow Enter key to subscribe
+        document.getElementById('tickerInput').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter' && !isSubscribed) {
+                subscribeTicker();
+            }
+        });
+
+        // Initialize WebSocket on page load
+        window.addEventListener('load', () => {
+            initWebSocket();
+            addLog('Initializing WebSocket connection...', 'info');
+        });
+    </script>
+</body>
+</html>
