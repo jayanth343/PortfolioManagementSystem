@@ -117,23 +117,7 @@ const Holdings = () => {
 
                     <h1>Your Holdings</h1>
                 </div>
-                <button
-                    onClick={() => setShowBuyModal(true)}
-                    className="btn-pill-strict"
-                    style={{
-                        padding: '14px 36px',   // bigger size
-                        fontSize: '1.2rem',     // slightly larger text
-                        borderRadius: '50px',   // pill shape
-                        backgroundColor: '#DB292D', // red background
-                        color: 'white',         // white text for contrast
-                        border: 'none',         // clean look
-                        cursor: 'pointer'       // pointer on hover
-                    }}
-                    onMouseOver={(e) => e.target.style.backgroundColor = '#b71c1c'}
-                    onMouseOut={(e) => e.target.style.backgroundColor = '#DB292D'}
-                >
-                    + Buy Asset
-                </button>
+
 
             </div>
 
@@ -148,6 +132,7 @@ const Holdings = () => {
                     onClose={handleCloseModal}
                     historyData={historyData}
                     onSell={() => handleSellAsset(selectedAsset)}
+                    onSuccess={fetchAssets}
                 />
             )}
 
