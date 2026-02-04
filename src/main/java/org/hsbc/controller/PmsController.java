@@ -17,8 +17,16 @@ public class PmsController {
 //        List<PmsEntity> pmsEntities = PmsEntity.finda
 //        return pmsEntities;
 //    }
+@GetMapping("/all")
+public List<PmsEntity> getAllAssets() {
+    return service.getAllAssets();
+}
+    @GetMapping("/{id}")
+    public PmsEntity getAssetById(@PathVariable Long id) {
+        return service.getAssetById(id);
+    }
 
-        @Autowired
+    @Autowired
         public PmsService service;
 
         @PostMapping("/add")

@@ -2,6 +2,8 @@ package org.hsbc.service;
 
 import org.hsbc.entity.PmsEntity;
 
+import java.util.List;
+
 public interface PmsService {
     PmsEntity addAsset(PmsEntity asset);
 
@@ -14,4 +16,8 @@ public interface PmsService {
     double calculatePLPercentage(Long id);
 
     double getTotalPortfolioValue();
+    List<PmsEntity> getAllAssets();
+    PmsEntity getAssetById(Long id);
+
+
 }

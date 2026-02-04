@@ -4,8 +4,11 @@ import org.hsbc.entity.PmsEntity;
 import org.hsbc.exception.InvalidException;
 import org.hsbc.repo.PmsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -73,6 +76,22 @@ public class PmsServiceimp implements PmsService {
                     .mapToDouble(a -> a.getCurrentPrice() * a.getQuantity())
                     .sum();
         }
+    public PmsServiceimp(PmsRepository repository) {
+        this.repository = repository;
+    }
+
+    @Override
+    public List<PmsEntity> getAllAssets() {
+        return repository.findAll();
+    }
+    @Override
+    public PmsEntity getAssetById(Long id) {
+        return repository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Asset not found with id " + id
+                ));
+    }
 //
 //    public PmsEntity findAllPms(long id) throws InvalidException {
 //        Optional<PmsEntity> optProduct = repository.findById(id);
