@@ -1,5 +1,7 @@
 package org.hsbc.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +16,8 @@ import java.util.Map;
 @CrossOrigin(origins = "*")
 public class StockDataController {
 
+    private static final Logger logger = LoggerFactory.getLogger(StockDataController.class);
+
     @Value("${flask.api.url:http://localhost:5000}")
     private String flaskApiUrl;
 
@@ -21,6 +25,7 @@ public class StockDataController {
 
     public StockDataController() {
         this.restTemplate = new RestTemplate();
+        logger.info("StockDataController initialized");
     }
 
     /**
@@ -28,17 +33,26 @@ public class StockDataController {
      * @param symbol Stock ticker symbol (e.g., AAPL, MSFT)
      * @return Stock data including price, volume, news, recommendations
      */
-    @GetMapping("/stocks/{symbol}")
+    @GetMapping(value = "/stocks/{symbol}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getStock(@PathVariable String symbol) {
+        logger.info("Request received for stock: {}", symbol);
         try {
             String url = flaskApiUrl + "/api/stocks/" + symbol.toUpperCase();
+            logger.debug("Calling Flask API: {}", url);
             ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
-            return ResponseEntity.ok(response.getBody());
+            logger.info("Successfully fetched stock data for: {}", symbol);
+            return ResponseEntity.ok()
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(response.getBody());
         } catch (HttpClientErrorException.NotFound e) {
+            logger.warn("Stock not found: {}", symbol);
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .contentType(MediaType.APPLICATION_JSON)
                     .body(createErrorResponse("Stock not found"));
         } catch (Exception e) {
+            logger.error("Error fetching stock data for {}: {}", symbol, e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .contentType(MediaType.APPLICATION_JSON)
                     .body(createErrorResponse("Error fetching stock data: " + e.getMessage()));
         }
     }
@@ -48,17 +62,26 @@ public class StockDataController {
      * @param symbol Crypto symbol (e.g., BTC, ETH)
      * @return Cryptocurrency data including price, market cap, volume
      */
-    @GetMapping("/crypto/{symbol}")
+    @GetMapping(value = "/crypto/{symbol}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getCrypto(@PathVariable String symbol) {
+        logger.info("Request received for crypto: {}", symbol);
         try {
             String url = flaskApiUrl + "/api/crypto/" + symbol.toUpperCase();
+            logger.debug("Calling Flask API: {}", url);
             ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
-            return ResponseEntity.ok(response.getBody());
+            logger.info("Successfully fetched crypto data for: {}", symbol);
+            return ResponseEntity.ok()
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(response.getBody());
         } catch (HttpClientErrorException.NotFound e) {
+            logger.warn("Cryptocurrency not found: {}", symbol);
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .contentType(MediaType.APPLICATION_JSON)
                     .body(createErrorResponse("Cryptocurrency not found"));
         } catch (Exception e) {
+            logger.error("Error fetching crypto data for {}: {}", symbol, e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .contentType(MediaType.APPLICATION_JSON)
                     .body(createErrorResponse("Error fetching crypto data: " + e.getMessage()));
         }
     }
@@ -68,17 +91,26 @@ public class StockDataController {
      * @param symbol Mutual fund symbol
      * @return Mutual fund data including NAV, returns, holdings
      */
-    @GetMapping("/mutual-funds/{symbol}")
+    @GetMapping(value = "/mutual-funds/{symbol}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getMutualFund(@PathVariable String symbol) {
+        logger.info("Request received for mutual fund: {}", symbol);
         try {
             String url = flaskApiUrl + "/api/mutual-funds/" + symbol.toUpperCase();
+            logger.debug("Calling Flask API: {}", url);
             ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
-            return ResponseEntity.ok(response.getBody());
+            logger.info("Successfully fetched mutual fund data for: {}", symbol);
+            return ResponseEntity.ok()
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(response.getBody());
         } catch (HttpClientErrorException.NotFound e) {
+            logger.warn("Mutual fund not found: {}", symbol);
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .contentType(MediaType.APPLICATION_JSON)
                     .body(createErrorResponse("Mutual fund not found"));
         } catch (Exception e) {
+            logger.error("Error fetching mutual fund data for {}: {}", symbol, e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .contentType(MediaType.APPLICATION_JSON)
                     .body(createErrorResponse("Error fetching mutual fund data: " + e.getMessage()));
         }
     }
@@ -88,17 +120,26 @@ public class StockDataController {
      * @param symbol Commodity symbol (e.g., GC=F for Gold, CL=F for Crude Oil)
      * @return Commodity data including price, volume, changes
      */
-    @GetMapping("/commodities/{symbol}")
+    @GetMapping(value = "/commodities/{symbol}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getCommodity(@PathVariable String symbol) {
+        logger.info("Request received for commodity: {}", symbol);
         try {
             String url = flaskApiUrl + "/api/commodities/" + symbol.toUpperCase();
+            logger.debug("Calling Flask API: {}", url);
             ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
-            return ResponseEntity.ok(response.getBody());
+            logger.info("Successfully fetched commodity data for: {}", symbol);
+            return ResponseEntity.ok()
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(response.getBody());
         } catch (HttpClientErrorException.NotFound e) {
+            logger.warn("Commodity not found: {}", symbol);
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .contentType(MediaType.APPLICATION_JSON)
                     .body(createErrorResponse("Commodity not found"));
         } catch (Exception e) {
+            logger.error("Error fetching commodity data for {}: {}", symbol, e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .contentType(MediaType.APPLICATION_JSON)
                     .body(createErrorResponse("Error fetching commodity data: " + e.getMessage()));
         }
     }
@@ -107,21 +148,35 @@ public class StockDataController {
      * Get historical price data for a symbol
      * @param symbol Asset symbol
      * @param period Time period (1D, 5D, 1W, 1MO, 3MO, 6MO, 1Y, 2Y)
+     * @param interval Data interval (1m, 5m, 15m, 1h, 1d, 1wk, 1mo)
      * @return Historical OHLCV data
      */
-    @GetMapping("/history/{symbol}")
+    @GetMapping(value = "/history/{symbol}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getHistory(
             @PathVariable String symbol,
-            @RequestParam(defaultValue = "1MO") String period) {
+            @RequestParam(defaultValue = "1MO") String period,
+            @RequestParam(required = false) String interval) {
+        logger.info("Request received for history: {} with period: {}, interval: {}", symbol, period, interval);
         try {
             String url = flaskApiUrl + "/api/history/" + symbol.toUpperCase() + "?period=" + period.toUpperCase();
+            if (interval != null && !interval.isEmpty()) {
+                url += "&interval=" + interval.toLowerCase();
+            }
+            logger.debug("Calling Flask API: {}", url);
             ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
-            return ResponseEntity.ok(response.getBody());
+            logger.info("Successfully fetched history for: {} ({}, {})", symbol, period, interval);
+            return ResponseEntity.ok()
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(response.getBody());
         } catch (HttpClientErrorException.NotFound e) {
+            logger.warn("History not found for: {} ({}, {})", symbol, period, interval);
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .contentType(MediaType.APPLICATION_JSON)
                     .body(createErrorResponse("History not found"));
         } catch (Exception e) {
+            logger.error("Error fetching history for {} ({}, {}): {}", symbol, period, interval, e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .contentType(MediaType.APPLICATION_JSON)
                     .body(createErrorResponse("Error fetching history: " + e.getMessage()));
         }
     }
@@ -131,17 +186,26 @@ public class StockDataController {
      * @param symbol Asset symbol
      * @return Latest news articles
      */
-    @GetMapping("/news/{symbol}")
+    @GetMapping(value = "/news/{symbol}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getNews(@PathVariable String symbol) {
+        logger.info("Request received for news: {}", symbol);
         try {
             String url = flaskApiUrl + "/api/news/" + symbol.toUpperCase();
+            logger.debug("Calling Flask API: {}", url);
             ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
-            return ResponseEntity.ok(response.getBody());
+            logger.info("Successfully fetched news for: {}", symbol);
+            return ResponseEntity.ok()
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(response.getBody());
         } catch (HttpClientErrorException.NotFound e) {
+            logger.warn("News not found for: {}", symbol);
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .contentType(MediaType.APPLICATION_JSON)
                     .body(createErrorResponse("News not found"));
         } catch (Exception e) {
+            logger.error("Error fetching news for {}: {}", symbol, e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .contentType(MediaType.APPLICATION_JSON)
                     .body(createErrorResponse("Error fetching news: " + e.getMessage()));
         }
     }
@@ -151,18 +215,27 @@ public class StockDataController {
      * @param query Search query string
      * @return Search results across all asset types
      */
-    @GetMapping("/search")
+    @GetMapping(value = "/search", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> searchAssets(@RequestParam String q) {
+        logger.info("Search request received with query: {}", q);
         try {
             if (q == null || q.trim().isEmpty()) {
+                logger.warn("Empty search query received");
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .contentType(MediaType.APPLICATION_JSON)
                         .body(createErrorResponse("Query parameter 'q' is required"));
             }
             String url = flaskApiUrl + "/api/search?q=" + q.trim();
+            logger.debug("Calling Flask API: {}", url);
             ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
-            return ResponseEntity.ok(response.getBody());
+            logger.info("Search completed successfully for query: {}", q);
+            return ResponseEntity.ok()
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(response.getBody());
         } catch (Exception e) {
+            logger.error("Error searching assets for query {}: {}", q, e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .contentType(MediaType.APPLICATION_JSON)
                     .body(createErrorResponse("Error searching assets: " + e.getMessage()));
         }
     }
@@ -172,21 +245,31 @@ public class StockDataController {
      * @param requestBody JSON with holdings array containing ticker, buyPrice, quantity, purchaseDate
      * @return Top 5 best and worst performers with comprehensive metrics
      */
-    @PostMapping("/portfolio/performers")
+    @PostMapping(value = "/portfolio/performers", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getPortfolioPerformers(@RequestBody String requestBody) {
+        logger.info("Portfolio performers analysis request received");
+        logger.debug("Request body: {}", requestBody);
         try {
             String url = flaskApiUrl + "/api/portfolio/performers";
+            logger.debug("Calling Flask API: {}", url);
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
             HttpEntity<String> request = new HttpEntity<>(requestBody, headers);
             
             ResponseEntity<String> response = restTemplate.postForEntity(url, request, String.class);
-            return ResponseEntity.ok(response.getBody());
+            logger.info("Portfolio performers analysis completed successfully");
+            return ResponseEntity.ok()
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(response.getBody());
         } catch (HttpClientErrorException.BadRequest e) {
+            logger.warn("Invalid portfolio performers request: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .contentType(MediaType.APPLICATION_JSON)
                     .body(createErrorResponse("Invalid request: " + e.getMessage()));
         } catch (Exception e) {
+            logger.error("Error analyzing portfolio performers: {}", e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .contentType(MediaType.APPLICATION_JSON)
                     .body(createErrorResponse("Error analyzing portfolio performers: " + e.getMessage()));
         }
     }
@@ -196,21 +279,31 @@ public class StockDataController {
      * @param requestBody JSON with holdings array containing ticker, buyPrice, quantity
      * @return Portfolio recommendations with buy/sell/hold actions based on sentiment + analysts
      */
-    @PostMapping("/portfolio/recommendations")
+    @PostMapping(value = "/portfolio/recommendations", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getPortfolioRecommendations(@RequestBody String requestBody) {
+        logger.info("Portfolio recommendations request received");
+        logger.debug("Request body: {}", requestBody);
         try {
             String url = flaskApiUrl + "/api/portfolio/recommendations";
+            logger.debug("Calling Flask API: {}", url);
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
             HttpEntity<String> request = new HttpEntity<>(requestBody, headers);
             
             ResponseEntity<String> response = restTemplate.postForEntity(url, request, String.class);
-            return ResponseEntity.ok(response.getBody());
+            logger.info("Portfolio recommendations generated successfully");
+            return ResponseEntity.ok()
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(response.getBody());
         } catch (HttpClientErrorException.BadRequest e) {
+            logger.warn("Invalid portfolio recommendations request: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .contentType(MediaType.APPLICATION_JSON)
                     .body(createErrorResponse("Invalid request: " + e.getMessage()));
         } catch (Exception e) {
+            logger.error("Error generating portfolio recommendations: {}", e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .contentType(MediaType.APPLICATION_JSON)
                     .body(createErrorResponse("Error generating recommendations: " + e.getMessage()));
         }
     }
@@ -222,14 +315,17 @@ public class StockDataController {
      * @param buyPrice Required if inPortfolio=true
      * @return Stock analysis with sentiment, analyst recommendations, and action
      */
-    @GetMapping("/stock/{symbol}/analysis")
+    @GetMapping(value = "/stock/{symbol}/analysis", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getStockAnalysis(
             @PathVariable String symbol,
             @RequestParam(defaultValue = "false") boolean inPortfolio,
             @RequestParam(required = false) Double buyPrice) {
+        logger.info("Stock analysis request for: {} (inPortfolio={}, buyPrice={})", symbol, inPortfolio, buyPrice);
         try {
             if (inPortfolio && buyPrice == null) {
+                logger.warn("buyPrice missing for stock analysis: {}", symbol);
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .contentType(MediaType.APPLICATION_JSON)
                         .body(createErrorResponse("buyPrice is required when inPortfolio=true"));
             }
             
@@ -240,13 +336,21 @@ public class StockDataController {
                 url += "&buyPrice=" + buyPrice;
             }
             
+            logger.debug("Calling Flask API: {}", url);
             ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
-            return ResponseEntity.ok(response.getBody());
+            logger.info("Stock analysis completed successfully for: {}", symbol);
+            return ResponseEntity.ok()
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(response.getBody());
         } catch (HttpClientErrorException.NotFound e) {
+            logger.warn("Unable to analyze stock: {}", symbol);
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .contentType(MediaType.APPLICATION_JSON)
                     .body(createErrorResponse("Unable to analyze stock"));
         } catch (Exception e) {
+            logger.error("Error analyzing stock {}: {}", symbol, e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .contentType(MediaType.APPLICATION_JSON)
                     .body(createErrorResponse("Error analyzing stock: " + e.getMessage()));
         }
     }
@@ -255,17 +359,23 @@ public class StockDataController {
      * Health check endpoint for the Flask API
      * @return Health status of the data API
      */
-    @GetMapping("/health")
+    @GetMapping(value = "/health", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> healthCheck() {
+        logger.debug("Health check request received");
         try {
             String url = flaskApiUrl + "/health";
             ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
-            return ResponseEntity.ok(response.getBody());
+            logger.info("Health check: Flask API is healthy");
+            return ResponseEntity.ok()
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(response.getBody());
         } catch (Exception e) {
+            logger.error("Health check failed: Flask API is not reachable - {}", e.getMessage());
             Map<String, Object> errorResponse = new HashMap<>();
             errorResponse.put("status", "unhealthy");
             errorResponse.put("error", "Flask API is not reachable: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
+                    .contentType(MediaType.APPLICATION_JSON)
                     .body(errorResponse);
         }
     }

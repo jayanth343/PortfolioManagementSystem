@@ -1,12 +1,27 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { createChart, ColorType, AreaSeries } from 'lightweight-charts';
+import { JAVA_API_URL } from '../../api/config';
+
+// Period configurations with their intervals
+const PERIOD_CONFIGS = [
+    { label: '1D', period: '1d', interval: '1m' },
+    { label: '5D', period: '5d', interval: '5m' },
+    { label: '1M', period: '1mo', interval: '1h' },
+    { label: '3M', period: '3mo', interval: '1d' },
+    { label: '6M', period: '6mo', interval: '1d' },
+    { label: '1Y', period: '1y', interval: '1d' },
+    { label: '5Y', period: '5y', interval: '1d' },
+    { label: 'Max', period: 'max', interval: '1mo' },
+];
 
 /**
- * Helper: Normalize data to { time: 'YYYY-MM-DD', value: number }
+ * Helper: Normalize data to
+ *  { time: 'YYYY-MM-DD' | number, value: number }
  * Handles:
  * - { date: ... } or { time: ... }
+ * - Unix timestamps (numbers) for intraday data
+ * - Date strings for daily data
  * - Strings ('Mon'), invalid dates (generates fallback)
- * - Timestamps
  * - Deduplication and sorting
  */
 const normalizeData = (inputData) => {
@@ -14,20 +29,23 @@ const normalizeData = (inputData) => {
 
     // 1. Standardize keys and values
     const raw = inputData.map(d => {
-        const val = d.value !== undefined ? d.value : d.price;
+        const val = d.value !== undefined ? d.value : (d.price !== undefined ? d.price : d.close);
         const t = d.time !== undefined ? d.time : d.date;
         return { originalTime: t, value: val };
     }).filter(d => d.value !== undefined && d.value !== null && !isNaN(d.value));
 
     if (raw.length === 0) return [];
 
-    // 2. Check if generation is needed (heuristics for invalid/missing dates)
+    // 2. Check if data is intraday (Unix timestamps) or daily (date strings)
     const firstTime = raw[0].originalTime;
+    let isIntradayData = typeof firstTime === 'number' && firstTime > 1000000000; // Unix timestamp check
+    
     let needsGeneration = false;
 
     if (!firstTime) {
         needsGeneration = true;
-    } else {
+    } else if (!isIntradayData) {
+        // Check if date string is valid
         const d = new Date(firstTime);
         if (isNaN(d.getTime())) needsGeneration = true;
         // If string is short (e.g. "Mon" = 3 chars), strictly treat as label -> generate dates
@@ -47,8 +65,14 @@ const normalizeData = (inputData) => {
                 value: parseFloat(item.value)
             };
         });
+    } else if (isIntradayData) {
+        // Intraday data: use Unix timestamps as-is
+        normalized = raw.map(item => ({
+            time: item.originalTime, // Already a Unix timestamp (seconds)
+            value: parseFloat(item.value)
+        }));
     } else {
-        // Parse dates
+        // Daily data: parse dates to 'YYYY-MM-DD' format
         normalized = raw.map(item => {
             let timeStr = null;
             const t = item.originalTime;
@@ -85,10 +109,77 @@ const normalizeData = (inputData) => {
 };
 
 
-const PriceChart = ({ data, height = 300, color = '#DB292D' }) => {
+const PriceChart = ({ symbol, height = 400, color = '#DB292D', initialPeriod = '1M' }) => {
     const chartContainerRef = useRef(null);
     const chartRef = useRef(null);
     const seriesRef = useRef(null);
+    const [selectedPeriod, setSelectedPeriod] = useState(initialPeriod);
+    const [chartData, setChartData] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+
+    // Fetch historical data from API
+    const fetchHistoryData = async (periodLabel) => {
+        if (!symbol) {
+            console.log('PriceChart: No symbol provided');
+            return;
+        }
+
+        const config = PERIOD_CONFIGS.find(p => p.label === periodLabel);
+        if (!config) {
+            console.log('PriceChart: Invalid period config');
+            return;
+        }
+
+        setLoading(true);
+        setError(null);
+
+        try {
+            const url = `${JAVA_API_URL}/history/${symbol}?period=${config.period}&interval=${config.interval}`;
+            console.log('PriceChart: Fetching from', url, 'with', config);
+            
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error('PriceChart: API error', response.status, errorText);
+                throw new Error(`Failed to fetch history data: ${response.status}`);
+            }
+
+            const data = await response.json();
+            console.log('PriceChart: Received data', data);
+            
+            // Transform data for chart (use close price as value)
+            const transformed = data.data?.map(item => ({
+                time: item.time,
+                value: item.close,
+            })) || [];
+
+            console.log('PriceChart: Transformed data points:', transformed.length);
+            if (transformed.length > 0) {
+                console.log('PriceChart: First point:', transformed[0]);
+                console.log('PriceChart: Last point:', transformed[transformed.length - 1]);
+            }
+
+            setChartData(transformed);
+        } catch (err) {
+            console.error('PriceChart: Error fetching history:', err);
+            setError(err.message);
+            setChartData([]);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // Fetch data when symbol or period changes
+    useEffect(() => {
+        fetchHistoryData(selectedPeriod);
+    }, [symbol, selectedPeriod]);
 
     // 1. Creation Effect - Runs ONCE
     useEffect(() => {
@@ -163,23 +254,27 @@ const PriceChart = ({ data, height = 300, color = '#DB292D' }) => {
 
     // 2. Data Update Effect with Normalization
     useEffect(() => {
-        if (!seriesRef.current) return;
+        if (!seriesRef.current) {
+            console.log('PriceChart: Series not ready yet');
+            return;
+        }
 
-        const validData = normalizeData(data);
+        console.log('PriceChart: Processing chartData', chartData.length, 'points');
+        const validData = normalizeData(chartData);
 
         if (validData.length > 0) {
-            if (process.env.NODE_ENV === 'development') {
-                console.log('PriceChart Normalized Data:', validData[0], '... total:', validData.length);
-            }
+            console.log('PriceChart: Setting', validData.length, 'normalized points');
+            console.log('PriceChart: First normalized:', validData[0]);
+            console.log('PriceChart: Last normalized:', validData[validData.length - 1]);
+            
             seriesRef.current.setData(validData);
             if (chartRef.current) {
                 chartRef.current.timeScale().fitContent();
             }
         } else {
-            // Check if we should clear
+            console.log('PriceChart: No valid data after normalization');
         }
-
-    }, [data]);
+    }, [chartData]);
 
     // 3. Style Update
     useEffect(() => {
@@ -193,7 +288,84 @@ const PriceChart = ({ data, height = 300, color = '#DB292D' }) => {
     }, [height, color]);
 
     return (
-        <div ref={chartContainerRef} style={{ width: '100%', height: '100%' }} />
+        <div style={{ width: '100%', position: 'relative' }}>
+            {/* Period Tabs */}
+            <div style={{
+                display: 'flex',
+                gap: '8px',
+                marginBottom: '12px',
+                flexWrap: 'wrap',
+                justifyContent: 'center',
+            }}>
+                {PERIOD_CONFIGS.map(config => (
+                    <button
+                        key={config.label}
+                        onClick={() => setSelectedPeriod(config.label)}
+                        disabled={loading}
+                        style={{
+                            padding: '6px 16px',
+                            border: selectedPeriod === config.label 
+                                ? `2px solid ${color}` 
+                                : '2px solid rgba(197, 203, 206, 0.3)',
+                            borderRadius: '6px',
+                            background: selectedPeriod === config.label 
+                                ? `${color}15` 
+                                : 'transparent',
+                            color: selectedPeriod === config.label 
+                                ? color 
+                                : '#d1d4dc',
+                            cursor: loading ? 'not-allowed' : 'pointer',
+                            fontSize: '13px',
+                            fontWeight: selectedPeriod === config.label ? '600' : '500',
+                            transition: 'all 0.2s ease',
+                            opacity: loading ? 0.5 : 1,
+                        }}
+                    >
+                        {config.label}
+                    </button>
+                ))}
+            </div>
+
+            {/* Loading/Error State */}
+            {loading && (
+                <div style={{
+                    position: 'absolute',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    color: '#d1d4dc',
+                    fontSize: '14px',
+                    zIndex: 10,
+                }}>
+                    Loading chart data...
+                </div>
+            )}
+
+            {error && (
+                <div style={{
+                    padding: '12px',
+                    background: 'rgba(219, 41, 45, 0.1)',
+                    border: '1px solid rgba(219, 41, 45, 0.3)',
+                    borderRadius: '6px',
+                    color: '#DB292D',
+                    fontSize: '14px',
+                    marginBottom: '12px',
+                }}>
+                    {error}
+                </div>
+            )}
+
+            {/* Chart Container */}
+            <div 
+                ref={chartContainerRef} 
+                style={{ 
+                    width: '100%', 
+                    height: height,
+                    opacity: loading ? 0.5 : 1,
+                    transition: 'opacity 0.2s ease',
+                }} 
+            />
+        </div>
     );
 };
 

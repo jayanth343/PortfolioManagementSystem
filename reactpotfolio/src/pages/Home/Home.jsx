@@ -2,16 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import PortfolioChart from '../../components/charts/PortfolioChart';
 import PerformanceCard from '../../components/cards/PerformanceCard';
-import AssetDetailsModal from '../../components/modals/AssetDetailsModal';
 import { getPortfolioSummary, getPortfolioPerformance, getAssetAllocation } from '../../api/portfolioApi';
 import { getAssets } from '../../api/assetsApi';
 import AssetAllocationPieChart from '../../components/charts/AssetAllocationPieChart';
-import { getAssetPriceHistory } from '../../api/marketApi';
 import './Home.css';
 
 import { formatCurrency } from '../../utils/formatCurrency';
 import { formatPercentage } from '../../utils/formatPercentage';
-import PriceChart from '../../components/charts/PriceChart'; // Temporary Validation
 
 const Home = () => {
     const navigate = useNavigate();
@@ -20,8 +17,6 @@ const Home = () => {
     const [allocationData, setAllocationData] = useState(null);
     const [assets, setAssets] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [selectedAsset, setSelectedAsset] = useState(null);
-    const [historyData, setHistoryData] = useState([]);
 
 
 
@@ -46,20 +41,10 @@ const Home = () => {
         fetchData();
     }, []);
 
-    const handleCardClick = async (asset) => {
-        const modalAsset = {
-            ...asset,
-            id: 'perf-' + asset.symbol // temporary ID to avoid key issues if passed as generic asset
-        };
-        setSelectedAsset(modalAsset);
-        // Fetch specific history for this asset
-        const history = await getAssetPriceHistory(asset.symbol);
-        setHistoryData(history);
-    };
-
-    const handleCloseModal = () => {
-        setSelectedAsset(null);
-        setHistoryData([]);
+    const handleCardClick = (asset) => {
+        // Navigate to the asset details page
+        const assetType = asset.assetType?.toLowerCase().replace(' ', '') || 'stock';
+        navigate(`/asset/${assetType}/${asset.symbol}`);
     };
 
     if (loading) {
@@ -179,22 +164,6 @@ const Home = () => {
                     ))}
                 </div>
             </div>
-
-
-
-            {
-                selectedAsset && (
-                    <AssetDetailsModal
-                        asset={selectedAsset}
-                        onClose={handleCloseModal}
-                        historyData={historyData}
-                        onSell={() => {
-                            console.log("Sell requested from Home page - Read Only");
-                            alert("Please go to Holdings page to manage assets.");
-                        }}
-                    />
-                )
-            }
         </div >
     );
 };
