@@ -201,6 +201,10 @@ const PriceChart = ({ symbol, height = 400, color = '#DB292D', initialPeriod = '
                 borderColor: 'rgba(197, 203, 206, 0.4)',
                 timeVisible: true,
                 secondsVisible: false,
+                tickMarkFormatter: (time, tickMarkType, locale) => {
+                    // Will be updated dynamically based on data
+                    return '';
+                },
             },
             rightPriceScale: {
                 borderColor: 'rgba(197, 203, 206, 0.4)',
@@ -270,11 +274,73 @@ const PriceChart = ({ symbol, height = 400, color = '#DB292D', initialPeriod = '
             seriesRef.current.setData(validData);
             if (chartRef.current) {
                 chartRef.current.timeScale().fitContent();
+                
+                // Configure time scale based on selected period
+                const currentConfig = PERIOD_CONFIGS.find(p => p.label === selectedPeriod);
+                const isIntradayData = typeof validData[0].time === 'number';
+                
+                // Only show time for 1D period, all others show dates
+                if (selectedPeriod === '1D' && isIntradayData) {
+                    // 1D period: show time (HH:MM)
+                    chartRef.current.applyOptions({
+                        timeScale: {
+                            timeVisible: true,
+                            secondsVisible: false,
+                            tickMarkFormatter: (time) => {
+                                const date = new Date(time * 1000);
+                                const hours = date.getHours().toString().padStart(2, '0');
+                                const minutes = date.getMinutes().toString().padStart(2, '0');
+                                return `${hours}:${minutes}`;
+                            },
+                        },
+                    });
+                } else {
+                    // All other periods: show date/month/year (no time)
+                    const intervalMap = {
+                        '1d': 'day',
+                        '1mo': 'month',
+                    };
+                    const interval = currentConfig?.interval || '1d';
+                    const formatType = intervalMap[interval] || 'day';
+                    
+                    chartRef.current.applyOptions({
+                        timeScale: {
+                            timeVisible: false,
+                            secondsVisible: false,
+                            tickMarkFormatter: (time) => {
+                                let date;
+                                if (typeof time === 'number') {
+                                    // Unix timestamp (for 5D period with 5m intervals)
+                                    date = new Date(time * 1000);
+                                } else if (typeof time === 'string') {
+                                    date = new Date(time);
+                                } else {
+                                    return time.toString();
+                                }
+                                
+                                const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+                                                  'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                                
+                                if (formatType === 'month') {
+                                    // For monthly intervals (Max period), show month + year
+                                    return `${monthNames[date.getMonth()]} ${date.getFullYear()}`;
+                                } else {
+                                    // For daily intervals, show Mon DD or Mon DD, YYYY
+                                    const currentYear = new Date().getFullYear();
+                                    const showYear = date.getFullYear() !== currentYear;
+                                    return showYear 
+                                        ? `${monthNames[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`
+                                        : `${monthNames[date.getMonth()]} ${date.getDate()}`;
+                                }
+                            },
+                        },
+                    });
+                }
             }
         } else {
             console.log('PriceChart: No valid data after normalization');
         }
-    }, [chartData]);
+    }, [chartData, selectedPeriod]);
 
     // 3. Style Update
     useEffect(() => {
