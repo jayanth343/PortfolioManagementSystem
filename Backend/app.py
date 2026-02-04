@@ -3,6 +3,7 @@ from flask import Flask
 from flask_cors import CORS
 from flask_socketio import SocketIO
 from services.stock_service import register_routes, register_websocket_events
+from services.recommendation_service import register_recommendation_routes
 
 
 def create_app():
@@ -14,6 +15,7 @@ def create_app():
     socketio = SocketIO(app, cors_allowed_origins="*")
     
     register_routes(app)
+    register_recommendation_routes(app)
     register_websocket_events(socketio)
     
     @app.route('/health', methods=['GET'])
