@@ -1,17 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import AssetCard from '../../components/cards/AssetCard';
-import AssetDetailsModal from '../../components/modals/AssetDetailsModal';
 import BuyAssetModal from '../../components/modals/BuyAssetModal';
 import { getAssets, addAsset, sellAsset } from '../../api/assetsApi';
-import { getAssetPriceHistory } from '../../api/marketApi';
 import './Holdings.css';
 
 const Holdings = () => {
+    const navigate = useNavigate();
     const [assets, setAssets] = useState([]);
-    const [selectedAsset, setSelectedAsset] = useState([]);
     const [showBuyModal, setShowBuyModal] = useState(false);
-    const [historyData, setHistoryData] = useState([]);
     const [loading, setLoading] = useState(true);
 
     const fetchAssets = async () => {
@@ -29,16 +26,10 @@ const Holdings = () => {
         fetchAssets();
     }, []);
 
-    const handleAssetClick = async (asset) => {
-        setSelectedAsset(asset);
-        // Fetch specific history for this asset
-        const history = await getAssetPriceHistory(asset.symbol);
-        setHistoryData(history);
-    };
-
-    const handleCloseModal = () => {
-        setSelectedAsset(null);
-        setHistoryData(null);
+    const handleAssetClick = (asset) => {
+        // Navigate to the asset details page
+        const assetType = asset.assetType?.toLowerCase().replace(' ', '') || 'stock';
+        navigate(`/asset/${assetType}/${asset.symbol}`);
     };
 
     const handleBuySubmit = async (formData) => {
@@ -55,7 +46,6 @@ const Holdings = () => {
         try {
             await sellAsset(asset.id);
             await fetchAssets(); // Refresh list
-            handleCloseModal(); // Close modal after sale
         } catch (error) {
             console.error("Error selling asset:", error);
         }
@@ -125,16 +115,6 @@ const Holdings = () => {
             {renderSection('Mutual Funds', 'Mutual Funds')}
             {renderSection('Commodities', 'Commodities')}
             {renderSection('Crypto', 'Crypto')}
-
-            {selectedAsset && (
-                <AssetDetailsModal
-                    asset={selectedAsset}
-                    onClose={handleCloseModal}
-                    historyData={historyData}
-                    onSell={() => handleSellAsset(selectedAsset)}
-                    onSuccess={fetchAssets}
-                />
-            )}
 
             {showBuyModal && (
                 <BuyAssetModal

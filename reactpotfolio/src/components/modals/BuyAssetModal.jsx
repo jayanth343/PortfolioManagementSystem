@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { io } from 'socket.io-client';
 
 const BuyAssetModal = ({ onClose, onSubmit }) => {
     const [formData, setFormData] = useState({
@@ -11,10 +12,45 @@ const BuyAssetModal = ({ onClose, onSubmit }) => {
     });
 
     const [buyingValue, setBuyingValue] = useState(0);
+    const [priceTimestamp, setPriceTimestamp] = useState(null);
 
     useEffect(() => {
         setBuyingValue(formData.quantity * formData.buyPrice);
     }, [formData.quantity, formData.buyPrice]);
+
+    // Socket.IO integration for live price updates
+    useEffect(() => {
+        if (!formData.symbol || formData.symbol.trim() === '') return;
+
+        const socket = io('http://localhost:5000');
+
+        socket.on('connect', () => {
+            console.log('BuyModal Socket connected');
+            socket.emit('subscribe_ticker_fast', { ticker: formData.symbol.trim().toUpperCase() });
+        });
+
+        socket.on('price_update', (data) => {
+            console.log('BuyModal Price update:', data);
+            if (data.ticker === formData.symbol.trim().toUpperCase()) {
+                setFormData(prev => ({
+                    ...prev,
+                    currentPrice: data.price
+                }));
+                setPriceTimestamp(data.timestamp);
+            }
+        });
+
+        socket.on('error', (error) => {
+            console.error('BuyModal Socket error:', error);
+        });
+
+        return () => {
+            if (formData.symbol && formData.symbol.trim() !== '') {
+                socket.emit('unsubscribe_ticker', { ticker: formData.symbol.trim().toUpperCase() });
+            }
+            socket.disconnect();
+        };
+    }, [formData.symbol]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -157,6 +193,37 @@ const BuyAssetModal = ({ onClose, onSubmit }) => {
 
                         </div>
                     </div>
+
+                    {formData.currentPrice > 0 && (
+                        <div style={{
+                            padding: '12px 20px',
+                            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                            border: '1px solid rgba(16, 185, 129, 0.3)',
+                            borderRadius: '8px',
+                            marginBottom: '10px'
+                        }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                <div>
+                                    <span style={{ fontSize: '0.8rem', color: '#999' }}>Live Price: </span>
+                                    <span style={{ fontSize: '1.1rem', fontWeight: 'bold', color: '#10b981' }}>
+                                        ${formData.currentPrice.toFixed(2)}
+                                    </span>
+                                </div>
+                                {priceTimestamp && (
+                                    <div style={{ fontSize: '0.75rem', color: '#999' }}>
+                                        Updated: {new Date(priceTimestamp).toLocaleString('en-IN', {
+                                            timeZone: 'Asia/Kolkata',
+                                            month: 'short',
+                                            day: 'numeric',
+                                            hour: '2-digit',
+                                            minute: '2-digit',
+                                            second: '2-digit'
+                                        })} IST
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    )}
 
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
                         <div className="form-group">

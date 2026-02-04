@@ -5,7 +5,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
 import torch
-from .stock_service import StockService
+from .stock_service import StockService, sanitize_value
 
 logger = logging.getLogger(__name__)
 
