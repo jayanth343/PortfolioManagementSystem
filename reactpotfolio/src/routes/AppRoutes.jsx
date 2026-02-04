@@ -1,7 +1,7 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import MainLayout from '../layouts/MainLayout';
-import { Home, Holdings, NotFound } from '../pages';
+import { Home, Holdings, Transactions, SearchResults, NotFound } from '../pages';
 
 const AppRoutes = () => {
     return (
@@ -9,6 +9,8 @@ const AppRoutes = () => {
             <Route path="/" element={<MainLayout />}>
                 <Route index element={<Home />} />
                 <Route path="holdings" element={<Holdings />} />
+                <Route path="transactions" element={<Transactions />} />
+                <Route path="search" element={<SearchResults />} />
                 <Route path="*" element={<NotFound />} />
             </Route>
         </Routes>
