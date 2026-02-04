@@ -351,28 +351,13 @@ class StockService:
     @staticmethod
     def search_assets(query: str):
         try:
-            ticker = yf.Ticker(query)
-            info = ticker.info
             
-            if info and info.get('symbol'):
-                return [{
-                    'symbol': info.get('symbol'),
-                    'name': info.get('longName', info.get('shortName')),
-                    'exchange': info.get('exchange'),
-                    'type': info.get('quoteType', 'N/A'),
-                    "Industry": info.get('industry', 'N/A'),
-                    "Currency": info.get('currency', 'N/A'),
-                    "Website": info.get('website', 'N/A'),
-                    "regularMarketPrice": info.get('regularMarketPrice', 'N/A')
-                    
-                }]
-            else:
                 lookup = yf.Lookup(query) if yf.Lookup(query) else yf.Search(query).quotes
                 
-                stocks_df = lookup.get_stock(count=2)
-                mutualfunds_df = lookup.get_mutualfund(count=2)
-                cryptos_df = lookup.get_cryptocurrency(count=2)
-                commodities_df = lookup.get_future(count=2)
+                stocks_df = lookup.get_stock(count=5)
+                mutualfunds_df = lookup.get_mutualfund(count=5)
+                cryptos_df = lookup.get_cryptocurrency(count=5)
+                commodities_df = lookup.get_future(count=5)
                 
                 response = {
                     "stocks": stocks_df.to_dict('records') if not stocks_df.empty else [],
