@@ -9,6 +9,7 @@ import html
 import json
 import time
 import threading
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 
 logger = logging.getLogger(__name__)
@@ -34,7 +35,7 @@ class StockService:
             previous_close = float(history['Close'].iloc[-2])
             
             # Fetch news
-            news = StockService._format_news(stock.get_news(count=5) if hasattr(stock, 'news') else [],)
+            news = StockService.format_news(stock.get_news(count=5) if hasattr(stock, 'news') else [],)
             
             # Get recommendations
             recommendations = []
@@ -350,28 +351,13 @@ class StockService:
     @staticmethod
     def search_assets(query: str):
         try:
-            ticker = yf.Ticker(query)
-            info = ticker.info
             
-            if info and info.get('symbol'):
-                return [{
-                    'symbol': info.get('symbol'),
-                    'name': info.get('longName', info.get('shortName')),
-                    'exchange': info.get('exchange'),
-                    'type': info.get('quoteType', 'N/A'),
-                    "Industry": info.get('industry', 'N/A'),
-                    "Currency": info.get('currency', 'N/A'),
-                    "Website": info.get('website', 'N/A'),
-                    "regularMarketPrice": info.get('regularMarketPrice', 'N/A')
-                    
-                }]
-            else:
                 lookup = yf.Lookup(query) if yf.Lookup(query) else yf.Search(query).quotes
                 
-                stocks_df = lookup.get_stock(count=2)
-                mutualfunds_df = lookup.get_mutualfund(count=2)
-                cryptos_df = lookup.get_cryptocurrency(count=2)
-                commodities_df = lookup.get_future(count=2)
+                stocks_df = lookup.get_stock(count=5)
+                mutualfunds_df = lookup.get_mutualfund(count=5)
+                cryptos_df = lookup.get_cryptocurrency(count=5)
+                commodities_df = lookup.get_future(count=5)
                 
                 response = {
                     "stocks": stocks_df.to_dict('records') if not stocks_df.empty else [],
@@ -388,64 +374,266 @@ class StockService:
     
     @staticmethod
     def get_news(symbol):
+        """Get formatted news for a symbol using the standard format_news function"""
         try:
             ticker = yf.Ticker(symbol)
-            news = ticker.news
-            result_list = []
-            for item in news[:5]:
-                content = item.get("content", {})
-                click_url = content.get("clickThroughUrl")
-                raw_description = content.get("description", "")
-                # Remove HTML tags
-                clean_description = re.sub(r'<[^>]*>', '', raw_description) if raw_description else ""
-                # Decode HTML entities (like &nbsp;, &#39;, etc.)
-                clean_description = html.unescape(clean_description)
-                # Remove extra backslashes
-                clean_description = clean_description.replace('\\', '')    
-                entry = {
-                    "title": content.get("title"),
-                    "description": clean_description,
-                    "summary": content.get("summary"),
-                    "publication_date": content.get("pubDate"),
-                    "url": click_url.get("url") if click_url else None,
-                }
-                result_list.append(entry)
-            return json.dumps(result_list, indent=4)
+            news = ticker.get_news(count=5) if hasattr(ticker, 'news') else []
+            formatted = StockService.format_news(news)
+            return formatted
             
         except Exception as e:
             logger.error(f"Error fetching news for {symbol}: {str(e)}")
+            return []
+    
+    @staticmethod
+    def get_performers_from_portfolio(holdings: List[Dict]):
+        """
+        Get top 5 best and worst performers from a list of holdings
+        holdings: List of dicts with 'ticker', 'buyPrice', 'quantity', and optional 'purchaseDate' keys
+        Uses parallel processing for faster execution
+        
+        Thresholds:
+        - Best performers: gainLossPercent >= 5%
+        - Worst performers: gainLossPercent <= -5%
+        """
+        from datetime import datetime
+        
+        # Define performance thresholds
+        BEST_THRESHOLD = 5.0  # Minimum 5% gain to be considered "best"
+        WORST_THRESHOLD = -5.0  # Maximum -5% loss to be considered "worst"
+        
+        def detect_asset_type(ticker: str, info: dict) -> str:
+            """Detect asset type from ticker symbol and yfinance info"""
+            ticker_upper = ticker.upper()
+            quote_type = info.get('quoteType', '').upper()
+            
+            # Check quote type from yfinance
+            if quote_type == 'CRYPTOCURRENCY':
+                return 'Crypto'
+            elif quote_type == 'MUTUALFUND' or quote_type == 'ETF':
+                return 'Mutual Fund'
+            elif quote_type == 'FUTURE':
+                return 'Commodity'
+            elif quote_type == 'EQUITY':
+                return 'Stock'
+            
+            # Fallback to ticker pattern matching
+            if '-USD' in ticker_upper or 'BTC' in ticker_upper or 'ETH' in ticker_upper:
+                return 'Crypto'
+            elif '=F' in ticker_upper or ticker_upper in ['GC', 'SI', 'CL', 'NG']:
+                return 'Commodity'
+            elif ticker_upper.endswith('X') and len(ticker_upper) == 5:
+                return 'Mutual Fund'
+            else:
+                return 'Stock'
+        
+        def calculate_holding_period(purchase_date_str: str) -> tuple:
+            """Calculate holding period in days and years"""
+            try:
+                purchase_date = datetime.strptime(purchase_date_str, '%Y-%m-%d')
+                today = datetime.now()
+                days_held = (today - purchase_date).days
+                years_held = days_held / 365.25
+                return days_held, years_held
+            except Exception as e:
+                logger.debug(f"Could not parse purchase date: {e}")
+                return None, None
+        
+        def fetch_stock_performance(holding):
+            """Helper function to fetch a single stock's performance"""
+            ticker = holding.get('ticker', '').strip().upper()
+            buy_price = holding.get('buyPrice')
+            quantity = holding.get('quantity', 1)
+            purchase_date = holding.get('purchaseDate')
+            
+            if not ticker or buy_price is None or buy_price <= 0:
+                logger.warning(f"Invalid holding data: {holding}")
+                return None
+            
+            if quantity is None or quantity <= 0:
+                logger.warning(f"Invalid quantity for {ticker}, defaulting to 1")
+                quantity = 1
+            
+            try:
+                stock = yf.Ticker(ticker)
+                history = stock.history(period="1d")
+                
+                if history.empty:
+                    logger.warning(f"No price data for {ticker}")
+                    return None
+                
+                current_price = float(history['Close'].iloc[-1])
+                info = stock.info
+                
+                # Calculate basic metrics
+                investment_value = buy_price * quantity
+                current_value = current_price * quantity
+                gain_loss_per_share = current_price - buy_price
+                gain_loss_percent = (gain_loss_per_share / buy_price) * 100 if buy_price > 0 else 0
+                total_gain_loss = gain_loss_per_share * quantity
+                
+                # Detect asset type
+                asset_type = detect_asset_type(ticker, info)
+                
+                # Calculate holding period and annualized return
+                days_held, years_held = None, None
+                annualized_return = None
+                
+                if purchase_date:
+                    days_held, years_held = calculate_holding_period(purchase_date)
+                    if years_held and years_held > 0:
+                        # CAGR formula: ((Ending Value / Beginning Value) ^ (1 / Years)) - 1
+                        annualized_return = round((((current_price / buy_price) ** (1 / years_held)) - 1) * 100, 2)
+                
+                # Get additional info from yfinance
+                sector = info.get('sector')
+                industry = info.get('industry')
+                currency = info.get('currency', 'USD')
+                market_cap = info.get('marketCap')
+                volume = info.get('volume')
+                
+                return {
+                    'symbol': ticker,
+                    'name': info.get('longName', info.get('shortName', ticker)),
+                    'assetType': asset_type,
+                    'sector': sector,
+                    'industry': industry,
+                    'currency': currency,
+                    'price': round(current_price, 2),
+                    'buyPrice': round(buy_price, 2),
+                    'quantity': quantity,
+                    'investmentValue': round(investment_value, 2),
+                    'currentValue': round(current_value, 2),
+                    'gainLossPerShare': round(gain_loss_per_share, 2),
+                    'totalGainLoss': round(total_gain_loss, 2),
+                    'gainLossPercent': round(gain_loss_percent, 2),
+                    'daysHeld': days_held,
+                    'annualizedReturn': annualized_return,
+                    'marketCap': market_cap,
+                    'volume': volume
+                }
+                
+            except Exception as e:
+                logger.error(f"Error fetching data for {ticker}: {e}")
+                return None
+        
+        try:
+            performances = []
+            
+            with ThreadPoolExecutor(max_workers=20) as executor:
+                future_to_holding = {executor.submit(fetch_stock_performance, holding): holding 
+                                    for holding in holdings}
+                
+                for future in as_completed(future_to_holding):
+                    result = future.result()
+                    if result:
+                        performances.append(result)
+            
+            if not performances:
+                return None
+            
+            # Calculate total portfolio value and weights
+            total_portfolio_value = sum(p['currentValue'] for p in performances)
+            for p in performances:
+                p['portfolioWeight'] = round((p['currentValue'] / total_portfolio_value) * 100, 2) if total_portfolio_value > 0 else 0
+            
+            # Sort by gain/loss percentage
+            sorted_performances = sorted(performances, key=lambda x: x['gainLossPercent'], reverse=True)
+            
+            # Filter best performers (above threshold)
+            best_candidates = [p for p in sorted_performances if p['gainLossPercent'] >= BEST_THRESHOLD]
+            best_performers = best_candidates[:5]  # Top 5 from qualified candidates
+            
+            # Filter worst performers (below threshold, excluding those already in best)
+            best_symbols = {p['symbol'] for p in best_performers}
+            worst_candidates = [p for p in sorted_performances 
+                              if p['gainLossPercent'] <= WORST_THRESHOLD 
+                              and p['symbol'] not in best_symbols]
+            worst_performers = worst_candidates[-5:] if worst_candidates else []  # Bottom 5 from qualified candidates
+            worst_performers.reverse()  # Show worst first
+            
+            # Combine with type indicator
+            data = []
+            for performer in best_performers:
+                performer['type'] = 'best'
+                data.append(performer)
+            
+            for performer in worst_performers:
+                performer['type'] = 'worst'
+                data.append(performer)
+            
+            # Calculate portfolio summary
+            total_investment = sum(p['investmentValue'] for p in performances)
+            total_current_value = sum(p['currentValue'] for p in performances)
+            total_gain_loss = total_current_value - total_investment
+            total_gain_loss_percent = round((total_gain_loss / total_investment) * 100, 2) if total_investment > 0 else 0
+            
+            return {
+                'datetime': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+                'bestCount': len(best_performers),
+                'worstCount': len(worst_performers),
+                'thresholds': {
+                    'best': BEST_THRESHOLD,
+                    'worst': WORST_THRESHOLD
+                },
+                'portfolioSummary': {
+                    'totalInvestment': round(total_investment, 2),
+                    'totalCurrentValue': round(total_current_value, 2),
+                    'totalGainLoss': round(total_gain_loss, 2),
+                    'totalGainLossPercent': total_gain_loss_percent,
+                    'totalAssets': len(performances)
+                },
+                'data': data
+            }
+            
+        except Exception as e:
+            logger.error(f"Error in get_performers_from_portfolio: {str(e)}")
             return None
     
     @staticmethod
-    def _format_news(news_items: List):
+    def format_news(news_items: List):
         formatted_news = []
         for item in news_items:
             try:
-                content = item.get('content', {})
-                thumbnail = None
-                thumbnail_data = content.get('thumbnail', {})
-                if thumbnail_data and thumbnail_data.get('resolutions'):
-                    resolutions = thumbnail_data.get('resolutions', [])
-                    if resolutions:
-                        thumbnail = resolutions[0].get('url')
-                provider = content.get('provider', {})
-                canonical_url = content.get('canonicalUrl', {})
-                formatted_news.append({
-                    'title': content.get('title'),
-                    'summary': content.get('summary'),
-                    'date': content.get('pubDate'),
-                    'publisher': provider.get('displayName'),
-                    'publishedAt': content.get('pubDate'),
-                    'link': canonical_url.get('url'),
-                    'type': content.get('contentType'),
-                    'thumbnail': thumbnail
-                })
+                # Check if news item has 'content' wrapper (old format) or direct fields (new format)
+                if 'content' in item:
+                    # Old format with content wrapper
+                    content = item.get('content', {})
+                    thumbnail = None
+                    thumbnail_data = content.get('thumbnail', {})
+                    if thumbnail_data and thumbnail_data.get('resolutions'):
+                        resolutions = thumbnail_data.get('resolutions', [])
+                        if resolutions:
+                            thumbnail = resolutions[0].get('url')
+                    provider = content.get('provider', {})
+                    canonical_url = content.get('canonicalUrl', {})
+                    formatted_news.append({
+                        'title': content.get('title'),
+                        'summary': content.get('summary'),
+                        'date': content.get('pubDate'),
+                        'publisher': provider.get('displayName'),
+                        'publishedAt': content.get('pubDate'),
+                        'link': canonical_url.get('url'),
+                        'type': content.get('contentType'),
+                        'thumbnail': thumbnail
+                    })
+                else:
+                    # New format - fields already at top level
+                    formatted_news.append({
+                        'title': item.get('title'),
+                        'summary': item.get('summary'),
+                        'date': item.get('date'),
+                        'publisher': item.get('publisher'),
+                        'publishedAt': item.get('publishedAt'),
+                        'link': item.get('link'),
+                        'type': item.get('type'),
+                        'thumbnail': item.get('thumbnail')
+                    })
             except Exception as e:
                 logger.debug(f"Error formatting news item: {e}")
                 continue
                 
         return formatted_news
-
 
 
 def register_routes(app):
@@ -524,11 +712,30 @@ def register_routes(app):
     def get_news_route(symbol):
         try:
             news = StockService.get_news(symbol.upper())
-            if news is None:
-                return jsonify({'error': 'News not found'}), 404
             return jsonify(news), 200
         except Exception as e:
             logger.error(f"Error in get_news: {e}")
+            return jsonify({'error': str(e)}), 500
+
+    @app.route('/api/portfolio/performers', methods=['POST'])
+    def get_portfolio_performers_route():
+        """Analyze portfolio and return top 5 best and worst performers"""
+        try:
+            data = request.get_json()
+            if not data or 'holdings' not in data:
+                return jsonify({'error': 'holdings array required in request body'}), 400
+            
+            holdings = data.get('holdings', [])
+            if not isinstance(holdings, list) or len(holdings) == 0:
+                return jsonify({'error': 'holdings must be a non-empty array'}), 400
+            
+            result = StockService.get_performers_from_portfolio(holdings)
+            if not result:
+                return jsonify({'error': 'Unable to analyze portfolio performers'}), 404
+            
+            return jsonify(result), 200
+        except Exception as e:
+            logger.error(f"Error in get_portfolio_performers: {e}")
             return jsonify({'error': str(e)}), 500
 
 
