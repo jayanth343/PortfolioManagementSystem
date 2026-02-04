@@ -404,19 +404,70 @@ class StockService:
     def get_performers_from_portfolio(holdings: List[Dict]):
         """
         Get top 5 best and worst performers from a list of holdings
-        holdings: List of dicts with 'ticker' and 'buyPrice' keys
+        holdings: List of dicts with 'ticker', 'buyPrice', 'quantity', and optional 'purchaseDate' keys
         Uses parallel processing for faster execution
+        
+        Thresholds:
+        - Best performers: gainLossPercent >= 5%
+        - Worst performers: gainLossPercent <= -5%
         """
         from datetime import datetime
+        
+        # Define performance thresholds
+        BEST_THRESHOLD = 5.0  # Minimum 5% gain to be considered "best"
+        WORST_THRESHOLD = -5.0  # Maximum -5% loss to be considered "worst"
+        
+        def detect_asset_type(ticker: str, info: dict) -> str:
+            """Detect asset type from ticker symbol and yfinance info"""
+            ticker_upper = ticker.upper()
+            quote_type = info.get('quoteType', '').upper()
+            
+            # Check quote type from yfinance
+            if quote_type == 'CRYPTOCURRENCY':
+                return 'Crypto'
+            elif quote_type == 'MUTUALFUND' or quote_type == 'ETF':
+                return 'Mutual Fund'
+            elif quote_type == 'FUTURE':
+                return 'Commodity'
+            elif quote_type == 'EQUITY':
+                return 'Stock'
+            
+            # Fallback to ticker pattern matching
+            if '-USD' in ticker_upper or 'BTC' in ticker_upper or 'ETH' in ticker_upper:
+                return 'Crypto'
+            elif '=F' in ticker_upper or ticker_upper in ['GC', 'SI', 'CL', 'NG']:
+                return 'Commodity'
+            elif ticker_upper.endswith('X') and len(ticker_upper) == 5:
+                return 'Mutual Fund'
+            else:
+                return 'Stock'
+        
+        def calculate_holding_period(purchase_date_str: str) -> tuple:
+            """Calculate holding period in days and years"""
+            try:
+                purchase_date = datetime.strptime(purchase_date_str, '%Y-%m-%d')
+                today = datetime.now()
+                days_held = (today - purchase_date).days
+                years_held = days_held / 365.25
+                return days_held, years_held
+            except Exception as e:
+                logger.debug(f"Could not parse purchase date: {e}")
+                return None, None
         
         def fetch_stock_performance(holding):
             """Helper function to fetch a single stock's performance"""
             ticker = holding.get('ticker', '').strip().upper()
             buy_price = holding.get('buyPrice')
+            quantity = holding.get('quantity', 1)
+            purchase_date = holding.get('purchaseDate')
             
             if not ticker or buy_price is None or buy_price <= 0:
                 logger.warning(f"Invalid holding data: {holding}")
                 return None
+            
+            if quantity is None or quantity <= 0:
+                logger.warning(f"Invalid quantity for {ticker}, defaulting to 1")
+                quantity = 1
             
             try:
                 stock = yf.Ticker(ticker)
@@ -429,16 +480,52 @@ class StockService:
                 current_price = float(history['Close'].iloc[-1])
                 info = stock.info
                 
-                gain_loss = current_price - buy_price
-                gain_loss_percent = (gain_loss / buy_price) * 100 if buy_price > 0 else 0
+                # Calculate basic metrics
+                investment_value = buy_price * quantity
+                current_value = current_price * quantity
+                gain_loss_per_share = current_price - buy_price
+                gain_loss_percent = (gain_loss_per_share / buy_price) * 100 if buy_price > 0 else 0
+                total_gain_loss = gain_loss_per_share * quantity
+                
+                # Detect asset type
+                asset_type = detect_asset_type(ticker, info)
+                
+                # Calculate holding period and annualized return
+                days_held, years_held = None, None
+                annualized_return = None
+                
+                if purchase_date:
+                    days_held, years_held = calculate_holding_period(purchase_date)
+                    if years_held and years_held > 0:
+                        # CAGR formula: ((Ending Value / Beginning Value) ^ (1 / Years)) - 1
+                        annualized_return = round((((current_price / buy_price) ** (1 / years_held)) - 1) * 100, 2)
+                
+                # Get additional info from yfinance
+                sector = info.get('sector')
+                industry = info.get('industry')
+                currency = info.get('currency', 'USD')
+                market_cap = info.get('marketCap')
+                volume = info.get('volume')
                 
                 return {
                     'symbol': ticker,
                     'name': info.get('longName', info.get('shortName', ticker)),
+                    'assetType': asset_type,
+                    'sector': sector,
+                    'industry': industry,
+                    'currency': currency,
                     'price': round(current_price, 2),
                     'buyPrice': round(buy_price, 2),
-                    'gainLoss': round(gain_loss, 2),
-                    'gainLossPercent': round(gain_loss_percent, 2)
+                    'quantity': quantity,
+                    'investmentValue': round(investment_value, 2),
+                    'currentValue': round(current_value, 2),
+                    'gainLossPerShare': round(gain_loss_per_share, 2),
+                    'totalGainLoss': round(total_gain_loss, 2),
+                    'gainLossPercent': round(gain_loss_percent, 2),
+                    'daysHeld': days_held,
+                    'annualizedReturn': annualized_return,
+                    'marketCap': market_cap,
+                    'volume': volume
                 }
                 
             except Exception as e:
@@ -448,7 +535,6 @@ class StockService:
         try:
             performances = []
             
-
             with ThreadPoolExecutor(max_workers=20) as executor:
                 future_to_holding = {executor.submit(fetch_stock_performance, holding): holding 
                                     for holding in holdings}
@@ -461,39 +547,57 @@ class StockService:
             if not performances:
                 return None
             
+            # Calculate total portfolio value and weights
+            total_portfolio_value = sum(p['currentValue'] for p in performances)
+            for p in performances:
+                p['portfolioWeight'] = round((p['currentValue'] / total_portfolio_value) * 100, 2) if total_portfolio_value > 0 else 0
+            
             # Sort by gain/loss percentage
             sorted_performances = sorted(performances, key=lambda x: x['gainLossPercent'], reverse=True)
             
-            # Get top 5 best and worst
-            best_performers = sorted_performances[:5]
-            worst_performers = sorted_performances[-5:][::-1]  # Reverse to show worst first
+            # Filter best performers (above threshold)
+            best_candidates = [p for p in sorted_performances if p['gainLossPercent'] >= BEST_THRESHOLD]
+            best_performers = best_candidates[:5]  # Top 5 from qualified candidates
+            
+            # Filter worst performers (below threshold, excluding those already in best)
+            best_symbols = {p['symbol'] for p in best_performers}
+            worst_candidates = [p for p in sorted_performances 
+                              if p['gainLossPercent'] <= WORST_THRESHOLD 
+                              and p['symbol'] not in best_symbols]
+            worst_performers = worst_candidates[-5:] if worst_candidates else []  # Bottom 5 from qualified candidates
+            worst_performers.reverse()  # Show worst first
             
             # Combine with type indicator
             data = []
             for performer in best_performers:
-                data.append({
-                    'symbol': performer['symbol'],
-                    'name': performer['name'],
-                    'price': performer['price'],
-                    'buyPrice': performer['buyPrice'],
-                    'gainLoss': performer['gainLoss'],
-                    'gainLossPercent': performer['gainLossPercent'],
-                    'type': 'best'
-                })
+                performer['type'] = 'best'
+                data.append(performer)
             
             for performer in worst_performers:
-                data.append({
-                    'symbol': performer['symbol'],
-                    'name': performer['name'],
-                    'price': performer['price'],
-                    'buyPrice': performer['buyPrice'],
-                    'gainLoss': performer['gainLoss'],
-                    'gainLossPercent': performer['gainLossPercent'],
-                    'type': 'worst'
-                })
+                performer['type'] = 'worst'
+                data.append(performer)
+            
+            # Calculate portfolio summary
+            total_investment = sum(p['investmentValue'] for p in performances)
+            total_current_value = sum(p['currentValue'] for p in performances)
+            total_gain_loss = total_current_value - total_investment
+            total_gain_loss_percent = round((total_gain_loss / total_investment) * 100, 2) if total_investment > 0 else 0
             
             return {
                 'datetime': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+                'bestCount': len(best_performers),
+                'worstCount': len(worst_performers),
+                'thresholds': {
+                    'best': BEST_THRESHOLD,
+                    'worst': WORST_THRESHOLD
+                },
+                'portfolioSummary': {
+                    'totalInvestment': round(total_investment, 2),
+                    'totalCurrentValue': round(total_current_value, 2),
+                    'totalGainLoss': round(total_gain_loss, 2),
+                    'totalGainLossPercent': total_gain_loss_percent,
+                    'totalAssets': len(performances)
+                },
                 'data': data
             }
             

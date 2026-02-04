@@ -168,6 +168,90 @@ public class StockDataController {
     }
 
     /**
+     * Get portfolio performers (top 5 best and worst)
+     * @param requestBody JSON with holdings array containing ticker, buyPrice, quantity, purchaseDate
+     * @return Top 5 best and worst performers with comprehensive metrics
+     */
+    @PostMapping("/portfolio/performers")
+    public ResponseEntity<?> getPortfolioPerformers(@RequestBody String requestBody) {
+        try {
+            String url = flaskApiUrl + "/api/portfolio/performers";
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            HttpEntity<String> request = new HttpEntity<>(requestBody, headers);
+            
+            ResponseEntity<String> response = restTemplate.postForEntity(url, request, String.class);
+            return ResponseEntity.ok(response.getBody());
+        } catch (HttpClientErrorException.BadRequest e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(createErrorResponse("Invalid request: " + e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(createErrorResponse("Error analyzing portfolio performers: " + e.getMessage()));
+        }
+    }
+
+    /**
+     * Get comprehensive portfolio recommendations using AI sentiment analysis
+     * @param requestBody JSON with holdings array containing ticker, buyPrice, quantity
+     * @return Portfolio recommendations with buy/sell/hold actions based on sentiment + analysts
+     */
+    @PostMapping("/portfolio/recommendations")
+    public ResponseEntity<?> getPortfolioRecommendations(@RequestBody String requestBody) {
+        try {
+            String url = flaskApiUrl + "/api/portfolio/recommendations";
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            HttpEntity<String> request = new HttpEntity<>(requestBody, headers);
+            
+            ResponseEntity<String> response = restTemplate.postForEntity(url, request, String.class);
+            return ResponseEntity.ok(response.getBody());
+        } catch (HttpClientErrorException.BadRequest e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(createErrorResponse("Invalid request: " + e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(createErrorResponse("Error generating recommendations: " + e.getMessage()));
+        }
+    }
+
+    /**
+     * Get comprehensive analysis for a single stock
+     * @param symbol Stock ticker symbol
+     * @param inPortfolio Whether stock is in portfolio (default: false)
+     * @param buyPrice Required if inPortfolio=true
+     * @return Stock analysis with sentiment, analyst recommendations, and action
+     */
+    @GetMapping("/stock/{symbol}/analysis")
+    public ResponseEntity<?> getStockAnalysis(
+            @PathVariable String symbol,
+            @RequestParam(defaultValue = "false") boolean inPortfolio,
+            @RequestParam(required = false) Double buyPrice) {
+        try {
+            if (inPortfolio && buyPrice == null) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body(createErrorResponse("buyPrice is required when inPortfolio=true"));
+            }
+            
+            String url = flaskApiUrl + "/api/stock/" + symbol.toUpperCase() + "/analysis"
+                    + "?inPortfolio=" + inPortfolio;
+            
+            if (buyPrice != null) {
+                url += "&buyPrice=" + buyPrice;
+            }
+            
+            ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
+            return ResponseEntity.ok(response.getBody());
+        } catch (HttpClientErrorException.NotFound e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(createErrorResponse("Unable to analyze stock"));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(createErrorResponse("Error analyzing stock: " + e.getMessage()));
+        }
+    }
+
+    /**
      * Health check endpoint for the Flask API
      * @return Health status of the data API
      */

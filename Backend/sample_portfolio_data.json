@@ -1,0 +1,244 @@
+{
+  "holdings": [
+    {
+      "ticker": "AAPL",
+      "buyPrice": 150.00,
+      "quantity": 10,
+      "purchaseDate": "2024-01-15"
+    },
+    {
+      "ticker": "MSFT",
+      "buyPrice": 320.00,
+      "quantity": 15,
+      "purchaseDate": "2024-03-10"
+    },
+    {
+      "ticker": "GOOGL",
+      "buyPrice": 140.00,
+      "quantity": 8,
+      "purchaseDate": "2024-02-20"
+    },
+    {
+      "ticker": "TSLA",
+      "buyPrice": 250.00,
+      "quantity": 5,
+      "purchaseDate": "2023-12-01"
+    },
+    {
+      "ticker": "NVDA",
+      "buyPrice": 450.00,
+      "quantity": 12,
+      "purchaseDate": "2024-04-05"
+    },
+    {
+      "ticker": "META",
+      "buyPrice": 300.00,
+      "quantity": 7,
+      "purchaseDate": "2024-01-25"
+    },
+    {
+      "ticker": "AMZN",
+      "buyPrice": 130.00,
+      "quantity": 20,
+      "purchaseDate": "2024-05-15"
+    },
+    {
+      "ticker": "NFLX",
+      "buyPrice": 450.00,
+      "quantity": 6,
+      "purchaseDate": "2024-06-01"
+    },
+    {
+      "ticker": "AMD",
+      "buyPrice": 120.00,
+      "quantity": 15,
+      "purchaseDate": "2024-02-14"
+    },
+    {
+      "ticker": "BABA",
+      "buyPrice": 90.00,
+      "quantity": 12,
+      "purchaseDate": "2023-11-20"
+    },
+    {
+      "ticker": "JPM",
+      "buyPrice": 145.00,
+      "quantity": 10,
+      "purchaseDate": "2024-03-15"
+    },
+    {
+      "ticker": "V",
+      "buyPrice": 240.00,
+      "quantity": 8,
+      "purchaseDate": "2024-04-20"
+    },
+    {
+      "ticker": "JNJ",
+      "buyPrice": 160.00,
+      "quantity": 12,
+      "purchaseDate": "2024-01-10"
+    },
+    {
+      "ticker": "WMT",
+      "buyPrice": 155.00,
+      "quantity": 15,
+      "purchaseDate": "2024-02-28"
+    },
+    {
+      "ticker": "PG",
+      "buyPrice": 145.00,
+      "quantity": 10,
+      "purchaseDate": "2024-03-05"
+    },
+    {
+      "ticker": "DIS",
+      "buyPrice": 95.00,
+      "quantity": 18,
+      "purchaseDate": "2023-12-15"
+    },
+    {
+      "ticker": "BA",
+      "buyPrice": 180.00,
+      "quantity": 6,
+      "purchaseDate": "2024-05-01"
+    },
+    {
+      "ticker": "INTC",
+      "buyPrice": 45.00,
+      "quantity": 25,
+      "purchaseDate": "2024-01-20"
+    },
+    {
+      "ticker": "CSCO",
+      "buyPrice": 48.00,
+      "quantity": 20,
+      "purchaseDate": "2024-04-10"
+    },
+    {
+      "ticker": "ORCL",
+      "buyPrice": 110.00,
+      "quantity": 14,
+      "purchaseDate": "2024-02-05"
+    },
+    {
+      "ticker": "BTC-USD",
+      "buyPrice": 40000.00,
+      "quantity": 0.5,
+      "purchaseDate": "2024-01-05"
+    },
+    {
+      "ticker": "ETH-USD",
+      "buyPrice": 2500.00,
+      "quantity": 2,
+      "purchaseDate": "2024-02-10"
+    },
+    {
+      "ticker": "BNB-USD",
+      "buyPrice": 300.00,
+      "quantity": 5,
+      "purchaseDate": "2024-03-01"
+    },
+    {
+      "ticker": "SOL-USD",
+      "buyPrice": 100.00,
+      "quantity": 10,
+      "purchaseDate": "2024-01-15"
+    },
+    {
+      "ticker": "ADA-USD",
+      "buyPrice": 0.50,
+      "quantity": 1000,
+      "purchaseDate": "2024-04-01"
+    },
+    {
+      "ticker": "XRP-USD",
+      "buyPrice": 0.60,
+      "quantity": 800,
+      "purchaseDate": "2024-02-20"
+    },
+    {
+      "ticker": "DOGE-USD",
+      "buyPrice": 0.08,
+      "quantity": 5000,
+      "purchaseDate": "2024-03-15"
+    },
+    {
+      "ticker": "GC=F",
+      "buyPrice": 1900.00,
+      "quantity": 3,
+      "purchaseDate": "2024-01-08"
+    },
+    {
+      "ticker": "CL=F",
+      "buyPrice": 75.00,
+      "quantity": 10,
+      "purchaseDate": "2024-02-12"
+    },
+    {
+      "ticker": "SI=F",
+      "buyPrice": 23.00,
+      "quantity": 50,
+      "purchaseDate": "2024-03-20"
+    },
+    {
+      "ticker": "VFIAX",
+      "buyPrice": 380.00,
+      "quantity": 25,
+      "purchaseDate": "2023-11-01"
+    },
+    {
+      "ticker": "VTSAX",
+      "buyPrice": 105.00,
+      "quantity": 30,
+      "purchaseDate": "2023-12-05"
+    },
+    {
+      "ticker": "FXAIX",
+      "buyPrice": 155.00,
+      "quantity": 20,
+      "purchaseDate": "2024-01-12"
+    },
+    {
+      "ticker": "VGTSX",
+      "buyPrice": 125.00,
+      "quantity": 18,
+      "purchaseDate": "2024-02-15"
+    },
+    {
+      "ticker": "VBMFX",
+      "buyPrice": 110.00,
+      "quantity": 22,
+      "purchaseDate": "2024-03-18"
+    },
+    {
+      "ticker": "COST",
+      "buyPrice": 580.00,
+      "quantity": 5,
+      "purchaseDate": "2024-04-22"
+    },
+    {
+      "ticker": "AVGO",
+      "buyPrice": 850.00,
+      "quantity": 4,
+      "purchaseDate": "2024-05-10"
+    },
+    {
+      "ticker": "LLY",
+      "buyPrice": 520.00,
+      "quantity": 6,
+      "purchaseDate": "2024-01-30"
+    },
+    {
+      "ticker": "NKE",
+      "buyPrice": 105.00,
+      "quantity": 12,
+      "purchaseDate": "2023-12-20"
+    },
+    {
+      "ticker": "PYPL",
+      "buyPrice": 65.00,
+      "quantity": 16,
+      "purchaseDate": "2024-02-25"
+    }
+  ]
+}
