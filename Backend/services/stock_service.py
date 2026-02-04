@@ -1,17 +1,20 @@
-"""
-Financial data service using yfinance for all asset types
-Supports: Stocks, Cryptocurrencies, Commodities (Gold, Silver, etc.)
-"""
+
 import re
 import yfinance as yf
 from typing import Optional, List, Dict
 import logging
 from flask import jsonify, request
+from flask_socketio import emit
 import html
 import json
+import time
+import threading
 
 
 logger = logging.getLogger(__name__)
+
+# Store active WebSocket connections and their tickers
+active_connections = {}
 
 class StockService:
     
@@ -185,12 +188,48 @@ class StockService:
                     fund_data['fundOverview'] = funds_info.fund_overview if hasattr(funds_info, 'fund_overview') and funds_info.fund_overview is not None else {}
                     fund_data['fundOperations'] = funds_info.fund_operations.to_dict() if hasattr(funds_info, 'fund_operations') and funds_info.fund_operations is not None else {}
                     
-                    fund_data['assetClasses'] = funds_info.asset_classes if hasattr(funds_info, 'asset_classes') and funds_info.asset_classes is not None and not funds_info.asset_classes.empty else []
-                    fund_data['topHoldings'] = funds_info.top_holdings.to_dict('records') if hasattr(funds_info, 'top_holdings') and funds_info.top_holdings is not None and not funds_info.top_holdings.empty else []
-                    fund_data['equityHoldings'] = funds_info.equity_holdings.to_dict() if hasattr(funds_info, 'equity_holdings') and funds_info.equity_holdings is not None else {}
-                    fund_data['sectorWeightings'] = funds_info.sector_weightings.to_dict('records') if hasattr(funds_info, 'sector_weightings') and funds_info.sector_weightings is not None and not funds_info.sector_weightings.empty else []
+                    # Asset classes
+                    try:
+                        if hasattr(funds_info, 'asset_classes') and funds_info.asset_classes is not None:
+                            fund_data['assetClasses'] = funds_info.asset_classes if not funds_info.asset_classes.empty else []
+                        else:
+                            fund_data['assetClasses'] = []
+                    except Exception as e:
+                        logger.debug(f"Error fetching asset_classes: {e}")
+                        fund_data['assetClasses'] = []
+                    
+                    # Top holdings
+                    try:
+                        if hasattr(funds_info, 'top_holdings') and funds_info.top_holdings is not None:
+                            fund_data['topHoldings'] = funds_info.top_holdings.to_dict('records') if not funds_info.top_holdings.empty else []
+                        else:
+                            fund_data['topHoldings'] = []
+                    except Exception as e:
+                        logger.debug(f"Error fetching top_holdings: {e}")
+                        fund_data['topHoldings'] = []
+                    
+                    # Equity holdings
+                    try:
+                        if hasattr(funds_info, 'equity_holdings') and funds_info.equity_holdings is not None:
+                            fund_data['equityHoldings'] = funds_info.equity_holdings.to_dict()
+                        else:
+                            fund_data['equityHoldings'] = {}
+                    except Exception as e:
+                        logger.debug(f"Error fetching equity_holdings: {e}")
+                        fund_data['equityHoldings'] = {}
+                    
+                    # Sector weightings
+                    try:
+                        if hasattr(funds_info, 'sector_weightings') and funds_info.sector_weightings is not None:
+                            fund_data['sectorWeightings'] = funds_info.sector_weightings if not funds_info.sector_weightings.empty else []
+                        else:
+                            fund_data['sectorWeightings'] = []
+                    except Exception as e:
+                        logger.debug(f"Error fetching sector_weightings: {e}")
+                        fund_data['sectorWeightings'] = []
+                        
             except Exception as e:
-                logger.debug(f"Could not fetch fund_data for {symbol}: {e}")
+                logger.error(f"Could not fetch fund_data for {symbol}: {e}")
 
             return {
                 'schemeCode': yf_symbol,
@@ -268,7 +307,7 @@ class StockService:
 
         HistoryMapping = {
             
-            '1D':['1d','30m'],
+            '1D':['1d','5m'],
             '5D':['5d', '1h'],
             '1W':['7d', '4h'],
             '1MO':['1mo', '1wk'],
@@ -282,6 +321,7 @@ class StockService:
         try:
             stock = yf.Ticker(ticker)
             historyPeriod, historyInterval = HistoryMapping.get(period.upper(), ['1mo', '1d'])
+            print(f"Fetching history for {ticker} with period: {historyPeriod}, interval: {historyInterval}")
             history = stock.history(period=historyPeriod, interval=historyInterval)
             
             if history.empty:
@@ -491,3 +531,134 @@ def register_routes(app):
             logger.error(f"Error in get_news: {e}")
             return jsonify({'error': str(e)}), 500
 
+
+def register_websocket_events(socketio):
+    """Register WebSocket event handlers for live price streaming"""
+    
+    @socketio.on('connect')
+    def handle_connect():
+        logger.info(f"Client connected: {request.sid}")
+        emit('connected', {'message': 'Successfully connected to stock price stream'})
+    
+    @socketio.on('disconnect')
+    def handle_disconnect():
+        logger.info(f"Client disconnected: {request.sid}")
+        # Stop any active price streaming for this client
+        if request.sid in active_connections:
+            active_connections[request.sid]['active'] = False
+            del active_connections[request.sid]
+    
+    @socketio.on('subscribe_ticker')
+    def handle_subscribe_ticker(data):
+        """Subscribe to live price updates for a specific ticker"""
+        try:
+            ticker = data.get('ticker', '').strip().upper()
+            if not ticker:
+                emit('error', {'message': 'Ticker symbol is required'})
+                return
+            
+            # Validate ticker exists
+            try:
+                stock = yf.Ticker(ticker)
+                info = stock.info
+                if not info or 'symbol' not in info:
+                    emit('error', {'message': f'Invalid ticker symbol: {ticker}'})
+                    return
+            except Exception as e:
+                emit('error', {'message': f'Failed to validate ticker: {str(e)}'})
+                return
+            
+            # Capture the session ID before starting the thread
+            client_sid = request.sid
+            
+            logger.info(f"Client {client_sid} subscribed to {ticker}")
+            
+            # Stop any existing subscription for this client
+            if client_sid in active_connections:
+                active_connections[client_sid]['active'] = False
+            
+            # Create new subscription
+            active_connections[client_sid] = {
+                'ticker': ticker,
+                'active': True
+            }
+            
+            emit('subscribed', {'ticker': ticker, 'message': f'Subscribed to {ticker}'})
+            
+            # Start streaming prices in a background thread
+            def stream_prices(sid):
+                while active_connections.get(sid, {}).get('active', False):
+                    try:
+                        stock = yf.Ticker(ticker)
+                        stock_info = stock.info
+                        # Get latest price data
+                        history = stock.history(period="1d", interval="1m")
+                        latest_timestamp = history.index[-1]  # Get the datetime index
+                        print(f"Latest timestamp for {ticker}: {latest_timestamp}")
+                        print(f"Streaming price for {stock_info.get('shortName', ticker)}, history length: {len(history)}")
+                        if not history.empty:
+                            latest = history.iloc[-1]
+                            current_price = float(latest['Close'])
+                            open_price = float(history.iloc[0]['Open'])
+                            high_price = float(max(history['High']))
+                            low_price = float(min(history['Low']))
+                            volume = int(latest['Volume'] if latest['Volume'] != 0 else stock.info.get('volume', 0))
+                            
+                            # Calculate change
+                            day_open = history.iloc[0]['Open']
+                            change = current_price - day_open
+                            change_percent = (change / day_open * 100) if day_open  > 0 else 0
+                            
+                            price_data = {
+                                'ticker': ticker,
+                                'currency': stock_info.get('currency', 'USD'),
+                                'name': stock_info.get('shortName', ticker),
+                                
+                                'price': round(current_price, 2),
+                                'open': round(open_price, 2),
+                                'high': round(high_price, 2),
+                                'low': round(low_price, 2),
+                                'volume': volume,
+                                'change': round(change, 2),
+                                'changePercent': round(change_percent, 2),
+                                'timestamp': latest_timestamp.strftime('%Y-%m-%d %H:%M:%S')
+                            }
+                            
+                            socketio.emit('price_update', price_data, room=sid)
+                            logger.debug(f"Sent price update for {ticker} to {sid}: ${current_price}")
+                        else:
+                            logger.warning(f"No price data available for {ticker}")
+                        
+                        # Wait before next update (5 seconds)
+                        time.sleep(5)
+                        
+                    except Exception as e:
+                        logger.error(f"Error streaming price for {ticker}: {e}")
+                        socketio.emit('error', {'message': f'Error fetching price: {str(e)}'}, room=sid)
+                        time.sleep(5)
+                
+                logger.info(f"Stopped streaming {ticker} for client {sid}")
+            
+            # Start the streaming thread, passing the sid as an argument
+            thread = threading.Thread(target=stream_prices, args=(client_sid,), daemon=True)
+            thread.start()
+            
+        except Exception as e:
+            logger.error(f"Error in subscribe_ticker: {e}")
+            emit('error', {'message': str(e)})
+    
+    @socketio.on('unsubscribe_ticker')
+    def handle_unsubscribe_ticker():
+        """Unsubscribe from live price updates"""
+        try:
+            if request.sid in active_connections:
+                ticker = active_connections[request.sid].get('ticker', 'Unknown')
+                active_connections[request.sid]['active'] = False
+                del active_connections[request.sid]
+                logger.info(f"Client {request.sid} unsubscribed from {ticker}")
+                emit('unsubscribed', {'message': 'Successfully unsubscribed'})
+            else:
+                emit('error', {'message': 'No active subscription found'})
+        except Exception as e:
+            logger.error(f"Error in unsubscribe_ticker: {e}")
+            emit('error', {'message': str(e)})

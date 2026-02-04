@@ -1,7 +1,8 @@
 
 from flask import Flask
 from flask_cors import CORS
-from services.stock_service import register_routes
+from flask_socketio import SocketIO
+from services.stock_service import register_routes, register_websocket_events
 
 
 def create_app():
@@ -9,8 +10,11 @@ def create_app():
     
     CORS(app, resources={r"/api/*": {"origins": "*"}})
     
-
+    # Initialize SocketIO
+    socketio = SocketIO(app, cors_allowed_origins="*")
+    
     register_routes(app)
+    register_websocket_events(socketio)
     
     @app.route('/health', methods=['GET'])
     def health_check():
@@ -25,12 +29,14 @@ def create_app():
         app.logger.error(f'Internal server error: {str(error)}')
         return {'error': 'Internal server error'}, 500
     
-    return app
+    return app, socketio
 
 if __name__ == '__main__':
-    app = create_app()
-    app.run(
+    app, socketio = create_app()
+    socketio.run(
+        app,
         host='0.0.0.0',
         port=5000,
-        debug=True
+        debug=True,
+        allow_unsafe_werkzeug=True
     )
