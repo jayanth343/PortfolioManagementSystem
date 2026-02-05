@@ -10,14 +10,55 @@ import json
 import time
 import threading
 from concurrent.futures import ThreadPoolExecutor, as_completed
+import math
 
 
 logger = logging.getLogger(__name__)
 
 # Store active WebSocket connections and their tickers
+# Format: {sid: {'ticker': str, 'active': bool, 'thread': Thread}}
 active_connections = {}
 
+
+def sanitize_value(value):
+    """
+    Convert NaN, inf, and -inf values to None for JSON serialization.
+    Returns None for any non-finite numeric value.
+    """
+    if value is None:
+        return None
+    if isinstance(value, (int, float)):
+        if math.isnan(value) or math.isinf(value):
+            return None
+    return value
+
+def get_news(symbol):
+    """Get formatted news for a symbol using the standard format_news function"""
+    try:
+        ticker = yf.Ticker(symbol)
+        news = ticker.get_news(count=10) if hasattr(ticker, 'news') else []
+        formatted = StockService.format_news(news)
+        return formatted
+        
+    except Exception as e:
+        logger.error(f"Error fetching news for {symbol}: {str(e)}")
+        return []
+    
+
 class StockService:
+    @staticmethod
+    def get_news(symbol):
+        """Get formatted news for a symbol using the standard format_news function"""
+        try:
+            ticker = yf.Ticker(symbol)
+            news = ticker.get_news(count=10) if hasattr(ticker, 'news') else []
+            formatted = StockService.format_news(news)
+            return formatted
+            
+        except Exception as e:
+            logger.error(f"Error fetching news for {symbol}: {str(e)}")
+            return []
+    
     
     @staticmethod
     def get_stock(ticker: str):
@@ -57,21 +98,21 @@ class StockService:
                 'previousClose': round(previous_close, 2),
                 'dayChangePercent': day_change_percent,
                 'currency': info.get('currency', 'USD'),
-                'exchange': info.get('exchange'),
-                'dividendYield': info.get('dividendYield'),
-                'sector': info.get('sector'),
-                'industry': info.get('industry'),
-                'volume': info.get('volume'),
-                'fiftyTwoWeekHigh': info.get('fiftyTwoWeekHigh'),
-                'fiftyTwoWeekLow': info.get('fiftyTwoWeekLow'),
-                'fiftyDayAverage': info.get('fiftyDayAverage'),
+                'exchange': sanitize_value(info.get('exchange')),
+                'dividendYield': sanitize_value(info.get('dividendYield')),
+                'sector': sanitize_value(info.get('sector')),
+                'industry': sanitize_value(info.get('industry')),
+                'volume': sanitize_value(info.get('volume')),
+                'fiftyTwoWeekHigh': sanitize_value(info.get('fiftyTwoWeekHigh')),
+                'fiftyTwoWeekLow': sanitize_value(info.get('fiftyTwoWeekLow')),
+                'fiftyDayAverage': sanitize_value(info.get('fiftyDayAverage')),
                 'description': info.get('longBusinessSummary', '')[:500] if info.get('longBusinessSummary') else None,
-                'website': info.get('website'),
-                'country': info.get('country'),
-                'employees': info.get('fullTimeEmployees'),
+                'website': sanitize_value(info.get('website')),
+                'country': sanitize_value(info.get('country')),
+                'employees': sanitize_value(info.get('fullTimeEmployees')),
                 'news': news,
                 'recommendations': recommendations,
-                'analystTargetPrice': info.get('targetMeanPrice')
+                'analystTargetPrice': sanitize_value(info.get('targetMeanPrice'))
             }
             
         except Exception as e:
@@ -112,15 +153,15 @@ class StockService:
                 'priceChange24h': price_change_24h,
                 'priceChangePercent24h': price_change_percent_24h,
                 'currency': info.get('currency', 'USD'),
-                'totalSupply': info.get('totalSupply'),
-                'marketCap': info.get('marketCap'),
+                'totalSupply': sanitize_value(info.get('totalSupply')),
+                'marketCap': sanitize_value(info.get('marketCap')),
                 'priceChangePercent7d': round(((current_price - price_7d_ago) / price_7d_ago) * 100, 2) if price_7d_ago > 0 else None,
                 'priceChangePercent30d': round(((current_price - price_30d_ago) / price_30d_ago) * 100, 2) if price_30d_ago > 0 else None,
-                'allTimeHigh': info.get('fiftyTwoWeekHigh'),
-                'allTimeLow': info.get('fiftyTwoWeekLow'),
-                'volume24h': info.get('volume'),
+                'allTimeHigh': sanitize_value(info.get('fiftyTwoWeekHigh')),
+                'allTimeLow': sanitize_value(info.get('fiftyTwoWeekLow')),
+                'volume24h': sanitize_value(info.get('volume')),
                 'description': info.get('longBusinessSummary', '')[:500] if info.get('longBusinessSummary') else None,
-                'news': []
+                'news': get_news(symbol)
             }
             
         except Exception as e:
@@ -237,18 +278,18 @@ class StockService:
                 'name': info.get('longName', info.get('shortName', symbol)),
                 'nav': round(current_nav, 4),
                 'currency': info.get('currency', 'USD'),
-                'category': info.get('category'),
-                'subCategory': info.get('legalType'),
+                'category': sanitize_value(info.get('category')),
+                'subCategory': sanitize_value(info.get('legalType')),
                 'riskLevel': risk_level,
-                'rating': info.get('morningStarOverallRating'),
-                'returns1Month': returns_1m,
-                'returns3Month': returns_3m,
-                'returns6Month': returns_6m,
-                'returns1Year': returns_1y,
-                'returns3Year': returns_3y,
-                'returns5Year': returns_5y,
-                'fundSize': info.get('totalAssets'),
-                'dividendYield': info.get('yield'),
+                'rating': sanitize_value(info.get('morningStarOverallRating')),
+                'returns1Month': sanitize_value(returns_1m),
+                'returns3Month': sanitize_value(returns_3m),
+                'returns6Month': sanitize_value(returns_6m),
+                'returns1Year': sanitize_value(returns_1y),
+                'returns3Year': sanitize_value(returns_3y),
+                'returns5Year': sanitize_value(returns_5y),
+                'fundSize': sanitize_value(info.get('totalAssets')),
+                'dividendYield': sanitize_value(info.get('yield')),
                 'fundData': fund_data,
                 'news': []
             }
@@ -290,10 +331,10 @@ class StockService:
                 'priceChange': price_change,
                 'priceChangePercent': price_change_percent,
                 'currency': info.get('currency', 'USD'),
-                'exchange': info.get('exchange'),
-                'volume': info.get('volume'),
-                'fiftyTwoWeekHigh': info.get('fiftyTwoWeekHigh'),
-                'fiftyTwoWeekLow': info.get('fiftyTwoWeekLow'),
+                'exchange': sanitize_value(info.get('exchange')),
+                'volume': sanitize_value(info.get('volume')),
+                'fiftyTwoWeekHigh': sanitize_value(info.get('fiftyTwoWeekHigh')),
+                'fiftyTwoWeekLow': sanitize_value(info.get('fiftyTwoWeekLow')),
                 'priceChangePercent7d': round(((current_price - price_7d_ago) / price_7d_ago) * 100, 2) if price_7d_ago > 0 else None,
                 'priceChangePercent30d': round(((current_price - price_30d_ago) / price_30d_ago) * 100, 2) if price_30d_ago > 0 else None,
                 'description': info.get('longBusinessSummary', '')[:500] if info.get('longBusinessSummary') else None,
@@ -304,29 +345,36 @@ class StockService:
             return None
 
     @staticmethod
-    def get_stock_history(ticker: str, period: str = "1mo"):
+    def get_stock_history(ticker: str, period: str = "1mo",interval:str = None):
 
         HistoryMapping = {
-            
-            '1D':['1d','5m'],
-            '5D':['5d', '1h'],
-            '1W':['7d', '4h'],
-            '1MO':['1mo', '1wk'],
-            '3MO':['3mo', '1wk'],
-            '6MO':['6mo', '1wk'],
-            '1Y':['1y', '1mo'],
-            '2Y':['2y', '1mo'],
-            
+            '1D':['1d','1m'],
+            '5D':['5d', '5m'],
+            '1W':['7d', '1h'],
+            '1MO':['1mo', '1h'],
+            '3MO':['3mo', '1d'],
+            '6MO':['6mo', '1d'],
+            '1Y':['1y', '1d'],
+            '5Y':['5y', '1d'],
+            'MAX':['max', '1mo'],
             }
         
         try:
             stock = yf.Ticker(ticker)
-            historyPeriod, historyInterval = HistoryMapping.get(period.upper(), ['1mo', '1d'])
+            print(f"O: {ticker}, P: {period}, I: {interval}")
+            if interval!=None:
+                historyInterval = interval.lower()
+                historyPeriod = period.lower()
+            else:
+                historyPeriod, historyInterval = HistoryMapping.get(period.upper(), ['1mo', '1d'])
             print(f"Fetching history for {ticker} with period: {historyPeriod}, interval: {historyInterval}")
             history = stock.history(period=historyPeriod, interval=historyInterval)
             
             if history.empty:
                 return None
+            
+            # Determine if we're dealing with intraday data
+            is_intraday = historyInterval in ['1m', '2m', '5m', '15m', '30m', '60m', '90m', '1h']
             
             return {
                 'ticker': ticker.upper(),
@@ -334,7 +382,9 @@ class StockService:
                 'interval': historyInterval,
                 'data': [
                     {
-                        'date': idx.strftime('%Y-%m-%d %H:%M:%S'),
+                        # For intraday: use Unix timestamp (seconds)
+                        # For daily+: use 'YYYY-MM-DD' string
+                        'time': int(idx.timestamp()) if is_intraday else idx.strftime('%Y-%m-%d'),
                         'open': float(row['Open']),
                         'high': float(row['High']),
                         'low': float(row['Low']),
@@ -351,19 +401,38 @@ class StockService:
     @staticmethod
     def search_assets(query: str):
         try:
+                exchange_currency_map = {
+                    'NSI': 'INR', 'BSE': 'INR',  # India
+                    'NYSE': 'USD', 'NMS': 'USD', 'NYQ': 'USD', 'NGM': 'USD', 'PNK': 'USD',  # USA
+                    'LSE': 'GBP', 'LON': 'GBP',  # UK
+                }
             
                 lookup = yf.Lookup(query) if yf.Lookup(query) else yf.Search(query).quotes
                 
-                stocks_df = lookup.get_stock(count=5)
-                mutualfunds_df = lookup.get_mutualfund(count=5)
-                cryptos_df = lookup.get_cryptocurrency(count=5)
-                commodities_df = lookup.get_future(count=5)
+                stocks_df = (lookup.get_stock(count=5)).to_dict('index') if not lookup.get_stock(count=5).empty else {}
+                mutualfunds_df = (lookup.get_mutualfund(count=5)).to_dict('index') if not lookup.get_mutualfund(count=5).empty else {}
+                cryptos_df = (lookup.get_cryptocurrency(count=5)).to_dict('index') if not lookup.get_cryptocurrency(count=5).empty else {}
+                commodities_df = (lookup.get_future(count=5)).to_dict('index') if not lookup.get_future(count=5).empty else {}
+                
+                # Convert from {symbol: {data}} to [{symbol: symbol, ...data}]
+                def dict_to_list_with_symbol(data_dict):
+                    result = []
+                    for symbol, data in data_dict.items():
+                        item = {'symbol': symbol}
+                        for key, value in data.items():
+                            item[key] = sanitize_value(value)
+                        
+                        exchange = data.get('exchange', '')
+                        item['currency'] = exchange_currency_map.get(exchange, 'USD')
+                        
+                        result.append(item)
+                    return result
                 
                 response = {
-                    "stocks": stocks_df.to_dict('records') if not stocks_df.empty else [],
-                    "mutualFunds": mutualfunds_df.to_dict('records') if not mutualfunds_df.empty else [],
-                    "cryptos": cryptos_df.to_dict('records') if not cryptos_df.empty else [],
-                    "commodities": commodities_df.to_dict('records') if not commodities_df.empty else []
+                    "stocks": dict_to_list_with_symbol(stocks_df),
+                    "mutualFunds": dict_to_list_with_symbol(mutualfunds_df),
+                    "cryptos": dict_to_list_with_symbol(cryptos_df),
+                    "commodities": dict_to_list_with_symbol(commodities_df)
                 }
                 
                 return response
@@ -377,7 +446,7 @@ class StockService:
         """Get formatted news for a symbol using the standard format_news function"""
         try:
             ticker = yf.Ticker(symbol)
-            news = ticker.get_news(count=5) if hasattr(ticker, 'news') else []
+            news = ticker.get_news(count=10) if hasattr(ticker, 'news') else []
             formatted = StockService.format_news(news)
             return formatted
             
@@ -486,11 +555,11 @@ class StockService:
                         annualized_return = round((((current_price / buy_price) ** (1 / years_held)) - 1) * 100, 2)
                 
                 # Get additional info from yfinance
-                sector = info.get('sector')
-                industry = info.get('industry')
+                sector = sanitize_value(info.get('sector'))
+                industry = sanitize_value(info.get('industry'))
                 currency = info.get('currency', 'USD')
-                market_cap = info.get('marketCap')
-                volume = info.get('volume')
+                market_cap = sanitize_value(info.get('marketCap'))
+                volume = sanitize_value(info.get('volume'))
                 
                 return {
                     'symbol': ticker,
@@ -508,7 +577,7 @@ class StockService:
                     'totalGainLoss': round(total_gain_loss, 2),
                     'gainLossPercent': round(gain_loss_percent, 2),
                     'daysHeld': days_held,
-                    'annualizedReturn': annualized_return,
+                    'annualizedReturn': sanitize_value(annualized_return),
                     'marketCap': market_cap,
                     'volume': volume
                 }
@@ -595,38 +664,47 @@ class StockService:
         formatted_news = []
         for item in news_items:
             try:
-                # Check if news item has 'content' wrapper (old format) or direct fields (new format)
+                # Check if news item has 'content' wrapper (yfinance format)
                 if 'content' in item:
-                    # Old format with content wrapper
                     content = item.get('content', {})
+                    
+                    # Extract thumbnail URL
                     thumbnail = None
                     thumbnail_data = content.get('thumbnail', {})
-                    if thumbnail_data and thumbnail_data.get('resolutions'):
+                    if thumbnail_data:
+                        # Try to get the first resolution URL
                         resolutions = thumbnail_data.get('resolutions', [])
-                        if resolutions:
+                        if resolutions and len(resolutions) > 0:
                             thumbnail = resolutions[0].get('url')
+                        # Fallback to original URL if resolutions not available
+                        if not thumbnail:
+                            thumbnail = thumbnail_data.get('originalUrl')
+                    
+                    # Extract provider/publisher
                     provider = content.get('provider', {})
-                    canonical_url = content.get('canonicalUrl', {})
+                    publisher = provider.get('displayName')
+                    
+                    # Extract article URL (prefer clickThroughUrl over canonicalUrl)
+                    click_through = content.get('clickThroughUrl', {})
+                    canonical = content.get('canonicalUrl', {})
+                    url = click_through.get('url') if click_through.get('url') else canonical.get('url')
+                    
                     formatted_news.append({
                         'title': content.get('title'),
                         'summary': content.get('summary'),
-                        'date': content.get('pubDate'),
-                        'publisher': provider.get('displayName'),
+                        'publisher': publisher,
                         'publishedAt': content.get('pubDate'),
-                        'link': canonical_url.get('url'),
-                        'type': content.get('contentType'),
+                        'url': url,
                         'thumbnail': thumbnail
                     })
                 else:
-                    # New format - fields already at top level
+                    # Fallback for already-formatted news
                     formatted_news.append({
                         'title': item.get('title'),
                         'summary': item.get('summary'),
-                        'date': item.get('date'),
                         'publisher': item.get('publisher'),
                         'publishedAt': item.get('publishedAt'),
-                        'link': item.get('link'),
-                        'type': item.get('type'),
+                        'url': item.get('url') or item.get('link'),
                         'thumbnail': item.get('thumbnail')
                     })
             except Exception as e:
@@ -675,7 +753,10 @@ def register_routes(app):
     def get_history_route(symbol):
         try:
             period = request.args.get('period', '1MO').upper()
-            data = StockService.get_stock_history(symbol.upper(), period)
+            print(request)
+            interval = request.args.get('interval', "15m").lower()
+            print(interval)
+            data = StockService.get_stock_history(symbol.upper(), period, interval)
             if not data:
                 return jsonify({'error': 'History not found'}), 404
             return jsonify(data), 200
@@ -753,7 +834,12 @@ def register_websocket_events(socketio):
         # Stop any active price streaming for this client
         if request.sid in active_connections:
             active_connections[request.sid]['active'] = False
+            # Wait for thread to finish (with timeout)
+            thread = active_connections[request.sid].get('thread')
+            if thread and thread.is_alive():
+                thread.join(timeout=1.0)  # Wait max 1 second
             del active_connections[request.sid]
+            logger.info(f"Cleaned up thread for client {request.sid}")
     
     @socketio.on('subscribe_ticker')
     def handle_subscribe_ticker(data):
@@ -783,16 +869,12 @@ def register_websocket_events(socketio):
             # Stop any existing subscription for this client
             if client_sid in active_connections:
                 active_connections[client_sid]['active'] = False
+                # Wait for old thread to finish
+                old_thread = active_connections[client_sid].get('thread')
+                if old_thread and old_thread.is_alive():
+                    old_thread.join(timeout=1.0)
             
-            # Create new subscription
-            active_connections[client_sid] = {
-                'ticker': ticker,
-                'active': True
-            }
-            
-            emit('subscribed', {'ticker': ticker, 'message': f'Subscribed to {ticker}'})
-            
-            # Start streaming prices in a background thread
+            # Define the streaming function
             def stream_prices(sid):
                 while active_connections.get(sid, {}).get('active', False):
                     try:
@@ -836,18 +918,29 @@ def register_websocket_events(socketio):
                         else:
                             logger.warning(f"No price data available for {ticker}")
                         
-                        # Wait before next update (5 seconds)
-                        time.sleep(5)
+                        # Wait before next update (2 minutes to prevent rate limiting)
+                        time.sleep(120)
                         
                     except Exception as e:
                         logger.error(f"Error streaming price for {ticker}: {e}")
                         socketio.emit('error', {'message': f'Error fetching price: {str(e)}'}, room=sid)
-                        time.sleep(5)
+                        time.sleep(120)
                 
                 logger.info(f"Stopped streaming {ticker} for client {sid}")
             
             # Start the streaming thread, passing the sid as an argument
             thread = threading.Thread(target=stream_prices, args=(client_sid,), daemon=True)
+            
+            # Create new subscription with thread reference
+            active_connections[client_sid] = {
+                'ticker': ticker,
+                'active': True,
+                'thread': thread
+            }
+            
+            emit('subscribed', {'ticker': ticker, 'message': f'Subscribed to {ticker}'})
+            
+            # Start the thread after defining the function
             thread.start()
             
         except Exception as e:
@@ -861,6 +954,12 @@ def register_websocket_events(socketio):
             if request.sid in active_connections:
                 ticker = active_connections[request.sid].get('ticker', 'Unknown')
                 active_connections[request.sid]['active'] = False
+                
+                # Wait for thread to finish
+                thread = active_connections[request.sid].get('thread')
+                if thread and thread.is_alive():
+                    thread.join(timeout=1.0)
+                
                 del active_connections[request.sid]
                 logger.info(f"Client {request.sid} unsubscribed from {ticker}")
                 emit('unsubscribed', {'message': 'Successfully unsubscribed'})
@@ -868,4 +967,107 @@ def register_websocket_events(socketio):
                 emit('error', {'message': 'No active subscription found'})
         except Exception as e:
             logger.error(f"Error in unsubscribe_ticker: {e}")
+            emit('error', {'message': str(e)})    
+    @socketio.on('subscribe_ticker_fast')
+    def handle_subscribe_ticker_fast(data):
+        """Subscribe to live price updates for a specific ticker with 5-second interval (for buy modal)"""
+        try:
+            ticker = data.get('ticker', '').strip().upper()
+            if not ticker:
+                emit('error', {'message': 'Ticker symbol is required'})
+                return
+            
+            # Validate ticker exists
+            try:
+                stock = yf.Ticker(ticker)
+                info = stock.info
+                if not info or 'symbol' not in info:
+                    emit('error', {'message': f'Invalid ticker symbol: {ticker}'})
+                    return
+            except Exception as e:
+                emit('error', {'message': f'Failed to validate ticker: {str(e)}'})
+                return
+            
+            # Capture the session ID before starting the thread
+            client_sid = request.sid
+            
+            logger.info(f"Client {client_sid} subscribed to {ticker} (fast mode)")
+            
+            # Stop any existing subscription for this client
+            if client_sid in active_connections:
+                active_connections[client_sid]['active'] = False
+                # Wait for old thread to finish
+                old_thread = active_connections[client_sid].get('thread')
+                if old_thread and old_thread.is_alive():
+                    old_thread.join(timeout=1.0)
+            
+            # Define the streaming function
+            def stream_prices_fast(sid):
+                while active_connections.get(sid, {}).get('active', False):
+                    try:
+                        stock = yf.Ticker(ticker)
+                        stock_info = stock.info
+                        # Get latest price data
+                        history = stock.history(period="1d", interval="1m")
+                        latest_timestamp = history.index[-1]  # Get the datetime index
+                        
+                        if not history.empty:
+                            latest = history.iloc[-1]
+                            current_price = float(latest['Close'])
+                            open_price = float(history.iloc[0]['Open'])
+                            high_price = float(max(history['High']))
+                            low_price = float(min(history['Low']))
+                            volume = int(latest['Volume'] if latest['Volume'] != 0 else stock.info.get('volume', 0))
+                            
+                            # Calculate change
+                            day_open = history.iloc[0]['Open']
+                            change = current_price - day_open
+                            change_percent = (change / day_open * 100) if day_open > 0 else 0
+                            
+                            price_data = {
+                                'ticker': ticker,
+                                'currency': stock_info.get('currency', 'USD'),
+                                'name': stock_info.get('shortName', ticker),
+                                'price': round(current_price, 2),
+                                'open': round(open_price, 2),
+                                'high': round(high_price, 2),
+                                'low': round(low_price, 2),
+                                'volume': volume,
+                                'change': round(change, 2),
+                                'changePercent': round(change_percent, 2),
+                                'timestamp': latest_timestamp.strftime('%Y-%m-%d %H:%M:%S')
+                            }
+                            
+                            socketio.emit('price_update', price_data, room=sid)
+                            logger.debug(f"Sent fast price update for {ticker} to {sid}: ${current_price}")
+                        else:
+                            logger.warning(f"No price data available for {ticker}")
+                        
+                        # Wait before next update (5 seconds for fast mode)
+                        time.sleep(5)
+                        
+                    except Exception as e:
+                        logger.error(f"Error streaming price for {ticker}: {e}")
+                        socketio.emit('error', {'message': f'Error fetching price: {str(e)}'}, room=sid)
+                        time.sleep(5)
+                
+                logger.info(f"Stopped streaming {ticker} for client {sid} (fast mode)")
+            
+            # Start the streaming thread, passing the sid as an argument
+            thread = threading.Thread(target=stream_prices_fast, args=(client_sid,), daemon=True)
+            
+            # Create new subscription with thread reference
+            active_connections[client_sid] = {
+                'ticker': ticker,
+                'active': True,
+                'thread': thread
+            }
+            
+            emit('subscribed', {'ticker': ticker, 'message': f'Subscribed to {ticker} (fast mode)'})
+            
+            # Start the thread after defining the function
+            thread.start()
+            
+        except Exception as e:
+            logger.error(f"Error in subscribe_ticker_fast: {e}")
             emit('error', {'message': str(e)})

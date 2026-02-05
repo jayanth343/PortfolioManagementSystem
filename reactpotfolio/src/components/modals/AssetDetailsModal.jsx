@@ -187,26 +187,15 @@ const AssetDetailsModal = ({ asset, onClose, historyData, onSell, onBuy, onSucce
                                 <span style={{ fontWeight: 'bold' }}>Asset Price History</span>
                             </div>
 
-                            {Array.isArray(historyData) && historyData.length > 0 ? (
-                                <div className="asset-price-chart" style={{ height: '300px', width: '100%', backgroundColor: '#1e1e1e', borderRadius: '8px', overflow: 'hidden' }}>
-                                    <PriceChart
-                                        data={historyData.map((item, index) => {
-                                            // Mock data uses 'Mon', 'Tue' etc.
-                                            // We need valid dates YYYY-MM-DD for lightweight-charts.
-                                            // Auto-generating sequence ending today for demo purposes.
-                                            const d = new Date();
-                                            d.setDate(d.getDate() - (historyData.length - 1 - index));
-                                            const dateStr = d.toISOString().split('T')[0];
-                                            return { time: dateStr, value: item.price };
-                                        })}
-                                        height={300}
-                                    />
-                                </div>
-                            ) : (
-                                <div className="stat-card-dark" style={{ height: '300px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-secondary)' }}>
-                                    Loading Chart Data...
-                                </div>
-                            )}
+                            <div className="asset-price-chart" style={{ height: '300px', width: '100%', backgroundColor: '#1e1e1e', borderRadius: '8px', overflow: 'hidden' }}>
+                                <PriceChart
+                                    symbol={asset.tickerSymbol || asset.symbol}
+                                    height={300}
+                                    color="#DB292D"
+                                    initialPeriod="1M"
+                                />
+                            </div>
+
                             <div className="stat-card-dark" style={{ marginTop: '20px', fontSize: '0.85em', color: 'var(--text-secondary)', lineHeight: '1.6', border: '1px solid #333' }}>
                                 Market Analysis: This asset is currently testing resistance levels. Volatility indices suggest a stable trend for the upcoming fiscal quarter.
                             </div>
