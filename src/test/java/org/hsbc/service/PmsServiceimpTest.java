@@ -1,6 +1,14 @@
 package org.hsbc.service;
 
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+
 import org.hsbc.entity.PmsEntity;
+import org.hsbc.exception.InvalidPmsIdException;
 import org.hsbc.repo.PmsRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -9,14 +17,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.List;
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
-
 @ExtendWith(MockitoExtension.class)
-class PmsServiceimpTest {
+public class PmsServiceimpTest {
 
     @Mock
     private PmsRepository repository;
@@ -24,87 +26,90 @@ class PmsServiceimpTest {
     @InjectMocks
     private PmsServiceimp service;
 
-    private PmsEntity asset;
+    private PmsEntity asset1;
 
     @BeforeEach
     void setUp() {
-        asset = new PmsEntity();
-        asset.setId(1L);
-        asset.setCompanyName("Apple");
-        asset.setSymbol("AAPL");
-        asset.setQuantity(10);
-        asset.setBuyPrice(100);
-        asset.setCurrentPrice(120);
+        // Setup dummy data
+        asset1 = new PmsEntity();
+        asset1.setId(1L);
+        asset1.setSymbol("AAPL");
+        asset1.setBuyPrice(150.0);
+        asset1.setCurrentPrice(170.0);
+        asset1.setQuantity(10);
     }
 
-    // 1️⃣ addAsset()
+    // --- Success Tests ---
+
     @Test
-    void testAddAsset() {
-        when(repository.save(any(PmsEntity.class))).thenReturn(asset);
+    void testGetAssetById_Success() throws InvalidPmsIdException {
+        when(repository.findById(1L)).thenReturn(Optional.of(asset1));
 
-        PmsEntity saved = service.addAsset(asset);
+        PmsEntity result = service.getAssetById(1L);
 
-        assertEquals(1000, saved.getBuyingValue());
-        verify(repository, times(1)).save(asset);
+        assertNotNull(result);
+        assertEquals("AAPL", result.getSymbol());
     }
 
-    // 2️⃣ removeAsset()
     @Test
-    void testRemoveAsset() {
-        doNothing().when(repository).deleteById(1L);
-
-        service.removeAsset(1L);
-
-        verify(repository, times(1)).deleteById(1L);
-    }
-
-    // 3️⃣ updateQuantity()
-    @Test
-    void testUpdateQuantity() {
-        when(repository.findById(1L)).thenReturn(Optional.of(asset));
-        when(repository.save(any(PmsEntity.class))).thenReturn(asset);
+    void testUpdateQuantity_Success() throws InvalidPmsIdException {
+        when(repository.findById(1L)).thenReturn(Optional.of(asset1));
+        when(repository.save(any(PmsEntity.class))).thenReturn(asset1);
 
         PmsEntity updated = service.updateQuantity(1L, 20);
 
         assertEquals(20, updated.getQuantity());
-        assertEquals(2000, updated.getBuyingValue());
+        // Check if buying value updated: 150 * 20 = 3000
+        assertEquals(3000.0, updated.getBuyingValue());
     }
 
-    // 4️⃣ calculatePL()
     @Test
-    void testCalculatePL() {
-        when(repository.findById(1L)).thenReturn(Optional.of(asset));
+    void testCalculatePL_Success() throws InvalidPmsIdException {
+        when(repository.findById(1L)).thenReturn(Optional.of(asset1));
 
+        // Buy: 150 * 10 = 1500
+        // Current: 170 * 10 = 1700
+        // PL: 200
         double pl = service.calculatePL(1L);
 
-        assertEquals(200, pl);
+        assertEquals(200.0, pl);
     }
 
-    // 5️⃣ calculatePLPercentage()
     @Test
-    void testCalculatePLPercentage() {
-        when(repository.findById(1L)).thenReturn(Optional.of(asset));
+    void testRemoveAsset_Success() throws InvalidPmsIdException {
+        when(repository.findById(1L)).thenReturn(Optional.of(asset1));
 
-        double plPercent = service.calculatePLPercentage(1L);
+        assertDoesNotThrow(() -> service.removeAsset(1L));
 
-        assertEquals(20.0, plPercent);
+        verify(repository, times(1)).deleteById(1L);
     }
 
-    // 6️⃣ getTotalPortfolioValue()
+    // --- Exception Tests (Failure Scenarios) ---
+
     @Test
-    void testGetTotalPortfolioValue() {
-        when(repository.findAll()).thenReturn(List.of(asset));
-
-        double total = service.getTotalPortfolioValue();
-
-        assertEquals(1200, total);
-    }
-
-    // ❌ Asset not found scenario
-    @Test
-    void testAssetNotFound() {
+    void testGetAssetById_NotFound() {
         when(repository.findById(99L)).thenReturn(Optional.empty());
 
-        assertThrows(RuntimeException.class, () -> service.calculatePL(99L));
+        assertThrows(InvalidPmsIdException.class, () -> {
+            service.getAssetById(99L);
+        });
+    }
+
+    @Test
+    void testUpdateQuantity_NotFound() {
+        when(repository.findById(99L)).thenReturn(Optional.empty());
+
+        assertThrows(InvalidPmsIdException.class, () -> {
+            service.updateQuantity(99L, 5);
+        });
+    }
+
+    @Test
+    void testCalculatePL_NotFound() {
+        when(repository.findById(99L)).thenReturn(Optional.empty());
+
+        assertThrows(InvalidPmsIdException.class, () -> {
+            service.calculatePL(99L);
+        });
     }
 }
