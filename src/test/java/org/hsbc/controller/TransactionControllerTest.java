@@ -13,7 +13,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
@@ -46,7 +46,7 @@ class TransactionControllerTest {
     // 1️⃣ Add transaction
     @Test
     void testAddTransaction() throws Exception {
-        TransactionEntity txn = new TransactionEntity("AAPL", 10, 150.0, LocalDate.now(), "BUY");
+        TransactionEntity txn = new TransactionEntity("AAPL", 10, 150.0, LocalDateTime.now(), "BUY");
         txn.setTransactionId(1L);
 
         when(service.addTransaction(any(TransactionEntity.class))).thenReturn(txn);
@@ -63,8 +63,8 @@ class TransactionControllerTest {
     @Test
     void testGetAllTransactions() throws Exception {
         List<TransactionEntity> txnList = Arrays.asList(
-                new TransactionEntity("AAPL", 10, 150.0, LocalDate.now(), "BUY"),
-                new TransactionEntity("GOOGL", 5, 2000.0, LocalDate.now(), "SELL")
+                new TransactionEntity("AAPL", 10, 150.0, LocalDateTime.now(), "BUY"),
+                new TransactionEntity("GOOGL", 5, 2000.0, LocalDateTime.now(), "SELL")
         );
 
         when(service.getAllTransactions()).thenReturn(txnList);
@@ -79,7 +79,7 @@ class TransactionControllerTest {
     @Test
     void testGetBySymbol() throws Exception {
         List<TransactionEntity> txnList = Arrays.asList(
-                new TransactionEntity("TSLA", 20, 700.0, LocalDate.now(), "BUY")
+                new TransactionEntity("TSLA", 20, 700.0, LocalDateTime.now(), "BUY")
         );
 
         when(service.getTransactionsBySymbol("TSLA")).thenReturn(txnList);
