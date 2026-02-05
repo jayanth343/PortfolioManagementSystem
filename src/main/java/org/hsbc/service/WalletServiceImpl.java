@@ -2,12 +2,18 @@ package org.hsbc.service;
 
 import org.hsbc.entity.WalletEntity;
 import org.hsbc.repo.WalletRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class WalletServiceImpl implements WalletService{
+
+    private static final Logger log =
+            LoggerFactory.getLogger(WalletServiceImpl.class);
+
     private final WalletRepository repository;
 
     public WalletServiceImpl(WalletRepository repository) {

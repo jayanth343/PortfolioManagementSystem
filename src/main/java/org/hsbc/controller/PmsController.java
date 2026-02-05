@@ -1,8 +1,11 @@
 package org.hsbc.controller;
 
 import org.hsbc.entity.PmsEntity;
+import org.hsbc.exception.InvalidPmsIdException;
 import org.hsbc.service.PmsService;
 import org.hsbc.service.PmsServiceimp;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,6 +15,8 @@ import java.util.List;
 @RequestMapping("/api/pms")
 @CrossOrigin(origins = "*")
 public class PmsController {
+    private static final Logger log =
+            LoggerFactory.getLogger(PmsController.class);
 
 
 //    public List<PmsEntity> findAllPms(){
@@ -23,7 +28,7 @@ public List<PmsEntity> getAllAssets() {
     return service.getAllAssets();
 }
     @GetMapping("/{id}")
-    public PmsEntity getAssetById(@PathVariable Long id) {
+    public PmsEntity getAssetById(@PathVariable Long id) throws InvalidPmsIdException {
         return service.getAssetById(id);
     }
 
@@ -36,7 +41,7 @@ public List<PmsEntity> getAllAssets() {
         }
 
         @DeleteMapping("/remove/{id}")
-        public String removeAsset(@PathVariable Long id) {
+        public String removeAsset(@PathVariable Long id) throws InvalidPmsIdException {
             service.removeAsset(id);
             return "Asset removed successfully";
         }
@@ -44,17 +49,17 @@ public List<PmsEntity> getAllAssets() {
         @PutMapping("/update-quantity/{id}")
         public PmsEntity updateQuantity(
                 @PathVariable Long id,
-                @RequestParam int quantity) {
+                @RequestParam int quantity) throws InvalidPmsIdException {
             return service.updateQuantity(id, quantity);
         }
 
         @GetMapping("/pl/{id}")
-        public double getPL(@PathVariable Long id) {
+        public double getPL(@PathVariable Long id) throws InvalidPmsIdException {
             return service.calculatePL(id);
         }
 
         @GetMapping("/pl-percentage/{id}")
-        public double getPLPercentage(@PathVariable Long id) {
+        public double getPLPercentage(@PathVariable Long id) throws InvalidPmsIdException {
             return service.calculatePLPercentage(id);
         }
 

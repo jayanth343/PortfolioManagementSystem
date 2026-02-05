@@ -2,6 +2,8 @@ package org.hsbc.controller;
 
 import org.hsbc.entity.WalletEntity;
 import org.hsbc.service.WalletService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -16,6 +18,9 @@ public class WalletController {
     public WalletController(WalletService service) {
         this.service = service;
     }
+    private static final Logger log =
+            LoggerFactory.getLogger(WalletController.class);
+
 
     // 1️⃣ Show wallet balance
     @GetMapping("/balance")

@@ -3,6 +3,8 @@ package org.hsbc.controller;
 import org.hsbc.entity.TransactionEntity;
 import org.hsbc.service.TransactionService;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,6 +24,8 @@ public class TransactionController {
     public TransactionController(TransactionService service) {
         this.service = service;
     }
+    private static final Logger log =
+            LoggerFactory.getLogger(TransactionController.class);
 
     // 1️⃣ Add transaction
     @PostMapping("/add")
