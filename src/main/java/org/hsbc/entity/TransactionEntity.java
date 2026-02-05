@@ -1,7 +1,7 @@
 package org.hsbc.entity;
 
 import jakarta.persistence.*;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "transactions")
@@ -14,29 +14,28 @@ public class TransactionEntity {
     String symbol;
     int quantity;
     double buyPrice;
-    LocalDate transactionDate;
+    LocalDateTime transactionDate;
 
-
-    String TransactionType ;
+    String transactionType;
 
     public TransactionEntity() {
     }
 
-    public TransactionEntity(Long transactionId, String symbol, int quantity, double buyPrice, LocalDate transactionDate, String transactionType) {
+    public TransactionEntity(Long transactionId, String symbol, int quantity, double buyPrice, LocalDateTime transactionDate, String transactionType) {
         this.transactionId = transactionId;
         this.symbol = symbol;
         this.quantity = quantity;
         this.buyPrice = buyPrice;
         this.transactionDate = transactionDate;
-        TransactionType = transactionType;
+        this.transactionType = transactionType;
     }
 
-    public TransactionEntity(String symbol, int quantity, double buyPrice, LocalDate transactionDate, String transactionType) {
+    public TransactionEntity(String symbol, int quantity, double buyPrice, LocalDateTime transactionDate, String transactionType) {
         this.symbol = symbol;
         this.quantity = quantity;
         this.buyPrice = buyPrice;
         this.transactionDate = transactionDate;
-        TransactionType = transactionType;
+        this.transactionType = transactionType;
     }
 
     public Long getTransactionId() {
@@ -71,20 +70,20 @@ public class TransactionEntity {
         this.buyPrice = buyPrice;
     }
 
-    public LocalDate getTransactionDate() {
+    public LocalDateTime getTransactionDate() {
         return transactionDate;
     }
 
-    public void setTransactionDate(LocalDate transactionDate) {
+    public void setTransactionDate(LocalDateTime transactionDate) {
         this.transactionDate = transactionDate;
     }
 
     public String getTransactionType() {
-        return TransactionType;
+        return transactionType;
     }
 
     public void setTransactionType(String transactionType) {
-        TransactionType = transactionType;
+        this.transactionType = transactionType;
     }
 
     @Override
@@ -95,7 +94,7 @@ public class TransactionEntity {
                 ", quantity=" + quantity +
                 ", buyPrice=" + buyPrice +
                 ", transactionDate=" + transactionDate +
-                ", TransactionType='" + TransactionType + '\'' +
+                ", transactionType='" + transactionType + '\'' +
                 '}';
     }
 }

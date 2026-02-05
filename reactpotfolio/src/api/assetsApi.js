@@ -47,77 +47,114 @@ let mockAssets = [
 ];
 
 export const getAssets = async () => {
-    return new Promise((resolve) => {
-        setTimeout(() => {
-            resolve([...mockAssets]);
-        }, 400);
-    });
+    try {
+        const response = await fetch('http://localhost:8080/api/pms/all');
+        if (!response.ok) {
+            throw new Error('Failed to fetch assets');
+        }
+        return await response.json();
+    } catch (error) {
+        console.error('Error fetching assets:', error);
+        return [];
+    }
 };
 
 export const addAsset = async (assetData) => {
-    return new Promise((resolve) => {
-        setTimeout(() => {
-            const currentValue = assetData.quantity * assetData.buyPrice;
-            const newAsset = {
-                id: Date.now(), // Normalized unique ID
-                companyName: assetData.companyName,
+    try {
+        const response = await fetch('http://localhost:8080/api/pms/add', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
                 symbol: assetData.symbol.toUpperCase(),
+                companyName: assetData.companyName,
                 quantity: assetData.quantity,
-                currentValue: currentValue,
-                percentageChange: 0, // Initial change
+                buyPrice: assetData.buyPrice,
+                currentPrice: assetData.buyPrice,
                 assetType: assetData.assetType
-            };
-            mockAssets.push(newAsset);
-            resolve(newAsset);
-        }, 600);
-    });
+            }),
+        });
+        if (!response.ok) {
+            throw new Error('Failed to add asset');
+        }
+        return await response.json();
+    } catch (error) {
+        console.error('Error adding asset:', error);
+        throw error;
+    }
 };
 
 export const sellAsset = async (assetId) => {
-    return new Promise((resolve) => {
-        setTimeout(() => {
-            mockAssets = mockAssets.filter(asset => asset.id !== assetId);
-            resolve(true);
-        }, 600);
-    });
+    try {
+        const response = await fetch(`http://localhost:8080/api/pms/remove/${assetId}`, {
+            method: 'DELETE',
+        });
+        if (!response.ok) {
+            throw new Error('Failed to remove asset');
+        }
+        return true;
+    } catch (error) {
+        console.error('Error removing asset:', error);
+        throw error;
+    }
 };
 
 // Helper function to increase asset quantity (for future transaction integration)
-export const increaseAssetQuantity = async (symbol, quantity) => {
-    return new Promise((resolve, reject) => {
-        setTimeout(() => {
-            const assetIndex = mockAssets.findIndex(a => a.symbol === symbol.toUpperCase());
-            if (assetIndex !== -1) {
-                const asset = mockAssets[assetIndex];
-                const currentPrice = asset.currentValue / asset.quantity;
-                asset.quantity += quantity;
-                asset.currentValue = asset.quantity * currentPrice;
-                resolve(asset);
-            } else {
-                reject(new Error("Asset not found"));
-            }
-        }, 200);
-    });
+export const increaseAssetQuantity = async (assetId, quantity) => {
+    try {
+        const response = await fetch(`http://localhost:8080/api/pms/update-quantity/${assetId}?quantity=${quantity}`, {
+            method: 'PUT',
+        });
+        if (!response.ok) {
+            throw new Error('Failed to update asset quantity');
+        }
+        return await response.json();
+    } catch (error) {
+        console.error('Error updating asset quantity:', error);
+        throw error;
+    }
 };
 
-// Helper function to decrease asset quantity (for future transaction integration)
-export const decreaseAssetQuantity = async (symbol, quantity) => {
-    return new Promise((resolve, reject) => {
-        setTimeout(() => {
-            const assetIndex = mockAssets.findIndex(a => a.symbol === symbol.toUpperCase());
-            if (assetIndex !== -1) {
-                const asset = mockAssets[assetIndex];
-                if (asset.quantity >= quantity) {
-                    const currentPrice = asset.currentValue / asset.quantity;
-                    asset.quantity -= quantity;
-                    asset.currentValue = asset.quantity * currentPrice;
-                    resolve(asset);
-                } else {
-                    reject(new Error("Insufficient quantity"));
-                }
-            } else {
-                reject(new Error("Asset not found"));
-            }
-        }, 200);
-    });
+// Note: To decrease quantity, use increaseAssetQuantity with negative value or remove the asset
+// Backend only supports update-quantity endpoint which sets the quantity
+export const getAssetPL = async (assetId) => {
+    try {
+        const response = await fetch(`http://localhost:8080/api/pms/pl/${assetId}`);
+        if (!response.ok) {
+            throw new Error('Failed to fetch P/L');
+        }
+        return await response.json();
+    } catch (error) {
+        console.error('Error fetching P/L:', error);
+        throw error;
+    }
+};
+
+export const getTotalPortfolioValue = async () => {
+    try {
+        const response = await fetch('http://localhost:8080/api/pms/total-value');
+        if (!response.ok) {
+            throw new Error('Failed to fetch total portfolio value');
+        }
+        return await response.json();
+    } catch (error) {
+        console.error('Error fetching total portfolio value:', error);
+        throw error;
+    }
+};
+
+export const updateCurrentPrice = async (symbol, price) => {
+    try {
+        const response = await fetch(`http://localhost:8080/api/pms/update-price/${symbol}?price=${price}`, {
+            method: 'PUT',
+        });
+        if (!response.ok) {
+            throw new Error('Failed to update current price');
+        }
+        return await response.json();
+    } catch (error) {
+        console.error('Error updating current price:', error);
+        throw error;
+    }
 };

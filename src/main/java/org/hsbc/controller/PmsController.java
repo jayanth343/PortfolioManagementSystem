@@ -12,7 +12,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/pms")
+@RequestMapping("/api/pms")
+@CrossOrigin(origins = "*")
 public class PmsController {
     private static final Logger log =
             LoggerFactory.getLogger(PmsController.class);
@@ -65,6 +66,13 @@ public List<PmsEntity> getAllAssets() {
         @GetMapping("/total-value")
         public double getTotalValue() {
             return service.getTotalPortfolioValue();
+        }
+
+        @PutMapping("/update-price/{symbol}")
+        public PmsEntity updateCurrentPrice(
+                @PathVariable String symbol,
+                @RequestParam double price) {
+            return service.updateCurrentPrice(symbol, price);
         }
     }
 

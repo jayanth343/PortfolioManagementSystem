@@ -172,30 +172,61 @@ const AssetDetails = () => {
             const price = livePrice || asset.currentPrice || asset.nav;
             const totalCost = price * quantity;
 
-            const response = await fetch(`${JAVA_API_URL}/pms/buy`, {
+            // First, add the asset to PMS (this will automatically deduct from wallet)
+            const pmsResponse = await fetch(`http://localhost:8080/api/pms/add`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
                     symbol: asset.tickerSymbol || asset.symbol,
-                    name: asset.name,
+                    companyName: asset.name,
                     quantity: quantity,
-                    price: price,
-                    totalCost: totalCost,
-                    currency: asset.currency,
-                    type: type,
+                    buyPrice: price,
+                    currentPrice: price,
+                    assetType: type,
+                    currency: asset.currency || 'USD',
+                    exchange: asset.exchange || asset.exchangeName || 'N/A',
+                    industry: asset.industry || asset.sector || 'N/A',
                 }),
             });
 
-            if (!response.ok) {
-                const errorData = await response.json();
+            if (!pmsResponse.ok) {
+                const errorData = await pmsResponse.json().catch(() => ({}));
+                // Check for insufficient balance error
+                if (pmsResponse.status === 400 && errorData.message && errorData.message.includes('Insufficient balance')) {
+                    throw new Error('Insufficient wallet balance. Please add funds to your wallet.');
+                }
                 throw new Error(errorData.message || 'Failed to complete purchase');
             }
 
-            const result = await response.json();
+            const pmsResult = await pmsResponse.json();
+
+            // Then, record the transaction with exact timestamp
+            const now = new Date();
+            const transactionResponse = await fetch(`http://localhost:8080/transactions/add`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    symbol: asset.tickerSymbol || asset.symbol,
+                    quantity: quantity,
+                    buyPrice: price,
+                    transactionDate: now.toISOString(), // Send full ISO timestamp
+                    transactionType: 'BUY',
+                }),
+            });
+
+            if (!transactionResponse.ok) {
+                console.warn('Asset added but failed to record transaction');
+            }
+
             alert(`Successfully purchased ${quantity} shares of ${asset.name}`);
             handleBuyClose();
+            
+            // Dispatch event to update credit balance
+            window.dispatchEvent(new Event('transactionUpdated'));
         } catch (err) {
             console.error('Buy error:', err);
             setBuyError(err.message || 'Failed to complete purchase');
@@ -753,6 +784,53 @@ const AssetDetails = () => {
 
                             {analysis ? (
                                 <Stack spacing={3}>
+                                    {/* Analysis Components Explanation */}
+                                    <Card sx={{ p: 3, bgcolor: 'rgba(16, 185, 129, 0.05)', border: '1px solid rgba(16, 185, 129, 0.2)', borderRadius: 2 }}>
+                                        <Typography variant="subtitle1" sx={{ color: '#10b981', fontWeight: '600', mb: 2 }}>
+                                            📊 Analysis Components
+                                        </Typography>
+                                        <Typography variant="body2" sx={{ color: '#ccc', mb: 2 }}>
+                                            This AI-powered recommendation is based on:
+                                        </Typography>
+                                        <Stack spacing={1.5} sx={{ pl: 2 }}>
+                                            <Box sx={{ display: 'flex', gap: 2 }}>
+                                                <Typography variant="body2" sx={{ color: '#10b981', fontWeight: '600', minWidth: '120px' }}>
+                                                    30% Weight:
+                                                </Typography>
+                                                <Typography variant="body2" sx={{ color: '#ccc' }}>
+                                                    <strong>News Sentiment Analysis</strong> using FinBERT AI model - Analyzes latest 20 news articles about {asset.companyName || asset.name}
+                                                </Typography>
+                                            </Box>
+                                            <Box sx={{ display: 'flex', gap: 2 }}>
+                                                <Typography variant="body2" sx={{ color: '#10b981', fontWeight: '600', minWidth: '120px' }}>
+                                                    30% Weight:
+                                                </Typography>
+                                                <Typography variant="body2" sx={{ color: '#ccc' }}>
+                                                    <strong>Analyst Recommendations</strong> - Aggregated professional analyst ratings (Strong Buy, Buy, Hold, Sell, Strong Sell)
+                                                </Typography>
+                                            </Box>
+                                            <Box sx={{ display: 'flex', gap: 2 }}>
+                                                <Typography variant="body2" sx={{ color: '#10b981', fontWeight: '600', minWidth: '120px' }}>
+                                                    20% Weight:
+                                                </Typography>
+                                                <Typography variant="body2" sx={{ color: '#ccc' }}>
+                                                    <strong>RSI (Relative Strength Index)</strong> - 14-period momentum indicator identifying overbought/oversold conditions
+                                                </Typography>
+                                            </Box>
+                                            <Box sx={{ display: 'flex', gap: 2 }}>
+                                                <Typography variant="body2" sx={{ color: '#10b981', fontWeight: '600', minWidth: '120px' }}>
+                                                    20% Weight:
+                                                </Typography>
+                                                <Typography variant="body2" sx={{ color: '#ccc' }}>
+                                                    <strong>Volatility Analysis</strong> - Annualized historical volatility (90-day standard deviation) measuring price risk
+                                                </Typography>
+                                            </Box>
+                                        </Stack>
+                                        <Typography variant="caption" sx={{ color: '#666', display: 'block', mt: 2, fontStyle: 'italic' }}>
+                                            Note: For portfolio holdings, a fifth component (20% performance vs buy price) is added to the analysis.
+                                        </Typography>
+                                    </Card>
+
                                     <Card sx={{ p: 3, bgcolor: '#000', border: '1px solid rgba(255,255,255,0.05)', borderRadius: 2 }}>
                                         <Stack direction="row" justifyContent="space-between" alignItems="center" mb={2}>
                                             <Typography variant="h6" sx={{ color: '#fff', fontWeight: '600' }}>
@@ -814,6 +892,67 @@ const AssetDetails = () => {
                                                 fontWeight: '700'
                                             }}>
                                                 {analysis.compositeScore?.toFixed(2) || '0.00'}
+                                            </Typography>
+                                        </Card>
+
+                                        <Card sx={{ p: 3, bgcolor: '#000', border: '1px solid rgba(255,255,255,0.05)', borderRadius: 2 }}>
+                                            <Typography variant="subtitle2" sx={{ color: '#666', mb: 1 }}>RSI (14-period)</Typography>
+                                            <Stack direction="row" alignItems="center" spacing={2}>
+                                                <Typography variant="h4" sx={{ 
+                                                    color: analysis.rsi > 70 ? '#ef4444' : 
+                                                           analysis.rsi < 30 ? '#10b981' : '#888',
+                                                    fontWeight: '700'
+                                                }}>
+                                                    {analysis.rsi?.toFixed(2) || 'N/A'}
+                                                </Typography>
+                                                <Chip 
+                                                    label={analysis.rsiSignal?.replace('_', ' ').toUpperCase() || 'NEUTRAL'}
+                                                    size="small"
+                                                    sx={{
+                                                        bgcolor: analysis.rsiSignal?.includes('oversold') ? 'rgba(16, 185, 129, 0.2)' :
+                                                                 analysis.rsiSignal?.includes('overbought') ? 'rgba(239, 68, 68, 0.2)' :
+                                                                 'rgba(255, 255, 255, 0.1)',
+                                                        color: analysis.rsiSignal?.includes('oversold') ? '#10b981' :
+                                                               analysis.rsiSignal?.includes('overbought') ? '#ef4444' :
+                                                               '#888',
+                                                        fontSize: '0.7rem'
+                                                    }}
+                                                />
+                                            </Stack>
+                                            <Typography variant="caption" sx={{ color: '#666', display: 'block', mt: 1 }}>
+                                                {analysis.rsi > 70 ? 'Overbought (>70) - Consider selling' : 
+                                                 analysis.rsi < 30 ? 'Oversold (<30) - Buy opportunity' : 
+                                                 'Neutral (30-70)'}
+                                            </Typography>
+                                        </Card>
+
+                                        <Card sx={{ p: 3, bgcolor: '#000', border: '1px solid rgba(255,255,255,0.05)', borderRadius: 2 }}>
+                                            <Typography variant="subtitle2" sx={{ color: '#666', mb: 1 }}>Volatility (Annualized)</Typography>
+                                            <Stack direction="row" alignItems="center" spacing={2}>
+                                                <Typography variant="h4" sx={{ 
+                                                    color: analysis.riskLevel === 'low' ? '#10b981' :
+                                                           analysis.riskLevel === 'very_high' ? '#ef4444' :
+                                                           '#fbbf24',
+                                                    fontWeight: '700'
+                                                }}>
+                                                    {analysis.volatility?.toFixed(1) || 'N/A'}%
+                                                </Typography>
+                                                <Chip 
+                                                    label={analysis.riskLevel?.replace('_', ' ').toUpperCase() || 'UNKNOWN'}
+                                                    size="small"
+                                                    sx={{
+                                                        bgcolor: analysis.riskLevel === 'low' ? 'rgba(16, 185, 129, 0.2)' :
+                                                                 analysis.riskLevel === 'very_high' ? 'rgba(239, 68, 68, 0.2)' :
+                                                                 'rgba(251, 191, 36, 0.2)',
+                                                        color: analysis.riskLevel === 'low' ? '#10b981' :
+                                                               analysis.riskLevel === 'very_high' ? '#ef4444' :
+                                                               '#fbbf24',
+                                                        fontSize: '0.7rem'
+                                                    }}
+                                                />
+                                            </Stack>
+                                            <Typography variant="caption" sx={{ color: '#666', display: 'block', mt: 1 }}>
+                                                90-day historical volatility
                                             </Typography>
                                         </Card>
 

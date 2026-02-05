@@ -11,10 +11,10 @@ const PerformanceCard = ({ label, name, value, percentage, hideLabel }) => {
         <div className="performance-card card">
             {!hideLabel && <div className="text-muted text-sm">{label}</div>}
             <div style={{ margin: '15px 0' }}>
-                <h3 style={{ margin: 0, fontSize: '1.2rem' }}>{name}</h3>
+                <h3 style={{ margin: 0, fontSize: '1.2rem', color: '#fff' }}>{name}</h3>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>{formatCurrency(value)}</span>
+                <span style={{ fontSize: '1.2rem', fontWeight: 'bold', color: '#fff' }}>{formatCurrency(value)}</span>
                 <span style={{
                     fontWeight: 600,
                     padding: '4px 8px',

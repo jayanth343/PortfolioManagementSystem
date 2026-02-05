@@ -10,7 +10,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -36,7 +36,7 @@ class TransactionSeviceimpTest {
         transaction.setSymbol("AAPL");
         transaction.setQuantity(10);
         transaction.setBuyPrice(150.0);
-        transaction.setTransactionDate(LocalDate.now());
+        transaction.setTransactionDate(LocalDateTime.now());
         transaction.setTransactionType("BUY");
     }
 

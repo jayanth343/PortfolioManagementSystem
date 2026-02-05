@@ -19,7 +19,7 @@ public interface PmsService {
     double getTotalPortfolioValue();
 
     List<PmsEntity> getAllAssets();
-
     PmsEntity getAssetById(Long id) throws InvalidPmsIdException;
+    PmsEntity updateCurrentPrice(String symbol, double newPrice);
 
 }
