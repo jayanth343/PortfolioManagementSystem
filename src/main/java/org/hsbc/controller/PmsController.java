@@ -4,6 +4,8 @@ import org.hsbc.entity.PmsEntity;
 import org.hsbc.exception.InvalidPmsIdException;
 import org.hsbc.service.PmsService;
 import org.hsbc.service.PmsServiceimp;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,6 +14,8 @@ import java.util.List;
 @RestController
 @RequestMapping("/pms")
 public class PmsController {
+    private static final Logger log =
+            LoggerFactory.getLogger(PmsController.class);
 
 
 //    public List<PmsEntity> findAllPms(){

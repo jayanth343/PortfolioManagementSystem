@@ -3,6 +3,8 @@ package org.hsbc.service;
 import org.hsbc.entity.PmsEntity;
 import org.hsbc.exception.InvalidPmsIdException;
 import org.hsbc.repo.PmsRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,9 +13,10 @@ import java.util.Optional;
 
 @Service
 public class PmsServiceimp implements PmsService {
-
-    @Autowired
-    private PmsRepository repository;
+    private static final Logger log =
+            LoggerFactory.getLogger(PmsServiceimp.class);
+        @Autowired
+        private PmsRepository repository;
 
     // 1️⃣ Add Asset
     @Override
