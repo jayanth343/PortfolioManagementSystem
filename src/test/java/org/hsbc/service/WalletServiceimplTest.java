@@ -8,7 +8,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
 
@@ -50,7 +49,7 @@ class WalletServiceImplTest {
     void testGetBalanceNotFound() {
         when(repository.findById(1L)).thenReturn(Optional.empty());
 
-        assertThrows(ResponseStatusException.class, () -> service.getBalance());
+        assertThrows(org.hsbc.exception.ResourceNotFoundException.class, () -> service.getBalance());
     }
 
     // 2️⃣ addMoney()
@@ -85,7 +84,7 @@ class WalletServiceImplTest {
         when(repository.findById(1L)).thenReturn(Optional.of(wallet));
 
         // Trying to deduct 6000 when balance is 5000
-        assertThrows(ResponseStatusException.class, () -> service.deductMoney(6000.0));
+        assertThrows(org.hsbc.exception.InsufficientBalanceException.class, () -> service.deductMoney(6000.0));
 
         // Ensure save is NEVER called if exception is thrown
         verify(repository, times(0)).save(any(WalletEntity.class));

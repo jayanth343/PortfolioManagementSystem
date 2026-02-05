@@ -28,6 +28,9 @@ public class PmsServiceimpTest {
 
     private PmsEntity asset1;
 
+    @Mock
+    private org.hsbc.service.WalletService walletService;
+
     @BeforeEach
     void setUp() {
         // Setup dummy data
@@ -40,6 +43,23 @@ public class PmsServiceimpTest {
     }
 
     // --- Success Tests ---
+
+    @Test
+    void testAddAsset_Success() {
+        PmsEntity newAsset = new PmsEntity();
+        newAsset.setSymbol("GOOGL");
+        newAsset.setBuyPrice(100.0);
+        newAsset.setQuantity(10);
+
+        when(walletService.deductMoney(1000.0)).thenReturn(4000.0);
+        when(repository.save(any(PmsEntity.class))).thenReturn(newAsset);
+
+        PmsEntity result = service.addAsset(newAsset);
+
+        assertNotNull(result);
+        verify(walletService, times(1)).deductMoney(1000.0);
+        assertNotNull(result.getPurchaseDate());
+    }
 
     @Test
     void testGetAssetById_Success() throws InvalidPmsIdException {
@@ -76,12 +96,60 @@ public class PmsServiceimpTest {
     }
 
     @Test
+    void testCalculatePLPercentage_Success() throws InvalidPmsIdException {
+        when(repository.findById(1L)).thenReturn(Optional.of(asset1));
+        // PL is 200. Buying value 1500. % = 200/1500 * 100 = 13.333
+
+        double plPct = service.calculatePLPercentage(1L);
+        assertEquals(13.333, plPct, 0.01);
+    }
+
+    @Test
+    void testCalculatePLPercentage_ZeroBuyingValue() throws InvalidPmsIdException {
+        asset1.setBuyPrice(0.0);
+        when(repository.findById(1L)).thenReturn(Optional.of(asset1));
+
+        assertEquals(0.0, service.calculatePLPercentage(1L));
+    }
+
+    @Test
     void testRemoveAsset_Success() throws InvalidPmsIdException {
         when(repository.findById(1L)).thenReturn(Optional.of(asset1));
 
         assertDoesNotThrow(() -> service.removeAsset(1L));
 
         verify(repository, times(1)).deleteById(1L);
+    }
+
+    @Test
+    void testGetTotalPortfolioValue() {
+        PmsEntity asset2 = new PmsEntity();
+        asset2.setCurrentPrice(50.0);
+        asset2.setQuantity(20); // 1000
+        // asset1 is 170 * 10 = 1700
+
+        when(repository.findAll()).thenReturn(Arrays.asList(asset1, asset2));
+
+        double total = service.getTotalPortfolioValue();
+        assertEquals(2700.0, total);
+    }
+
+    @Test
+    void testUpdateCurrentPrice_Success() {
+        when(repository.findAll()).thenReturn(Arrays.asList(asset1));
+        when(repository.save(any(PmsEntity.class))).thenReturn(asset1);
+
+        service.updateCurrentPrice("AAPL", 180.0);
+
+        assertEquals(180.0, asset1.getCurrentPrice());
+    }
+
+    @Test
+    void testUpdateCurrentPrice_NotFound() {
+        when(repository.findAll()).thenReturn(Arrays.asList(asset1));
+
+        assertThrows(org.hsbc.exception.ResourceNotFoundException.class,
+                () -> service.updateCurrentPrice("XYZ", 100.0));
     }
 
     // --- Exception Tests (Failure Scenarios) ---
