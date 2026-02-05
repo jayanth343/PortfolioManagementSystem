@@ -3,12 +3,16 @@ package org.hsbc.service;
 import org.hsbc.entity.TransactionEntity;
 
 import org.hsbc.repo.TransactionRepo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
 public class TransactionSeviceimp implements TransactionService {
+    private static final Logger log =
+            LoggerFactory.getLogger(TransactionSeviceimp.class);
 
     private final TransactionRepo repository;
 
