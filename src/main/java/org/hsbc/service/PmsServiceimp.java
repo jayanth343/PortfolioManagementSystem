@@ -1,12 +1,10 @@
 package org.hsbc.service;
 
 import org.hsbc.entity.PmsEntity;
-import org.hsbc.exception.InvalidException;
+import org.hsbc.exception.InvalidPmsIdException;
 import org.hsbc.repo.PmsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -14,68 +12,66 @@ import java.util.Optional;
 @Service
 public class PmsServiceimp implements PmsService {
 
-        @Autowired
-        private PmsRepository repository;
+    @Autowired
+    private PmsRepository repository;
 
-        // 1️⃣ Add Asset
-        @Override
-        public PmsEntity addAsset(PmsEntity asset) {
-            asset.setBuyingValue(asset.getBuyPrice() * asset.getQuantity());
-            return repository.save(asset);
-        }
+    // 1️⃣ Add Asset
+    @Override
+    public PmsEntity addAsset(PmsEntity asset) {
+        asset.setBuyingValue(asset.getBuyPrice() * asset.getQuantity());
+        return repository.save(asset);
+    }
 
-        // 2️⃣ Remove Asset
-        @Override
-        public void removeAsset(Long id) {
-            repository.deleteById(id);
-        }
+    // 2️⃣ Remove Asset
+    @Override
+    public void removeAsset(Long id) throws InvalidPmsIdException {
+        getAssetById(id);
+        repository.deleteById(id);
+    }
 
-        // 3️⃣ Update Quantity
-        @Override
-        public PmsEntity updateQuantity(Long id, int newQuantity) {
-            PmsEntity asset = repository.findById(id)
-                    .orElseThrow(() -> new RuntimeException("Asset not found"));
+    // 3️⃣ Update Quantity
+    @Override
+    public PmsEntity updateQuantity(Long id, int newQuantity) throws InvalidPmsIdException {
+        PmsEntity asset = getAssetById(id);
 
-            asset.setQuantity(newQuantity);
-            asset.setBuyingValue(asset.getBuyPrice() * newQuantity);
+        asset.setQuantity(newQuantity);
+        asset.setBuyingValue(asset.getBuyPrice() * newQuantity);
 
-            return repository.save(asset);
-        }
+        return repository.save(asset);
+    }
 
-        // 4️⃣ Calculate Profit / Loss
-        @Override
-        public double calculatePL(Long id) {
-            PmsEntity asset = repository.findById(id)
-                    .orElseThrow(() -> new RuntimeException("Asset not found"));
+    // 4️⃣ Calculate Profit / Loss
+    @Override
+    public double calculatePL(Long id) throws InvalidPmsIdException {
+        PmsEntity asset = getAssetById(id);
 
-            double buyingValue = asset.getBuyPrice() * asset.getQuantity();
-            double currentValue = asset.getCurrentPrice() * asset.getQuantity();
+        double buyingValue = asset.getBuyPrice() * asset.getQuantity();
+        double currentValue = asset.getCurrentPrice() * asset.getQuantity();
 
-            return currentValue - buyingValue;
-        }
+        return currentValue - buyingValue;
+    }
 
-        // 5️⃣ Calculate P/L Percentage
-        @Override
-        public double calculatePLPercentage(Long id) {
-            PmsEntity asset = repository.findById(id)
-                    .orElseThrow(() -> new RuntimeException("Asset not found"));
+    // 5️⃣ Calculate P/L Percentage
+    @Override
+    public double calculatePLPercentage(Long id) throws InvalidPmsIdException {
+        PmsEntity asset = getAssetById(id);
 
-            double buyingValue = asset.getBuyPrice() * asset.getQuantity();
-            double pl = calculatePL(id);
+        double buyingValue = asset.getBuyPrice() * asset.getQuantity();
+        double pl = calculatePL(id);
 
-            if (buyingValue == 0) return 0;
+        if (buyingValue == 0) return 0;
 
-            return (pl / buyingValue) * 100;
-        }
+        return (pl / buyingValue) * 100;
+    }
 
-        // 6️⃣ Total Portfolio Value
-        @Override
-        public double getTotalPortfolioValue() {
-            return repository.findAll()
-                    .stream()
-                    .mapToDouble(a -> a.getCurrentPrice() * a.getQuantity())
-                    .sum();
-        }
+    // 6️⃣ Total Portfolio Value
+    @Override
+    public double getTotalPortfolioValue() {
+        return repository.findAll()
+                .stream()
+                .mapToDouble(a -> a.getCurrentPrice() * a.getQuantity())
+                .sum();
+    }
     public PmsServiceimp(PmsRepository repository) {
         this.repository = repository;
     }
@@ -85,12 +81,12 @@ public class PmsServiceimp implements PmsService {
         return repository.findAll();
     }
     @Override
-    public PmsEntity getAssetById(Long id) {
-        return repository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND,
-                        "Asset not found with id " + id
-                ));
+    public PmsEntity getAssetById(Long id) throws InvalidPmsIdException {
+        Optional<PmsEntity> optAsset = repository.findById(id);
+        if (optAsset.isEmpty()) {
+            throw new InvalidPmsIdException("Asset not found with id " + id);
+        }
+        return optAsset.get();
     }
 //
 //    public PmsEntity findAllPms(long id) throws InvalidException {
