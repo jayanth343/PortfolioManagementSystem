@@ -1,11 +1,14 @@
 package org.hsbc.controller;
 
+import org.hsbc.entity.WalletEntity;
 import org.hsbc.service.WalletService;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
 
 @RestController
 @RequestMapping("/wallet")
+@CrossOrigin(origins = "*")
 public class WalletController {
 
     private final WalletService service;
@@ -30,5 +33,11 @@ public class WalletController {
     @PostMapping("/deduct")
     public double deductMoney(@RequestParam double amount) {
         return service.deductMoney(amount);
+    }
+    
+    // 4️⃣ Get wallet summary
+    @GetMapping("/summary")
+    public WalletEntity getWalletSummary() {
+        return service.getWalletSummary();
     }
 }

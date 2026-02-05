@@ -84,18 +84,46 @@ const transactions = [
 ];
 
 export const getTransactions = async () => {
-    return new Promise((resolve) => {
-        setTimeout(() => {
-            resolve([...transactions]);
-        }, 400);
-    });
+    try {
+        const response = await fetch('http://localhost:8080/transactions/all');
+        if (!response.ok) {
+            throw new Error('Failed to fetch transactions');
+        }
+        return await response.json();
+    } catch (error) {
+        console.error('Error fetching transactions:', error);
+        return [];
+    }
 };
 
 export const addTransaction = async (transaction) => {
-    return new Promise((resolve) => {
-        setTimeout(() => {
-            transactions.unshift(transaction); // Add to beginning of list
-            resolve(transaction);
-        }, 400);
-    });
+    try {
+        const response = await fetch('http://localhost:8080/transactions/add', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(transaction),
+        });
+        if (!response.ok) {
+            throw new Error('Failed to add transaction');
+        }
+        return await response.json();
+    } catch (error) {
+        console.error('Error adding transaction:', error);
+        throw error;
+    }
+};
+
+export const getTransactionsBySymbol = async (symbol) => {
+    try {
+        const response = await fetch(`http://localhost:8080/transactions/symbol/${symbol}`);
+        if (!response.ok) {
+            throw new Error('Failed to fetch transactions by symbol');
+        }
+        return await response.json();
+    } catch (error) {
+        console.error('Error fetching transactions by symbol:', error);
+        return [];
+    }
 };

@@ -109,7 +109,7 @@ const normalizeData = (inputData) => {
 };
 
 
-const PriceChart = ({ symbol, height = 400, color = '#DB292D', initialPeriod = '1M' }) => {
+const PriceChart = ({ symbol, height = 400, color = '#DB292D', initialPeriod = '1M', data = null }) => {
     const chartContainerRef = useRef(null);
     const chartRef = useRef(null);
     const seriesRef = useRef(null);
@@ -118,8 +118,22 @@ const PriceChart = ({ symbol, height = 400, color = '#DB292D', initialPeriod = '
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
+    // If external data is provided, use it directly
+    useEffect(() => {
+        if (data && Array.isArray(data) && data.length > 0) {
+            console.log('PriceChart: Using external data', data.length, 'points');
+            setChartData(data);
+        }
+    }, [data]);
+
     // Fetch historical data from API
     const fetchHistoryData = async (periodLabel) => {
+        // Skip fetch if external data is provided
+        if (data) {
+            console.log('PriceChart: Skipping fetch, using external data');
+            return;
+        }
+
         if (!symbol) {
             console.log('PriceChart: No symbol provided');
             return;
@@ -355,42 +369,44 @@ const PriceChart = ({ symbol, height = 400, color = '#DB292D', initialPeriod = '
 
     return (
         <div style={{ width: '100%', position: 'relative' }}>
-            {/* Period Tabs */}
-            <div style={{
-                display: 'flex',
-                gap: '8px',
-                marginBottom: '12px',
-                flexWrap: 'wrap',
-                justifyContent: 'center',
-            }}>
-                {PERIOD_CONFIGS.map(config => (
-                    <button
-                        key={config.label}
-                        onClick={() => setSelectedPeriod(config.label)}
-                        disabled={loading}
-                        style={{
-                            padding: '6px 16px',
-                            border: selectedPeriod === config.label 
-                                ? `2px solid ${color}` 
-                                : '2px solid rgba(197, 203, 206, 0.3)',
-                            borderRadius: '6px',
-                            background: selectedPeriod === config.label 
-                                ? `${color}15` 
-                                : 'transparent',
-                            color: selectedPeriod === config.label 
-                                ? color 
-                                : '#d1d4dc',
-                            cursor: loading ? 'not-allowed' : 'pointer',
-                            fontSize: '13px',
-                            fontWeight: selectedPeriod === config.label ? '600' : '500',
-                            transition: 'all 0.2s ease',
-                            opacity: loading ? 0.5 : 1,
-                        }}
-                    >
-                        {config.label}
-                    </button>
-                ))}
-            </div>
+            {/* Period Tabs - Only show if no external data is provided */}
+            {!data && (
+                <div style={{
+                    display: 'flex',
+                    gap: '8px',
+                    marginBottom: '12px',
+                    flexWrap: 'wrap',
+                    justifyContent: 'center',
+                }}>
+                    {PERIOD_CONFIGS.map(config => (
+                        <button
+                            key={config.label}
+                            onClick={() => setSelectedPeriod(config.label)}
+                            disabled={loading}
+                            style={{
+                                padding: '6px 16px',
+                                border: selectedPeriod === config.label 
+                                    ? `2px solid ${color}` 
+                                    : '2px solid rgba(197, 203, 206, 0.3)',
+                                borderRadius: '6px',
+                                background: selectedPeriod === config.label 
+                                    ? `${color}15` 
+                                    : 'transparent',
+                                color: selectedPeriod === config.label 
+                                    ? color 
+                                    : '#d1d4dc',
+                                cursor: loading ? 'not-allowed' : 'pointer',
+                                fontSize: '13px',
+                                fontWeight: selectedPeriod === config.label ? '600' : '500',
+                                transition: 'all 0.2s ease',
+                                opacity: loading ? 0.5 : 1,
+                            }}
+                        >
+                            {config.label}
+                        </button>
+                    ))}
+                </div>
+            )}
 
             {/* Loading/Error State */}
             {loading && (

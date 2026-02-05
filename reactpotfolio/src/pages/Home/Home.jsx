@@ -1,9 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { io } from 'socket.io-client';
+import { 
+    Box, 
+    Container, 
+    Typography, 
+    Card, 
+    CardContent, 
+    Grid, 
+    Stack,
+    Divider,
+    Chip
+} from '@mui/material';
+import { TrendingUp, TrendingDown, AccountBalance, ShowChart, AccountBalanceWallet } from '@mui/icons-material';
 import PortfolioChart from '../../components/charts/PortfolioChart';
 import PerformanceCard from '../../components/cards/PerformanceCard';
-import { getPortfolioSummary, getPortfolioPerformance, getAssetAllocation } from '../../api/portfolioApi';
-import { getAssets } from '../../api/assetsApi';
+import { getPortfolioSummary, getPortfolioPerformance, getAssetAllocation, getInvestmentBreakdown, getPerformers } from '../../api/portfolioApi';
+import { getAssets, updateCurrentPrice } from '../../api/assetsApi';
 import AssetAllocationPieChart from '../../components/charts/AssetAllocationPieChart';
 import './Home.css';
 
@@ -16,7 +29,11 @@ const Home = () => {
     const [chartData, setChartData] = useState(null);
     const [allocationData, setAllocationData] = useState(null);
     const [assets, setAssets] = useState([]);
+    const [breakdown, setBreakdown] = useState([]);
+    const [performers, setPerformers] = useState({ topPerformers: [], lowestPerformers: [] });
     const [loading, setLoading] = useState(true);
+    const [livePrices, setLivePrices] = useState({});
+    const [lastUpdateTime, setLastUpdateTime] = useState(null);
 
 
 
@@ -27,12 +44,24 @@ const Home = () => {
                 const performanceData = await getPortfolioPerformance();
                 const allocation = await getAssetAllocation();
                 const assetsData = await getAssets();
+                const breakdownData = await getInvestmentBreakdown();
+                const performersData = await getPerformers();
+                
+                console.log("Portfolio Performance Data:", performanceData);
+                console.log("Performance Data Length:", performanceData?.length);
+                console.log("Performers Data:", performersData);
+                console.log("Top Performers:", performersData?.topPerformers);
+                console.log("Lowest Performers:", performersData?.lowestPerformers);
+                
                 setSummary(summaryData);
-                setChartData(performanceData);
+                setChartData(performanceData || []);
                 setAllocationData(allocation);
                 setAssets(assetsData);
+                setBreakdown(breakdownData);
+                setPerformers(performersData);
             } catch (error) {
                 console.error("Failed to fetch portfolio data", error);
+                setChartData([]); // Set empty array on error
             } finally {
                 setLoading(false);
             }
@@ -41,6 +70,59 @@ const Home = () => {
         fetchData();
     }, []);
 
+    // Socket.IO for live portfolio prices (updates every 3 minutes)
+    useEffect(() => {
+        if (!assets || assets.length === 0) return;
+
+        const socket = io('http://localhost:5000');
+
+        socket.on('connect', () => {
+            console.log('Portfolio Socket connected');
+            // Subscribe to assets based on type
+            assets.forEach(asset => {
+                if (asset.assetType?.toLowerCase().includes('fund') || asset.assetType?.toLowerCase().includes('mutual')) {
+                    // For mutual funds, use different endpoint or skip live updates
+                    // Mutual funds update once a day, so we can skip socket subscription
+                    console.log(`Skipping socket for mutual fund: ${asset.symbol}`);
+                } else {
+                    // For stocks, crypto, commodities
+                    socket.emit('subscribe_ticker', { ticker: asset.symbol });
+                }
+            });
+        });
+
+        socket.on('price_update', (data) => {
+            console.log('Portfolio Price update:', data);
+            setLivePrices(prev => ({
+                ...prev,
+                [data.ticker]: data.price
+            }));
+            setLastUpdateTime(data.timestamp);
+            
+            // Update database with new price
+            updateCurrentPrice(data.ticker, data.price)
+                .then(() => {
+                    console.log(`Database updated for ${data.ticker}: ${data.price}`);
+                })
+                .catch((error) => {
+                    console.error(`Failed to update database for ${data.ticker}:`, error);
+                });
+        });
+
+        socket.on('error', (error) => {
+            console.error('Portfolio Socket error:', error);
+        });
+
+        return () => {
+            assets.forEach(asset => {
+                if (!asset.assetType?.toLowerCase().includes('fund')) {
+                    socket.emit('unsubscribe_ticker', { ticker: asset.symbol });
+                }
+            });
+            socket.disconnect();
+        };
+    }, [assets]);
+
     const handleCardClick = (asset) => {
         // Navigate to the asset details page
         const assetType = asset.assetType?.toLowerCase().replace(' ', '') || 'stock';
@@ -48,123 +130,427 @@ const Home = () => {
     };
 
     if (loading) {
-        return <div className="home-page" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80vh' }}>Loading...</div>;
+        return (
+            <Box sx={{ 
+                display: 'flex', 
+                justifyContent: 'center', 
+                alignItems: 'center', 
+                minHeight: '80vh'
+            }}>
+                <Typography sx={{ color: '#fff', fontSize: '1.2rem' }}>Loading...</Typography>
+            </Box>
+        );
     }
 
-    // Calculate Investment Breakdown
-    const investmentBreakdown = {
-        'Stocks': 0,
-        'Mutual Funds': 0,
-        'Crypto': 0,
-        'Commodities': 0
+    // Map breakdown data with icons and colors
+    const iconMap = {
+        'Stocks': { icon: <ShowChart />, color: '#10b981' },
+        'Mutual Funds': { icon: <AccountBalance />, color: '#3b82f6' },
+        'Crypto': { icon: <TrendingUp />, color: '#f59e0b' },
+        'Commodities': { icon: <TrendingDown />, color: '#8b5cf6' }
     };
 
-    assets.forEach(asset => {
-        if (investmentBreakdown[asset.assetType] !== undefined) {
-            investmentBreakdown[asset.assetType] += asset.currentValue;
-        }
-    });
+    const investmentBreakdown = breakdown.map(item => ({
+        type: item.type,
+        value: item.value,
+        icon: iconMap[item.type]?.icon || <ShowChart />,
+        color: iconMap[item.type]?.color || '#10b981'
+    }));
+
+    // Calculate live portfolio value and gain/loss
+    const livePortfolioValue = assets.reduce((total, asset) => {
+        const currentPrice = livePrices[asset.symbol] || asset.currentPrice;
+        return total + (currentPrice * asset.quantity);
+    }, 0);
+
+    const totalInvestedValue = summary?.totalInvested || 0;
+    const liveGain = livePortfolioValue - totalInvestedValue;
+    const liveGainPercentage = totalInvestedValue > 0 ? (liveGain / totalInvestedValue) * 100 : 0;
+
+    const isPositive = liveGain >= 0;
+
+    // Format last update time
+    const formatUpdateTime = (timestamp) => {
+        if (!timestamp) return 'Updating...';
+        const date = new Date(timestamp);
+        return date.toLocaleTimeString('en-IN', { 
+            timeZone: 'Asia/Kolkata',
+            hour: '2-digit', 
+            minute: '2-digit',
+            second: '2-digit'
+        }) + ' IST';
+    };
 
     return (
-        <div className="home-page">
-            <div className="hero-section" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '40px', textAlign: 'center' }}>
-                <h1 style={{ fontSize: '3rem', marginBottom: '20px' }}>Hello, {summary.userName}</h1>
+        <Box sx={{ bgcolor: '#0a0a0a', minHeight: '100vh', pb: 6 }}>
+            <Container maxWidth="xl" sx={{ pt: 3 }}>
+                {/* Hero Section */}
+                <Box sx={{ mb: 3 }}>
+                    <Typography 
+                        variant="h4" 
+                        sx={{ 
+                            color: '#fff', 
+                            fontWeight: '600',
+                            mb: 0.5,
+                            fontSize: { xs: '1.5rem', md: '2rem' }
+                        }}
+                    >
+                        Portfolio Dashboard
+                    </Typography>
+                    <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.5)' }}>
+                        Welcome back, {summary?.userName || 'User'}
+                    </Typography>
+                </Box>
 
-                <div className="portfolio-summary" style={{ textAlign: 'center', marginBottom: '25px', width: 'fit-content' }}>
-                    <div style={{ fontSize: '1.2rem', color: 'var(--text-secondary)', marginBottom: '5px' }}>Total Portfolio Value</div>
-                    <div style={{ fontSize: '2.5rem', fontWeight: 'bold', marginBottom: '5px' }}>{formatCurrency(summary.portfolioValue)}</div>
-                    <div style={{ fontSize: '1.1rem' }}>
-                        <span className="text-positive">{formatCurrency(summary.totalGain)} ({formatPercentage(summary.gainPercentage)})</span>
-                    </div>
-                </div>
+                {/* Portfolio Value Card */}
+                <Card sx={{ 
+                    bgcolor: '#111', 
+                    border: '1px solid rgba(255,255,255,0.1)',
+                    borderRadius: 2,
+                    mb: 3,
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.4)'
+                }}>
+                    <CardContent sx={{ p: 3 }}>
+                        <Stack direction="row" spacing={4} alignItems="center" flexWrap="wrap">
+                            <Box>
+                                <Chip 
+                                    icon={<AccountBalanceWallet sx={{ color: '#4caf50 !important' }} />}
+                                    label="Total Portfolio Value"
+                                    sx={{ 
+                                        bgcolor: 'rgba(76, 175, 80, 0.1)',
+                                        color: '#4caf50',
+                                        border: '1px solid rgba(76, 175, 80, 0.3)',
+                                        fontWeight: '600',
+                                        fontSize: '0.75rem',
+                                        mb: 1.5,
+                                        '& .MuiChip-icon': {
+                                            color: '#4caf50'
+                                        }
+                                    }}
+                                />
+                                <Typography 
+                                    variant="h3" 
+                                    sx={{ 
+                                        color: '#fff', 
+                                        fontWeight: '700',
+                                        fontSize: { xs: '2rem', md: '2.75rem' }
+                                    }}
+                                >
+                                    {formatCurrency(livePortfolioValue || summary?.portfolioValue || 0)}
+                                </Typography>
+                                <Typography 
+                                    variant="caption" 
+                                    sx={{ 
+                                        color: 'rgba(255,255,255,0.4)',
+                                        fontSize: '0.7rem',
+                                        mt: 0.5,
+                                        display: 'block'
+                                    }}
+                                >
+                                    Last updated: {formatUpdateTime(lastUpdateTime)}
+                                </Typography>
+                            </Box>
+                            <Divider orientation="vertical" flexItem sx={{ bgcolor: 'rgba(255,255,255,0.1)' }} />
+                            <Box>
+                                <Typography 
+                                    variant="caption" 
+                                    sx={{ 
+                                        color: 'rgba(255,255,255,0.6)', 
+                                        textTransform: 'uppercase',
+                                        letterSpacing: 1.2,
+                                        fontSize: '0.7rem',
+                                        fontWeight: '500',
+                                        mb: 0.5,
+                                        display: 'block'
+                                    }}
+                                >
+                                    Total Invested
+                                </Typography>
+                                <Typography 
+                                    variant="h4" 
+                                    sx={{ 
+                                        color: 'rgba(255,255,255,0.8)',
+                                        fontWeight: '600',
+                                        fontSize: { xs: '1.5rem', md: '2rem' }
+                                    }}
+                                >
+                                    {formatCurrency(summary?.totalInvested || 0)}
+                                </Typography>
+                            </Box>
+                            <Divider orientation="vertical" flexItem sx={{ bgcolor: 'rgba(255,255,255,0.1)' }} />
+                            <Box>
+                                <Typography 
+                                    variant="caption" 
+                                    sx={{ 
+                                        color: 'rgba(255,255,255,0.6)', 
+                                        textTransform: 'uppercase',
+                                        letterSpacing: 1.2,
+                                        fontSize: '0.7rem',
+                                        fontWeight: '500',
+                                        mb: 0.5,
+                                        display: 'block'
+                                    }}
+                                >
+                                    Total Gain/Loss
+                                </Typography>
+                                <Stack direction="row" spacing={1.5} alignItems="baseline">
+                                    <Typography 
+                                        variant="h4" 
+                                        sx={{ 
+                                            color: isPositive ? '#00c853' : '#ff1744',
+                                            fontWeight: '700',
+                                            fontSize: { xs: '1.5rem', md: '2rem' }
+                                        }}
+                                    >
+                                        {isPositive ? '+' : ''}{formatCurrency(liveGain || summary?.totalGain || 0)}
+                                    </Typography>
+                                    <Typography 
+                                        variant="h6" 
+                                        sx={{ 
+                                            color: isPositive ? '#00c853' : '#ff1744',
+                                            fontWeight: '600',
+                                            fontSize: { xs: '1rem', md: '1.25rem' }
+                                        }}
+                                    >
+                                        ({isPositive ? '+' : ''}{formatPercentage(liveGainPercentage || summary?.gainPercentage || 0)})
+                                    </Typography>
+                                </Stack>
+                            </Box>
+                        </Stack>
+                    </CardContent>
+                </Card>
 
+                {/* Charts Section */}
+                <Box sx={{ display: 'flex', gap: 2, mb: 3, flexWrap: 'wrap' }}>
+                    <Box sx={{ flex: '1 1 48%', minWidth: '400px' }}>
+                        <Card sx={{ 
+                            bgcolor: '#111', 
+                            border: '1px solid rgba(255,255,255,0.1)',
+                            borderRadius: 2,
+                            height: '100%',
+                            boxShadow: '0 2px 8px rgba(0,0,0,0.3)'
+                        }}>
+                            <CardContent sx={{ p: 2.5 }}>
+                                <Typography 
+                                    variant="subtitle1" 
+                                    sx={{ 
+                                        color: '#fff', 
+                                        fontWeight: '600',
+                                        mb: 2,
+                                        fontSize: '1rem'
+                                    }}
+                                >
+                                    Asset Allocation
+                                </Typography>
+                                <AssetAllocationPieChart data={allocationData} />
+                            </CardContent>
+                        </Card>
+                    </Box>
+                    <Box sx={{ flex: '1 1 48%', minWidth: '400px' }}>
+                        <Card sx={{ 
+                            bgcolor: '#111', 
+                            border: '1px solid rgba(255,255,255,0.1)',
+                            borderRadius: 2,
+                            height: '100%',
+                            boxShadow: '0 2px 8px rgba(0,0,0,0.3)'
+                        }}>
+                            <CardContent sx={{ p: 2.5 }}>
+                                <Typography 
+                                    variant="subtitle1" 
+                                    sx={{ 
+                                        color: '#fff', 
+                                        fontWeight: '600',
+                                        mb: 2,
+                                        fontSize: '1rem'
+                                    }}
+                                >
+                                    Portfolio Performance
+                                </Typography>
+                                <PortfolioChart data={chartData} />
+                            </CardContent>
+                        </Card>
+                    </Box>
+                </Box>
 
+                {/* Investment Breakdown */}
+                <Box sx={{ mb: 3 }}>
+                    <Typography 
+                        variant="subtitle1" 
+                        sx={{ 
+                            color: '#fff', 
+                            fontWeight: '600',
+                            mb: 2,
+                            fontSize: '1rem'
+                        }}
+                    >
+                        Investment Breakdown
+                    </Typography>
+                    <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
+                        {investmentBreakdown.map((item) => (
+                            <Box key={item.type} sx={{ flex: '1 1 23%', minWidth: '200px' }}>
+                                <Card 
+                                    onClick={() => navigate('/holdings')}
+                                    sx={{ 
+                                        bgcolor: '#111', 
+                                        border: '1px solid rgba(255,255,255,0.1)',
+                                        borderRadius: 2,
+                                        cursor: 'pointer',
+                                        transition: 'all 0.2s',
+                                        boxShadow: '0 2px 6px rgba(0,0,0,0.2)',
+                                        '&:hover': {
+                                            transform: 'translateY(-2px)',
+                                            borderColor: item.color,
+                                            boxShadow: `0 4px 12px ${item.color}20`
+                                        }
+                                    }}
+                                >
+                                    <CardContent sx={{ p: 2.5 }}>
+                                        <Stack direction="row" justifyContent="space-between" alignItems="center" mb={1.5}>
+                                            <Typography 
+                                                variant="caption" 
+                                                sx={{ 
+                                                    color: 'rgba(255,255,255,0.5)',
+                                                    textTransform: 'uppercase',
+                                                    letterSpacing: 1,
+                                                    fontSize: '0.65rem',
+                                                    fontWeight: '600'
+                                                }}
+                                            >
+                                                {item.type}
+                                            </Typography>
+                                            <Box sx={{ color: item.color, opacity: 0.9, fontSize: '1.25rem' }}>
+                                                {item.icon}
+                                            </Box>
+                                        </Stack>
+                                        <Typography 
+                                            variant="h5" 
+                                            sx={{ 
+                                                color: item.value > 0 ? '#fff' : 'rgba(255,255,255,0.2)',
+                                                fontWeight: '700',
+                                                fontSize: '1.5rem'
+                                            }}
+                                        >
+                                            {formatCurrency(item.value)}
+                                        </Typography>
+                                    </CardContent>
+                                </Card>
+                            </Box>
+                        ))}
+                    </Box>
+                </Box>
 
-            </div>
+                {/* Performance Section */}
+                <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
+                    {/* Top Performers */}
+                    <Box sx={{ flex: '1 1 48%', minWidth: '400px' }}>
+                        <Card sx={{ 
+                            bgcolor: '#111', 
+                            border: '1px solid rgba(255,255,255,0.1)',
+                            borderRadius: 2,
+                            boxShadow: '0 2px 8px rgba(0,0,0,0.3)'
+                        }}>
+                            <CardContent sx={{ p: 2.5 }}>
+                                <Stack direction="row" spacing={1} alignItems="center" mb={2.5}>
+                                    <Box sx={{ 
+                                        width: 3, 
+                                        height: 20, 
+                                        bgcolor: '#00c853', 
+                                        borderRadius: 1 
+                                    }} />
+                                    <Typography 
+                                        variant="subtitle1" 
+                                        sx={{ 
+                                            color: '#fff', 
+                                            fontWeight: '600',
+                                            fontSize: '1rem'
+                                        }}
+                                    >
+                                        Top Performers
+                                    </Typography>
+                                </Stack>
+                                <Stack spacing={1.5}>
+                                    {performers.topPerformers && performers.topPerformers.length > 0 ? (
+                                        performers.topPerformers.map(asset => (
+                                            <Box 
+                                                key={`top-${asset.id}`} 
+                                                onClick={() => handleCardClick(asset)}
+                                                sx={{ cursor: 'pointer' }}
+                                            >
+                                                <PerformanceCard
+                                                    label="Top Performer"
+                                                    name={asset.companyName}
+                                                    value={asset.currentValue}
+                                                    percentage={asset.percentageChange}
+                                                    hideLabel={true}
+                                                />
+                                            </Box>
+                                        ))
+                                    ) : (
+                                        <Typography sx={{ color: 'rgba(255,255,255,0.3)', textAlign: 'center', py: 3, fontSize: '0.9rem' }}>
+                                            No assets available
+                                        </Typography>
+                                    )}
+                                </Stack>
+                            </CardContent>
+                        </Card>
+                    </Box>
 
-            <div className="chart-section" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '20px', marginBottom: '40px' }}>
-                <PortfolioChart data={chartData} />
-                <AssetAllocationPieChart data={allocationData} />
-            </div>
-
-            <div className="performance-section" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '30px' }}>
-                {/* Top Performers Column */}
-                <div>
-                    <h3 style={{ marginBottom: '15px', borderLeft: '4px solid #4caf50', paddingLeft: '10px' }}>Top Performers</h3>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-                        {[...assets]
-                            .sort((a, b) => b.percentageChange - a.percentageChange)
-                            .slice(0, 3)
-                            .map(asset => (
-                                <div key={`top-${asset.id}`} onClick={() => handleCardClick(asset)} style={{ cursor: 'pointer' }}>
-                                    <PerformanceCard
-                                        label="Top Performer"
-                                        name={asset.companyName}
-                                        value={asset.currentValue}
-                                        percentage={asset.percentageChange}
-                                        hideLabel={true}
-                                    />
-                                </div>
-                            ))}
-                        {assets.length === 0 && <div className="text-muted">No assets available.</div>}
-                    </div>
-                </div>
-
-                {/* Lowest Performers Column */}
-                <div>
-                    <h3 style={{ marginBottom: '15px', borderLeft: '4px solid #f44336', paddingLeft: '10px' }}>Lowest Performers</h3>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-                        {[...assets]
-                            .sort((a, b) => a.percentageChange - b.percentageChange)
-                            .slice(0, 3)
-                            .map(asset => (
-                                <div key={`low-${asset.id}`} onClick={() => handleCardClick(asset)} style={{ cursor: 'pointer' }}>
-                                    <PerformanceCard
-                                        label="Lowest Performer"
-                                        name={asset.companyName}
-                                        value={asset.currentValue}
-                                        percentage={asset.percentageChange}
-                                        hideLabel={true}
-                                    />
-                                </div>
-                            ))}
-                        {assets.length === 0 && <div className="text-muted">No assets available.</div>}
-                    </div>
-                </div>
-            </div>
-
-            <div style={{ marginTop: '40px', marginBottom: '40px' }}>
-                <h3 style={{ marginBottom: '20px', paddingLeft: '10px', borderLeft: '4px solid #DB292D' }}>Investment Breakdown</h3>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '20px' }}>
-                    {Object.entries(investmentBreakdown).map(([type, value]) => (
-                        <div
-                            key={type}
-                            onClick={() => navigate('/holdings')}
-                            className="card breakdown-card"
-                            style={{
-                                padding: '20px',
-                                cursor: 'pointer',
-                                transition: 'transform 0.2s, background-color 0.2s',
-                                backgroundColor: '#1e1e1e'
-                            }}
-                            onMouseOver={(e) => {
-                                e.currentTarget.style.transform = 'translateY(-5px)';
-                                e.currentTarget.style.backgroundColor = '#252525';
-                            }}
-                            onMouseOut={(e) => {
-                                e.currentTarget.style.transform = 'translateY(0)';
-                                e.currentTarget.style.backgroundColor = '#1e1e1e';
-                            }}
-                        >
-                            <div className="text-muted text-sm" style={{ marginBottom: '10px', textTransform: 'uppercase', letterSpacing: '1px' }}>{type}</div>
-                            <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: value > 0 ? 'white' : 'var(--text-secondary)' }}>
-                                {formatCurrency(value)}
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            </div>
-        </div >
+                    {/* Lowest Performers */}
+                    <Box sx={{ flex: '1 1 48%', minWidth: '400px' }}>
+                        <Card sx={{ 
+                            bgcolor: '#111', 
+                            border: '1px solid rgba(255,255,255,0.1)',
+                            borderRadius: 2,
+                            boxShadow: '0 2px 8px rgba(0,0,0,0.3)'
+                        }}>
+                            <CardContent sx={{ p: 2.5 }}>
+                                <Stack direction="row" spacing={1} alignItems="center" mb={2.5}>
+                                    <Box sx={{ 
+                                        width: 3, 
+                                        height: 20, 
+                                        bgcolor: '#ff1744', 
+                                        borderRadius: 1 
+                                    }} />
+                                    <Typography 
+                                        variant="subtitle1" 
+                                        sx={{ 
+                                            color: '#fff', 
+                                            fontWeight: '600',
+                                            fontSize: '1rem'
+                                        }}
+                                    >
+                                        Lowest Performers
+                                    </Typography>
+                                </Stack>
+                                <Stack spacing={1.5}>
+                                    {performers.lowestPerformers && performers.lowestPerformers.length > 0 ? (
+                                        performers.lowestPerformers.map(asset => (
+                                            <Box 
+                                                key={`low-${asset.id}`} 
+                                                onClick={() => handleCardClick(asset)}
+                                                sx={{ cursor: 'pointer' }}
+                                            >
+                                                <PerformanceCard
+                                                    label="Lowest Performer"
+                                                    name={asset.companyName}
+                                                    value={asset.currentValue}
+                                                    percentage={asset.percentageChange}
+                                                    hideLabel={true}
+                                                />
+                                            </Box>
+                                        ))
+                                    ) : (
+                                        <Typography sx={{ color: 'rgba(255,255,255,0.3)', textAlign: 'center', py: 3, fontSize: '0.9rem' }}>
+                                            No assets available
+                                        </Typography>
+                                    )}
+                                </Stack>
+                            </CardContent>
+                        </Card>
+                    </Box>
+                </Box>
+            </Container>
+        </Box>
     );
 };
 

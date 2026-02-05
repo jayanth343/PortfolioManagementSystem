@@ -829,17 +829,22 @@ def register_websocket_events(socketio):
         emit('connected', {'message': 'Successfully connected to stock price stream'})
     
     @socketio.on('disconnect')
-    def handle_disconnect():
-        logger.info(f"Client disconnected: {request.sid}")
+    def handle_disconnect(reason=None):
+        logger.info(f"Client disconnected: {request.sid}, reason: {reason}")
         # Stop any active price streaming for this client
         if request.sid in active_connections:
-            active_connections[request.sid]['active'] = False
-            # Wait for thread to finish (with timeout)
-            thread = active_connections[request.sid].get('thread')
-            if thread and thread.is_alive():
-                thread.join(timeout=1.0)  # Wait max 1 second
-            del active_connections[request.sid]
-            logger.info(f"Cleaned up thread for client {request.sid}")
+            try:
+                active_connections[request.sid]['active'] = False
+                # Wait for thread to finish (with timeout)
+                thread = active_connections[request.sid].get('thread')
+                if thread and thread.is_alive():
+                    thread.join(timeout=1.0)  # Wait max 1 second
+                del active_connections[request.sid]
+                logger.info(f"Cleaned up thread for client {request.sid}")
+            except KeyError:
+                logger.warning(f"Client {request.sid} already removed from active_connections")
+            except Exception as e:
+                logger.error(f"Error cleaning up connection {request.sid}: {str(e)}")
     
     @socketio.on('subscribe_ticker')
     def handle_subscribe_ticker(data):
@@ -882,41 +887,46 @@ def register_websocket_events(socketio):
                         stock_info = stock.info
                         # Get latest price data
                         history = stock.history(period="1d", interval="1m")
+                        
+                        if history.empty:
+                            logger.warning(f"No history data available for {ticker}")
+                            socketio.emit('error', {'message': f'No data available for {ticker}'}, room=sid)
+                            time.sleep(120)
+                            continue
+                        
                         latest_timestamp = history.index[-1]  # Get the datetime index
                         print(f"Latest timestamp for {ticker}: {latest_timestamp}")
                         print(f"Streaming price for {stock_info.get('shortName', ticker)}, history length: {len(history)}")
-                        if not history.empty:
-                            latest = history.iloc[-1]
-                            current_price = float(latest['Close'])
-                            open_price = float(history.iloc[0]['Open'])
-                            high_price = float(max(history['High']))
-                            low_price = float(min(history['Low']))
-                            volume = int(latest['Volume'] if latest['Volume'] != 0 else stock.info.get('volume', 0))
+                        
+                        latest = history.iloc[-1]
+                        current_price = float(latest['Close'])
+                        open_price = float(history.iloc[0]['Open'])
+                        high_price = float(max(history['High']))
+                        low_price = float(min(history['Low']))
+                        volume = int(latest['Volume'] if latest['Volume'] != 0 else stock.info.get('volume', 0))
+                        
+                        # Calculate change
+                        day_open = history.iloc[0]['Open']
+                        change = current_price - day_open
+                        change_percent = (change / day_open * 100) if day_open  > 0 else 0
+                        
+                        price_data = {
+                            'ticker': ticker,
+                            'currency': stock_info.get('currency', 'USD'),
+                            'name': stock_info.get('shortName', ticker),
                             
-                            # Calculate change
-                            day_open = history.iloc[0]['Open']
-                            change = current_price - day_open
-                            change_percent = (change / day_open * 100) if day_open  > 0 else 0
-                            
-                            price_data = {
-                                'ticker': ticker,
-                                'currency': stock_info.get('currency', 'USD'),
-                                'name': stock_info.get('shortName', ticker),
-                                
-                                'price': round(current_price, 2),
-                                'open': round(open_price, 2),
-                                'high': round(high_price, 2),
-                                'low': round(low_price, 2),
-                                'volume': volume,
-                                'change': round(change, 2),
-                                'changePercent': round(change_percent, 2),
-                                'timestamp': latest_timestamp.strftime('%Y-%m-%d %H:%M:%S')
-                            }
-                            
-                            socketio.emit('price_update', price_data, room=sid)
-                            logger.debug(f"Sent price update for {ticker} to {sid}: ${current_price}")
-                        else:
-                            logger.warning(f"No price data available for {ticker}")
+                            'price': round(current_price, 2),
+                            'open': round(open_price, 2),
+                            'high': round(high_price, 2),
+                            'low': round(low_price, 2),
+                            'volume': volume,
+                            'change': round(change, 2),
+                            'changePercent': round(change_percent, 2),
+                            'timestamp': latest_timestamp.strftime('%Y-%m-%d %H:%M:%S')
+                        }
+                        
+                        socketio.emit('price_update', price_data, room=sid)
+                        logger.debug(f"Sent price update for {ticker} to {sid}: ${current_price}")
                         
                         # Wait before next update (2 minutes to prevent rate limiting)
                         time.sleep(120)

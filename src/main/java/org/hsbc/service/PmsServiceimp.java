@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,11 +17,23 @@ public class PmsServiceimp implements PmsService {
 
         @Autowired
         private PmsRepository repository;
+        
+        @Autowired
+        private WalletService walletService;
 
         // 1️⃣ Add Asset
         @Override
         public PmsEntity addAsset(PmsEntity asset) {
-            asset.setBuyingValue(asset.getBuyPrice() * asset.getQuantity());
+            // Calculate total cost
+            double totalCost = asset.getBuyPrice() * asset.getQuantity();
+            
+            // Check and deduct from wallet (this will throw exception if insufficient balance)
+            walletService.deductMoney(totalCost);
+            
+            // Set purchase date and buying value
+            asset.setPurchaseDate(LocalDate.now());
+            asset.setBuyingValue(totalCost);
+            
             return repository.save(asset);
         }
 
@@ -91,6 +104,22 @@ public class PmsServiceimp implements PmsService {
                         HttpStatus.NOT_FOUND,
                         "Asset not found with id " + id
                 ));
+    }
+
+    @Override
+    public PmsEntity updateCurrentPrice(String symbol, double newPrice) {
+        List<PmsEntity> assets = repository.findAll();
+        for (PmsEntity asset : assets) {
+            if (asset.getSymbol().equalsIgnoreCase(symbol)) {
+                asset.setCurrentPrice(newPrice);
+                System.out.println("Updated " + symbol + " price to: " + newPrice);
+                return repository.save(asset);
+            }
+        }
+        throw new ResponseStatusException(
+                HttpStatus.NOT_FOUND,
+                "Asset not found with symbol " + symbol
+        );
     }
 //
 //    public PmsEntity findAllPms(long id) throws InvalidException {

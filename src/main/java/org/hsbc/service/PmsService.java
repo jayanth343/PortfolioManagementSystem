@@ -18,6 +18,7 @@ public interface PmsService {
     double getTotalPortfolioValue();
     List<PmsEntity> getAllAssets();
     PmsEntity getAssetById(Long id);
+    PmsEntity updateCurrentPrice(String symbol, double newPrice);
 
 
 }

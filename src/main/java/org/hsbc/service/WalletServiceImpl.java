@@ -46,4 +46,9 @@ public class WalletServiceImpl implements WalletService{
         repository.save(wallet);
         return wallet.getBalance();
     }
+    
+    @Override
+    public WalletEntity getWalletSummary() {
+        return getWallet();
+    }
 }

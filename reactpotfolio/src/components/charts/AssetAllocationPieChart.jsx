@@ -46,9 +46,8 @@ const AssetAllocationPieChart = ({ data }) => {
     });
 
     return (
-        <div className="pie-chart-container" style={{ height: '350px', width: '100%', marginTop: '20px' }}>
-            <h3 style={{ marginBottom: '20px' }}>Asset Allocation</h3>
-            <div style={{ height: '100%', width: '100%', backgroundColor: '#1a1a1a', borderRadius: '12px', padding: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <div className="pie-chart-container" style={{ height: '350px', width: '100%' }}>
+            <div style={{ height: '100%', width: '100%', backgroundColor: 'transparent', borderRadius: '12px', padding: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
 
                 {/* SVG Chart */}
                 <div style={{ position: 'relative', width: '220px', height: '220px' }}>

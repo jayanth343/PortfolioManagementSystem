@@ -1,6 +1,7 @@
 package org.hsbc.entity;
 
 import jakarta.persistence.*;
+import java.time.LocalDate;
 
 
 @Entity
@@ -19,6 +20,7 @@ public class PmsEntity
     String exchange;
     String industry;
     String assetType;
+    LocalDate purchaseDate;
 
     public PmsEntity() {
     }
@@ -138,6 +140,14 @@ public class PmsEntity
         this.assetType = assetType;
     }
 
+    public LocalDate getPurchaseDate() {
+        return purchaseDate;
+    }
+
+    public void setPurchaseDate(LocalDate purchaseDate) {
+        this.purchaseDate = purchaseDate;
+    }
+
     @Override
     public String toString() {
         return "PmsEntity{" +
@@ -152,6 +162,7 @@ public class PmsEntity
                 ", exchange='" + exchange + '\'' +
                 ", industry='" + industry + '\'' +
                 ", assetType='" + assetType + '\'' +
+                ", purchaseDate=" + purchaseDate +
                 '}';
     }
 }

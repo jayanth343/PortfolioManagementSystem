@@ -1,5 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
+import { 
+    AppBar, 
+    Toolbar, 
+    Typography, 
+    Box, 
+    TextField, 
+    IconButton, 
+    Chip,
+    InputAdornment,
+    Container
+} from '@mui/material';
+import { Search, AccountBalanceWallet, TrendingUp } from '@mui/icons-material';
 import { getCreditBalance } from '../api/accountApi';
 import { formatCurrency } from '../utils/formatCurrency';
 
@@ -36,92 +48,143 @@ const Header = () => {
         e.preventDefault();
         if (searchQuery.trim()) {
             navigate(`/search?q=${encodeURIComponent(searchQuery)}`);
-            setSearchQuery(''); // Optional: clear after search
+            setSearchQuery('');
         }
     };
 
+    const navLinkStyle = (isActive) => ({
+        textDecoration: 'none',
+        color: isActive ? '#00c853' : 'rgba(255,255,255,0.7)',
+        fontWeight: isActive ? '700' : '500',
+        fontSize: '0.9rem',
+        padding: '8px 16px',
+        borderRadius: '6px',
+        backgroundColor: isActive ? 'rgba(0, 200, 83, 0.08)' : 'transparent',
+        transition: 'all 0.2s',
+        '&:hover': {
+            color: '#00c853',
+            backgroundColor: 'rgba(0, 200, 83, 0.04)'
+        }
+    });
+
     return (
-        <header className="app-header" style={{ display: 'flex', flexDirection: 'column', padding: '20px 40px', backgroundColor: '#1e1e1e', borderBottom: '1px solid #333' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
-                <h1 style={{ margin: 0, fontSize: '1.8rem', fontWeight: 'bold' }}>Portfolio Manager</h1>
-                <div className="search-container" style={{ width: '400px' }}>
-                    <form onSubmit={handleSearch} style={{ display: 'flex', gap: '10px' }}>
-                        <input
-                            type="text"
+        <AppBar 
+            position="sticky" 
+            sx={{ 
+                bgcolor: '#111', 
+                borderBottom: '1px solid rgba(255,255,255,0.1)',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.3)'
+            }}
+        >
+            <Container maxWidth="xl">
+                <Toolbar sx={{ py: 1.5, px: 0, gap: 3, flexWrap: 'wrap' }}>
+                    {/* Logo/Brand */}
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <TrendingUp sx={{ color: '#00c853', fontSize: '2rem' }} />
+                        <Typography 
+                            variant="h6" 
+                            sx={{ 
+                                fontWeight: '700', 
+                                color: '#fff',
+                                fontSize: '1.3rem',
+                                letterSpacing: '-0.5px'
+                            }}
+                        >
+                            Portfolio Manager
+                        </Typography>
+                    </Box>
+
+                    {/* Search Bar */}
+                    <Box 
+                        component="form" 
+                        onSubmit={handleSearch}
+                        sx={{ flex: { xs: '1 1 100%', md: '0 1 400px' }, maxWidth: '500px' }}
+                    >
+                        <TextField
+                            size="small"
+                            fullWidth
                             placeholder="Search assets..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            className="input-dark"
-                            style={{
-                                flex: 1,
-                                backgroundColor: '#121212',
-                                border: '1px solid #333',
-                                color: 'white',
-                                borderRadius: '8px',
-                                padding: '10px 15px'
+                            InputProps={{
+                                startAdornment: (
+                                    <InputAdornment position="start">
+                                        <Search sx={{ color: 'rgba(255,255,255,0.4)' }} />
+                                    </InputAdornment>
+                                ),
+                                sx: {
+                                    bgcolor: 'rgba(255,255,255,0.05)',
+                                    borderRadius: '8px',
+                                    color: '#fff',
+                                    '& .MuiOutlinedInput-notchedOutline': {
+                                        borderColor: 'rgba(255,255,255,0.1)'
+                                    },
+                                    '&:hover .MuiOutlinedInput-notchedOutline': {
+                                        borderColor: 'rgba(255,255,255,0.2)'
+                                    },
+                                    '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                                        borderColor: '#00c853',
+                                        borderWidth: '1px'
+                                    },
+                                    '& input::placeholder': {
+                                        color: 'rgba(255,255,255,0.4)',
+                                        opacity: 1
+                                    }
+                                }
                             }}
                         />
-                        <button
-                            type="submit"
-                            className="btn btn-primary"
-                            style={{ padding: '10px 20px', borderRadius: '8px' }}
-                        >
-                            Search
-                        </button>
-                    </form>
-                </div>
-            </div>
+                    </Box>
 
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <nav style={{ display: 'flex', gap: '30px' }}>
-                    <NavLink
-                        to="/"
-                        end
-                        style={({ isActive }) => ({
-                            textDecoration: 'none',
-                            color: isActive ? '#DB292D' : 'var(--text-primary, #e0e0e0)',
-                            fontWeight: 'bold',
-                            borderBottom: isActive ? '2px solid #DB292D' : '2px solid transparent',
-                            paddingBottom: '4px',
-                            transition: 'color 0.2s, border-color 0.2s'
-                        })}
-                    >
-                        Dashboard
-                    </NavLink>
-                    <NavLink
-                        to="/holdings"
-                        style={({ isActive }) => ({
-                            textDecoration: 'none',
-                            color: isActive ? '#DB292D' : 'var(--text-primary, #e0e0e0)',
-                            fontWeight: 'bold',
-                            borderBottom: isActive ? '2px solid #DB292D' : '2px solid transparent',
-                            paddingBottom: '4px',
-                            transition: 'color 0.2s, border-color 0.2s'
-                        })}
-                    >
-                        Holdings
-                    </NavLink>
-                    <NavLink
-                        to="/transactions"
-                        style={({ isActive }) => ({
-                            textDecoration: 'none',
-                            color: isActive ? '#DB292D' : 'var(--text-primary, #e0e0e0)',
-                            fontWeight: 'bold',
-                            borderBottom: isActive ? '2px solid #DB292D' : '2px solid transparent',
-                            paddingBottom: '4px',
-                            transition: 'color 0.2s, border-color 0.2s'
-                        })}
-                    >
-                        Transactions
-                    </NavLink>
-                </nav>
+                    {/* Spacer */}
+                    <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'block' } }} />
 
-                <div className="credit-balance" style={{ textAlign: 'right' }}>
-                    <div className="text-muted text-sm" style={{ fontSize: '0.8rem', color: '#aaa', marginBottom: '2px' }}>Credit Balance</div>
-                    <div style={{ fontWeight: 'bold', fontSize: '1.1rem' }}>{formatCurrency(credit)}</div>
-                </div>
-            </div>
-        </header>
+                    {/* Navigation */}
+                    <Box sx={{ display: 'flex', gap: 1 }}>
+                        <NavLink to="/" end>
+                            {({ isActive }) => (
+                                <Box sx={navLinkStyle(isActive)}>
+                                    Dashboard
+                                </Box>
+                            )}
+                        </NavLink>
+                        <NavLink to="/holdings">
+                            {({ isActive }) => (
+                                <Box sx={navLinkStyle(isActive)}>
+                                    Holdings
+                                </Box>
+                            )}
+                        </NavLink>
+                        <NavLink to="/transactions">
+                            {({ isActive }) => (
+                                <Box sx={navLinkStyle(isActive)}>
+                                    Transactions
+                                </Box>
+                            )}
+                        </NavLink>
+                    </Box>
+
+                    {/* Credit Balance */}
+                    <Chip
+                        icon={<AccountBalanceWallet sx={{ color: '#4caf50 !important' }} />}
+                        label={formatCurrency(credit)}
+                        sx={{
+                            bgcolor: 'rgba(76, 175, 80, 0.1)',
+                            color: '#4caf50',
+                            border: '1px solid rgba(76, 175, 80, 0.3)',
+                            fontWeight: '700',
+                            fontSize: '0.9rem',
+                            px: 1,
+                            '& .MuiChip-icon': {
+                                color: '#4caf50'
+                            },
+                            '& .MuiChip-label': {
+                                px: 1
+                            }
+                        }}
+                    />
+                </Toolbar>
+            </Container>
+        </AppBar>
     );
 };
 
