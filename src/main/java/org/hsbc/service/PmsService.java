@@ -21,5 +21,8 @@ public interface PmsService {
     List<PmsEntity> getAllAssets();
     PmsEntity getAssetById(Long id) throws InvalidPmsIdException;
     PmsEntity updateCurrentPrice(String symbol, double newPrice);
+    
+    PmsEntity buyAsset(String symbol, String companyName, int quantity, double price, String assetType);
+    PmsEntity sellAsset(String symbol, int quantity);
 
 }

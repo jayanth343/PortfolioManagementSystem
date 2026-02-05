@@ -3,8 +3,9 @@ import { useSearchParams, useNavigate } from 'react-router-dom';
 import './SearchResults.css';
 
 const SearchResults = () => {
-    const [searchParams] = useSearchParams();
+    const [searchParams, setSearchParams] = useSearchParams();
     const query = searchParams.get('q');
+    const [searchInput, setSearchInput] = useState(query || '');
     const [results, setResults] = useState(null);
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
@@ -20,6 +21,7 @@ const SearchResults = () => {
 
     useEffect(() => {
         if (query) {
+            setSearchInput(query);
             setLoading(true);
             fetchSearchResults(query)
                 .then(data => {
@@ -35,6 +37,13 @@ const SearchResults = () => {
                 });
         }
     }, [query]);
+
+    const handleSearch = (e) => {
+        e.preventDefault();
+        if (searchInput.trim()) {
+            setSearchParams({ q: searchInput.trim() });
+        }
+    };
 
     const handleAssetClick = (symbol, type) => {
         // Navigate to asset details or handle click
@@ -105,7 +114,7 @@ const SearchResults = () => {
                     <h3 className="section-title">{title}</h3>
                     <span className="section-count">{items.length} result{items.length !== 1 ? 's' : ''}</span>
                 </div>
-                <div className="asset-grid">
+                <div className="asset-scroll-container">
                     {items.map((item, index) => (
                         <AssetCard key={item.symbol || index} asset={item} type={type} />
                     ))}
@@ -124,8 +133,25 @@ const SearchResults = () => {
     return (
         <div className="search-results-page">
             <div className="search-header">
-                <h1 className="page-title">Search Results</h1>
-                {query && (
+                <h1 className="page-title">Search Assets</h1>
+                <form onSubmit={handleSearch} className="search-form">
+                    <div className="search-input-wrapper">
+                        <svg className="search-icon" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                            <path d="M9 17A8 8 0 1 0 9 1a8 8 0 0 0 0 16zM19 19l-4.35-4.35" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                        <input
+                            type="text"
+                            className="search-input"
+                            placeholder="Search stocks, crypto, funds, commodities..."
+                            value={searchInput}
+                            onChange={(e) => setSearchInput(e.target.value)}
+                        />
+                        <button type="submit" className="search-button">
+                            Search
+                        </button>
+                    </div>
+                </form>
+                {query && results && (
                     <div className="search-query">
                         Showing results for <strong>"{query}"</strong>
                     </div>

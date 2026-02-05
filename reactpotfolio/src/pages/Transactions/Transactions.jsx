@@ -77,7 +77,7 @@ const Transactions = () => {
                     {/* Header Row */}
                     <div style={{
                         display: 'grid',
-                        gridTemplateColumns: '1.5fr 1fr 1fr 1fr 1fr',
+                        gridTemplateColumns: '1.5fr 1fr 1fr 1fr 1fr 1.2fr',
                         padding: '10px 20px',
                         color: 'var(--text-secondary)',
                         fontSize: '0.85rem',
@@ -85,22 +85,35 @@ const Transactions = () => {
                         textTransform: 'uppercase',
                         letterSpacing: '0.5px'
                     }}>
-                        <div>Asset</div>
+                        <div>Symbol</div>
                         <div>Type</div>
                         <div style={{ textAlign: 'right' }}>Price</div>
                         <div style={{ textAlign: 'right' }}>Quantity</div>
                         <div style={{ textAlign: 'right' }}>Total Value</div>
+                        <div style={{ textAlign: 'right' }}>Date</div>
                     </div>
 
                     {/* Data Rows */}
-                    {transactions.map((tx, index) => (
+                    {transactions.map((tx, index) => {
+                        const transactionDate = new Date(tx.timestamp);
+                        const formattedDate = transactionDate.toLocaleDateString('en-US', {
+                            month: 'short',
+                            day: 'numeric',
+                            year: 'numeric'
+                        });
+                        const formattedTime = transactionDate.toLocaleTimeString('en-US', {
+                            hour: '2-digit',
+                            minute: '2-digit'
+                        });
+                        
+                        return (
                         <div
-                            key={index}
+                            key={tx.id || index}
                             onClick={() => setSelectedTransaction(tx)}
                             className="transaction-card"
                             style={{
                                 display: 'grid',
-                                gridTemplateColumns: '1.5fr 1fr 1fr 1fr 1fr',
+                                gridTemplateColumns: '1.5fr 1fr 1fr 1fr 1fr 1.2fr',
                                 padding: '20px',
                                 backgroundColor: '#1a1a1a',
                                 borderRadius: '12px',
@@ -124,7 +137,6 @@ const Transactions = () => {
                         >
                             <div>
                                 <div style={{ fontWeight: 'bold', fontSize: '1rem' }}>{tx.symbol}</div>
-                                <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>{tx.assetType}</div>
                             </div>
                             <div>
                                 <span style={{
@@ -141,8 +153,13 @@ const Transactions = () => {
                             <div style={{ textAlign: 'right', fontWeight: 'bold' }}>{formatCurrency(tx.price)}</div>
                             <div style={{ textAlign: 'right' }}>{tx.quantity}</div>
                             <div style={{ textAlign: 'right', fontWeight: 'bold' }}>{formatCurrency(tx.totalValue)}</div>
+                            <div style={{ textAlign: 'right' }}>
+                                <div style={{ fontSize: '0.9rem' }}>{formattedDate}</div>
+                                <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>{formattedTime}</div>
+                            </div>
                         </div>
-                    ))}
+                        );
+                    })}
                 </div>
             )}
 

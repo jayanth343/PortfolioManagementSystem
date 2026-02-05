@@ -74,6 +74,23 @@ public List<PmsEntity> getAllAssets() {
                 @RequestParam double price) {
             return service.updateCurrentPrice(symbol, price);
         }
+        
+        @PostMapping("/buy")
+        public PmsEntity buyAsset(
+                @RequestParam String symbol,
+                @RequestParam String companyName,
+                @RequestParam int quantity,
+                @RequestParam double price,
+                @RequestParam String assetType) {
+            return service.buyAsset(symbol, companyName, quantity, price, assetType);
+        }
+        
+        @PostMapping("/sell")
+        public PmsEntity sellAsset(
+                @RequestParam String symbol,
+                @RequestParam int quantity) {
+            return service.sellAsset(symbol, quantity);
+        }
     }
 
 

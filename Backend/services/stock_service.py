@@ -80,11 +80,17 @@ class StockService:
             
             # Get recommendations
             recommendations = []
+            recommendations_summary = []
             try:
                 rec_data = stock.recommendations
                 if rec_data is not None and not rec_data.empty:
                     recent_rec = rec_data.tail(5)
                     recommendations = recent_rec.to_dict('records')
+                
+                # Get recommendations summary (analyst ratings over time)
+                rec_summary = stock.get_recommendations_summary()
+                if rec_summary is not None and not rec_summary.empty:
+                    recommendations_summary = rec_summary.to_dict('records')
             except Exception as e:
                 logger.debug(f"Could not fetch recommendations for {ticker}: {e}")
             
@@ -112,6 +118,7 @@ class StockService:
                 'employees': sanitize_value(info.get('fullTimeEmployees')),
                 'news': news,
                 'recommendations': recommendations,
+                'recommendationsSummary': recommendations_summary,
                 'analystTargetPrice': sanitize_value(info.get('targetMeanPrice'))
             }
             
@@ -409,10 +416,10 @@ class StockService:
             
                 lookup = yf.Lookup(query) if yf.Lookup(query) else yf.Search(query).quotes
                 
-                stocks_df = (lookup.get_stock(count=5)).to_dict('index') if not lookup.get_stock(count=5).empty else {}
-                mutualfunds_df = (lookup.get_mutualfund(count=5)).to_dict('index') if not lookup.get_mutualfund(count=5).empty else {}
-                cryptos_df = (lookup.get_cryptocurrency(count=5)).to_dict('index') if not lookup.get_cryptocurrency(count=5).empty else {}
-                commodities_df = (lookup.get_future(count=5)).to_dict('index') if not lookup.get_future(count=5).empty else {}
+                stocks_df = (lookup.get_stock(count=15)).to_dict('index') if not lookup.get_stock(count=15).empty else {}
+                mutualfunds_df = (lookup.get_mutualfund(count=15)).to_dict('index') if not lookup.get_mutualfund(count=15).empty else {}
+                cryptos_df = (lookup.get_cryptocurrency(count=15)).to_dict('index') if not lookup.get_cryptocurrency(count=15).empty else {}
+                commodities_df = (lookup.get_future(count=15)).to_dict('index') if not lookup.get_future(count=15).empty else {}
                 
                 # Convert from {symbol: {data}} to [{symbol: symbol, ...data}]
                 def dict_to_list_with_symbol(data_dict):

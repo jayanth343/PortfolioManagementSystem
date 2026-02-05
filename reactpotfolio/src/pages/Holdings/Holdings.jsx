@@ -3,8 +3,9 @@ import { Link, useNavigate } from 'react-router-dom';
 import { io } from 'socket.io-client';
 import AssetCard from '../../components/cards/AssetCard';
 import BuyAssetModal from '../../components/modals/BuyAssetModal';
-import { getAssets, addAsset, sellAsset, updateCurrentPrice } from '../../api/assetsApi';
-import { createChart } from 'lightweight-charts';
+import PriceChart from '../../components/charts/PriceChart';
+import { getAssets, addAsset, buyAsset, sellAssetQuantity, updateCurrentPrice } from '../../api/assetsApi';
+import { getCreditBalance } from '../../api/accountApi';
 import { formatCurrency } from '../../utils/formatCurrency';
 import { formatPercentage } from '../../utils/formatPercentage';
 import './Holdings.css';
@@ -19,6 +20,11 @@ const Holdings = () => {
     const [livePrices, setLivePrices] = useState({});
     const [buyQuantity, setBuyQuantity] = useState(1);
     const [sellQuantity, setSellQuantity] = useState(1);
+    const [walletBalance, setWalletBalance] = useState(0);
+    const [activeTab, setActiveTab] = useState('overview');
+    const [analysis, setAnalysis] = useState(null);
+    const [analysisLoading, setAnalysisLoading] = useState(false);
+    const [analysisError, setAnalysisError] = useState(null);
 
     const fetchAssets = async () => {
         try {
@@ -34,8 +40,19 @@ const Holdings = () => {
         }
     };
 
+    const fetchWalletBalance = async () => {
+        try {
+            const balance = await getCreditBalance();
+            setWalletBalance(balance);
+            console.log("Holdings: Wallet balance:", balance);
+        } catch (error) {
+            console.error("Error fetching wallet balance:", error);
+        }
+    };
+
     useEffect(() => {
         fetchAssets();
+        fetchWalletBalance();
     }, []);
 
     // Socket.IO for live price updates every 2 minutes
@@ -78,7 +95,51 @@ const Holdings = () => {
         setShowDetailsModal(true);
         setBuyQuantity(1);
         setSellQuantity(1);
+        setActiveTab('overview');
+        setAnalysis(null);
+        setAnalysisError(null);
     };
+
+    const fetchAnalysis = async () => {
+        if (!selectedAsset) return;
+        
+        setAnalysisLoading(true);
+        setAnalysisError(null);
+
+        try {
+            const url = `http://localhost:8080/api/yfdata/stock/${selectedAsset.symbol}/analysis?inPortfolio=true&buyPrice=${selectedAsset.buyPrice}`;
+            console.log('Fetching analysis from:', url);
+            
+            const response = await fetch(url);
+            console.log('Analysis response status:', response.status);
+            
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}));
+                console.error('Analysis error response:', errorData);
+                throw new Error(errorData.error || 'Failed to fetch analysis');
+            }
+
+            const data = await response.json();
+            console.log('Analysis data received:', data);
+            console.log('Analysis recommendation:', data?.recommendation);
+            console.log('Analysis summary:', data?.summary);
+            console.log('Analysis keyPoints:', data?.keyPoints);
+            setAnalysis(data);
+        } catch (err) {
+            console.error('Analysis error:', err);
+            setAnalysisError(err.message || 'Failed to load AI recommendation');
+        } finally {
+            setAnalysisLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        console.log('useEffect triggered - activeTab:', activeTab, 'analysis:', analysis, 'analysisLoading:', analysisLoading, 'selectedAsset:', selectedAsset?.symbol);
+        if (activeTab === 'recommendation' && !analysis && !analysisLoading && selectedAsset) {
+            console.log('Calling fetchAnalysis...');
+            fetchAnalysis();
+        }
+    }, [activeTab]);
 
     const handleBuySubmit = async (formData) => {
         try {
@@ -94,19 +155,24 @@ const Holdings = () => {
         if (!selectedAsset || buyQuantity <= 0) return;
         
         try {
-            // currentPrice is already the unit price
+            // Get current price (unit price)
             const currentUnitPrice = livePrices[selectedAsset.symbol] || selectedAsset.currentPrice;
             
-            // Add to existing quantity
-            await addAsset({
-                symbol: selectedAsset.symbol,
-                companyName: selectedAsset.companyName,
-                quantity: selectedAsset.quantity + buyQuantity,
-                buyPrice: currentUnitPrice,
-                assetType: selectedAsset.assetType
-            });
+            // Use new buyAsset function that handles add/update and transaction recording
+            await buyAsset(
+                selectedAsset.symbol,
+                selectedAsset.companyName,
+                buyQuantity,
+                currentUnitPrice,
+                selectedAsset.assetType
+            );
             
             await fetchAssets();
+            await fetchWalletBalance();
+            
+            // Dispatch event to update wallet balance in header
+            window.dispatchEvent(new Event('transactionUpdated'));
+            
             setShowDetailsModal(false);
             setBuyQuantity(1);
         } catch (error) {
@@ -122,23 +188,15 @@ const Holdings = () => {
         }
         
         try {
-            if (sellQuantity === selectedAsset.quantity) {
-                // Sell entire position
-                await sellAsset(selectedAsset.id);
-            } else {
-                // Reduce quantity - currentPrice is already the unit price
-                const currentUnitPrice = livePrices[selectedAsset.symbol] || selectedAsset.currentPrice;
-                
-                await addAsset({
-                    symbol: selectedAsset.symbol,
-                    companyName: selectedAsset.companyName,
-                    quantity: selectedAsset.quantity - sellQuantity,
-                    buyPrice: currentUnitPrice,
-                    assetType: selectedAsset.assetType
-                });
-            }
+            // Use new sellAssetQuantity function that handles remove/reduce and transaction recording
+            await sellAssetQuantity(selectedAsset.symbol, sellQuantity);
             
             await fetchAssets();
+            await fetchWalletBalance();
+            
+            // Dispatch event to update wallet balance in header
+            window.dispatchEvent(new Event('transactionUpdated'));
+            
             setShowDetailsModal(false);
             setSellQuantity(1);
         } catch (error) {
@@ -178,6 +236,7 @@ const Holdings = () => {
                         <AssetCard
                             key={asset.id}
                             {...asset}
+                            currentValue={asset.currentPrice * asset.quantity}
                             onClick={() => handleAssetClick(asset)}
                         />
                     ))}
@@ -261,400 +320,747 @@ const Holdings = () => {
                         left: 0,
                         right: 0,
                         bottom: 0,
-                        backgroundColor: 'rgba(0,0,0,0.85)',
+                        backgroundColor: 'rgba(0,0,0,0.75)',
+                        backdropFilter: 'blur(4px)',
                         display: 'flex',
-                        alignItems: 'center',
+                        alignItems: 'flex-start',
                         justifyContent: 'center',
                         zIndex: 1000,
-                        padding: '20px'
+                        paddingTop: '80px',
+                        paddingBottom: '40px',
+                        paddingLeft: '20px',
+                        paddingRight: '20px',
+                        overflow: 'auto'
                     }}
                     onClick={() => setShowDetailsModal(false)}
                 >
                     <div 
                         style={{
-                            backgroundColor: '#1a1a1a',
+                            backgroundColor: '#0a0a0a',
                             border: '1px solid rgba(255,255,255,0.1)',
-                            borderRadius: '16px',
-                            maxWidth: '900px',
+                            borderRadius: '12px',
+                            maxWidth: '650px',
                             width: '100%',
-                            maxHeight: '90vh',
-                            overflow: 'auto',
-                            padding: '30px'
+                            maxHeight: '80vh',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5)',
+                            margin: 'auto'
                         }}
                         onClick={(e) => e.stopPropagation()}
                     >
                         {/* Header */}
                         <div style={{ 
-                            display: 'flex', 
-                            justifyContent: 'space-between', 
-                            alignItems: 'flex-start',
-                            marginBottom: '30px',
-                            paddingBottom: '20px',
-                            borderBottom: '1px solid rgba(255,255,255,0.1)'
+                            padding: '20px 24px',
+                            borderBottom: '1px solid rgba(255,255,255,0.08)',
+                            flexShrink: 0
                         }}>
-                            <div>
-                                <div style={{ 
-                                    fontSize: '0.85rem', 
-                                    color: 'rgba(255,255,255,0.5)',
-                                    marginBottom: '8px',
-                                    textTransform: 'uppercase',
-                                    letterSpacing: '1px'
-                                }}>
-                                    {selectedAsset.assetType}
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                                <div>
+                                    <div style={{
+                                        display: 'inline-block',
+                                        padding: '4px 10px',
+                                        backgroundColor: 'rgba(255,255,255,0.05)',
+                                        border: '1px solid rgba(255,255,255,0.1)',
+                                        borderRadius: '6px',
+                                        fontSize: '0.75rem',
+                                        color: 'rgba(255,255,255,0.6)',
+                                        marginBottom: '12px',
+                                        fontWeight: 500,
+                                        letterSpacing: '0.3px'
+                                    }}>
+                                        {selectedAsset.assetType}
+                                    </div>
+                                    <h2 style={{ 
+                                        color: '#fff', 
+                                        margin: '0 0 6px 0',
+                                        fontSize: '1.5rem',
+                                        fontWeight: 600,
+                                        letterSpacing: '-0.02em'
+                                    }}>
+                                        {selectedAsset.companyName}
+                                    </h2>
+                                    <div style={{ 
+                                        fontSize: '0.95rem', 
+                                        color: 'rgba(255,255,255,0.5)',
+                                        fontFamily: 'ui-monospace, monospace'
+                                    }}>
+                                        {selectedAsset.symbol}
+                                    </div>
                                 </div>
-                                <h2 style={{ 
-                                    color: '#fff', 
-                                    margin: '0 0 8px 0',
-                                    fontSize: '1.8rem'
-                                }}>
-                                    {selectedAsset.companyName}
-                                </h2>
-                                <div style={{ 
-                                    fontSize: '1.1rem', 
-                                    color: 'rgba(255,255,255,0.6)',
-                                    fontFamily: 'monospace'
-                                }}>
-                                    {selectedAsset.symbol}
-                                </div>
+                                <button
+                                    onClick={() => setShowDetailsModal(false)}
+                                    style={{
+                                        background: 'transparent',
+                                        border: '1px solid rgba(255,255,255,0.1)',
+                                        color: 'rgba(255,255,255,0.6)',
+                                        width: '32px',
+                                        height: '32px',
+                                        borderRadius: '6px',
+                                        cursor: 'pointer',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        fontSize: '1.2rem',
+                                        transition: 'all 0.15s ease'
+                                    }}
+                                    onMouseOver={(e) => {
+                                        e.target.style.backgroundColor = 'rgba(255,255,255,0.05)';
+                                        e.target.style.borderColor = 'rgba(255,255,255,0.2)';
+                                    }}
+                                    onMouseOut={(e) => {
+                                        e.target.style.backgroundColor = 'transparent';
+                                        e.target.style.borderColor = 'rgba(255,255,255,0.1)';
+                                    }}
+                                >
+                                    ×
+                                </button>
                             </div>
+                        </div>
+
+                        {/* Tabs */}
+                        <div style={{
+                            display: 'flex',
+                            borderBottom: '1px solid rgba(255,255,255,0.08)',
+                            padding: '0 24px',
+                            gap: '24px',
+                            flexShrink: 0
+                        }}>
                             <button
-                                onClick={() => setShowDetailsModal(false)}
+                                onClick={() => setActiveTab('overview')}
                                 style={{
-                                    background: 'rgba(255,255,255,0.1)',
-                                    border: '1px solid rgba(255,255,255,0.2)',
-                                    color: '#fff',
-                                    fontSize: '1.5rem',
-                                    width: '40px',
-                                    height: '40px',
-                                    borderRadius: '50%',
+                                    background: 'none',
+                                    border: 'none',
+                                    color: activeTab === 'overview' ? '#fff' : 'rgba(255,255,255,0.5)',
+                                    padding: '12px 0',
+                                    fontSize: '0.875rem',
+                                    fontWeight: 500,
                                     cursor: 'pointer',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center'
+                                    borderBottom: activeTab === 'overview' ? '2px solid #fff' : '2px solid transparent',
+                                    transition: 'all 0.15s ease',
+                                    marginBottom: '-1px'
                                 }}
                             >
-                                ×
+                                Overview
+                            </button>
+                            <button
+                                onClick={() => setActiveTab('recommendation')}
+                                style={{
+                                    background: 'none',
+                                    border: 'none',
+                                    color: activeTab === 'recommendation' ? '#fff' : 'rgba(255,255,255,0.5)',
+                                    padding: '12px 0',
+                                    fontSize: '0.875rem',
+                                    fontWeight: 500,
+                                    cursor: 'pointer',
+                                    borderBottom: activeTab === 'recommendation' ? '2px solid #fff' : '2px solid transparent',
+                                    transition: 'all 0.15s ease',
+                                    marginBottom: '-1px'
+                                }}
+                            >
+                                AI Recommendation
                             </button>
                         </div>
 
-                        {/* Price Information */}
+                        {/* Content */}
                         <div style={{ 
-                            display: 'grid', 
-                            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-                            gap: '20px',
-                            marginBottom: '30px'
+                            padding: '20px 24px',
+                            overflowY: 'auto',
+                            flex: 1
                         }}>
-                            <div style={{
-                                backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                                border: '1px solid rgba(16, 185, 129, 0.3)',
-                                borderRadius: '12px',
-                                padding: '20px'
+                            {activeTab === 'overview' ? (
+                            <>
+                            {/* Price Information Grid */}
+                            <div style={{ 
+                                display: 'grid',
+                                gridTemplateColumns: 'repeat(2, 1fr)',
+                                gap: '12px',
+                                marginBottom: '24px'
                             }}>
-                                <div style={{ 
-                                    fontSize: '0.75rem', 
-                                    color: 'rgba(255,255,255,0.5)',
-                                    marginBottom: '8px',
-                                    textTransform: 'uppercase',
-                                    letterSpacing: '1px'
-                                }}>
-                                    Current Price
-                                </div>
-                                <div style={{ 
-                                    fontSize: '1.8rem', 
-                                    fontWeight: '700',
-                                    color: '#10b981'
-                                }}>
-                                    {formatCurrency(unitPrice)}
-                                </div>
                                 <div style={{
-                                    fontSize: '0.85rem',
-                                    color: 'rgba(255,255,255,0.4)',
-                                    marginTop: '4px'
+                                    padding: '16px',
+                                    border: '1px solid rgba(255,255,255,0.08)',
+                                    borderRadius: '8px',
+                                    backgroundColor: 'rgba(255,255,255,0.02)'
                                 }}>
-                                    Live Update
+                                    <div style={{ 
+                                        fontSize: '0.75rem',
+                                        color: 'rgba(255,255,255,0.5)',
+                                        marginBottom: '8px',
+                                        fontWeight: 500
+                                    }}>
+                                        Current Price
+                                    </div>
+                                    <div style={{ 
+                                        fontSize: '1.5rem',
+                                        fontWeight: 600,
+                                        color: '#fff',
+                                        marginBottom: '4px',
+                                        letterSpacing: '-0.02em'
+                                    }}>
+                                        {formatCurrency(unitPrice)}
+                                    </div>
+                                    <div style={{
+                                        fontSize: '0.7rem',
+                                        color: '#10b981'
+                                    }}>
+                                        ● Live
+                                    </div>
                                 </div>
-                            </div>
 
-                            <div style={{
-                                backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                                border: '1px solid rgba(59, 130, 246, 0.3)',
-                                borderRadius: '12px',
-                                padding: '20px'
-                            }}>
-                                <div style={{ 
-                                    fontSize: '0.75rem', 
-                                    color: 'rgba(255,255,255,0.5)',
-                                    marginBottom: '8px',
-                                    textTransform: 'uppercase',
-                                    letterSpacing: '1px'
-                                }}>
-                                    Buy Price
-                                </div>
-                                <div style={{ 
-                                    fontSize: '1.8rem', 
-                                    fontWeight: '700',
-                                    color: '#3b82f6'
-                                }}>
-                                    {formatCurrency(buyPrice)}
-                                </div>
                                 <div style={{
-                                    fontSize: '0.85rem',
-                                    color: 'rgba(255,255,255,0.4)',
-                                    marginTop: '4px'
+                                    padding: '16px',
+                                    border: '1px solid rgba(255,255,255,0.08)',
+                                    borderRadius: '8px',
+                                    backgroundColor: 'rgba(255,255,255,0.02)'
                                 }}>
-                                    Purchase Price
+                                    <div style={{ 
+                                        fontSize: '0.75rem',
+                                        color: 'rgba(255,255,255,0.5)',
+                                        marginBottom: '8px',
+                                        fontWeight: 500
+                                    }}>
+                                        Avg Buy Price
+                                    </div>
+                                    <div style={{ 
+                                        fontSize: '1.5rem',
+                                        fontWeight: 600,
+                                        color: '#fff',
+                                        letterSpacing: '-0.02em'
+                                    }}>
+                                        {formatCurrency(buyPrice)}
+                                    </div>
                                 </div>
-                            </div>
 
-                            <div style={{
-                                backgroundColor: gainLoss >= 0 ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)',
-                                border: `1px solid ${gainLoss >= 0 ? 'rgba(16, 185, 129, 0.3)' : 'rgba(239, 68, 68, 0.3)'}`,
-                                borderRadius: '12px',
-                                padding: '20px'
-                            }}>
-                                <div style={{ 
-                                    fontSize: '0.75rem', 
-                                    color: 'rgba(255,255,255,0.5)',
-                                    marginBottom: '8px',
-                                    textTransform: 'uppercase',
-                                    letterSpacing: '1px'
-                                }}>
-                                    Gain/Loss
-                                </div>
-                                <div style={{ 
-                                    fontSize: '1.8rem', 
-                                    fontWeight: '700',
-                                    color: gainLoss >= 0 ? '#10b981' : '#ef4444'
-                                }}>
-                                    {gainLoss >= 0 ? '+' : ''}{formatCurrency(gainLoss)}
-                                </div>
                                 <div style={{
-                                    fontSize: '0.85rem',
-                                    color: gainLoss >= 0 ? '#10b981' : '#ef4444',
-                                    marginTop: '4px',
-                                    fontWeight: '600'
+                                    padding: '16px',
+                                    border: '1px solid rgba(255,255,255,0.08)',
+                                    borderRadius: '8px',
+                                    backgroundColor: 'rgba(255,255,255,0.02)'
                                 }}>
-                                    {gainLoss >= 0 ? '+' : ''}{formatPercentage(gainLossPercent)}
+                                    <div style={{ 
+                                        fontSize: '0.75rem',
+                                        color: 'rgba(255,255,255,0.5)',
+                                        marginBottom: '8px',
+                                        fontWeight: 500
+                                    }}>
+                                        P&L
+                                    </div>
+                                    <div style={{ 
+                                        fontSize: '1.5rem',
+                                        fontWeight: 600,
+                                        color: gainLoss >= 0 ? '#10b981' : '#ef4444',
+                                        marginBottom: '4px',
+                                        letterSpacing: '-0.02em'
+                                    }}>
+                                        {gainLoss >= 0 ? '+' : ''}{formatCurrency(gainLoss)}
+                                    </div>
+                                    <div style={{
+                                        fontSize: '0.75rem',
+                                        color: gainLoss >= 0 ? '#10b981' : '#ef4444',
+                                        fontWeight: 500
+                                    }}>
+                                        {gainLoss >= 0 ? '+' : ''}{formatPercentage(gainLossPercent)}
+                                    </div>
                                 </div>
-                            </div>
 
-                            <div style={{
-                                backgroundColor: 'rgba(139, 92, 246, 0.1)',
-                                border: '1px solid rgba(139, 92, 246, 0.3)',
-                                borderRadius: '12px',
-                                padding: '20px'
-                            }}>
-                                <div style={{ 
-                                    fontSize: '0.75rem', 
-                                    color: 'rgba(255,255,255,0.5)',
-                                    marginBottom: '8px',
-                                    textTransform: 'uppercase',
-                                    letterSpacing: '1px'
-                                }}>
-                                    Holdings
-                                </div>
-                                <div style={{ 
-                                    fontSize: '1.8rem', 
-                                    fontWeight: '700',
-                                    color: '#8b5cf6'
-                                }}>
-                                    {selectedAsset.quantity}
-                                </div>
                                 <div style={{
-                                    fontSize: '0.85rem',
-                                    color: 'rgba(255,255,255,0.4)',
-                                    marginTop: '4px'
+                                    padding: '16px',
+                                    border: '1px solid rgba(255,255,255,0.08)',
+                                    borderRadius: '8px',
+                                    backgroundColor: 'rgba(255,255,255,0.02)'
                                 }}>
-                                    Total Value: {formatCurrency(totalValue)}
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Chart Placeholder */}
-                        <div style={{
-                            backgroundColor: '#111',
-                            border: '1px solid rgba(255,255,255,0.1)',
-                            borderRadius: '12px',
-                            padding: '20px',
-                            marginBottom: '30px',
-                            height: '200px',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            color: 'rgba(255,255,255,0.3)'
-                        }}>
-                            <div style={{ textAlign: 'center' }}>
-                                <div style={{ fontSize: '2rem', marginBottom: '10px' }}>📊</div>
-                                <div>Price Chart (7 Days)</div>
-                                <div style={{ fontSize: '0.8rem', marginTop: '5px' }}>
-                                    Click "Details" button for full chart
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Buy/Sell Actions */}
-                        <div style={{ 
-                            display: 'grid', 
-                            gridTemplateColumns: '1fr 1fr',
-                            gap: '20px',
-                            marginBottom: '20px'
-                        }}>
-                            {/* Buy Section */}
-                            <div style={{
-                                backgroundColor: 'rgba(16, 185, 129, 0.05)',
-                                border: '1px solid rgba(16, 185, 129, 0.2)',
-                                borderRadius: '12px',
-                                padding: '20px'
-                            }}>
-                                <h3 style={{ 
-                                    color: '#10b981', 
-                                    margin: '0 0 15px 0',
-                                    fontSize: '1.1rem'
-                                }}>
-                                    Buy More
-                                </h3>
-                                <div style={{ marginBottom: '15px' }}>
-                                    <label style={{ 
-                                        display: 'block',
-                                        color: 'rgba(255,255,255,0.6)',
-                                        fontSize: '0.85rem',
-                                        marginBottom: '8px'
+                                    <div style={{ 
+                                        fontSize: '0.75rem',
+                                        color: 'rgba(255,255,255,0.5)',
+                                        marginBottom: '8px',
+                                        fontWeight: 500
                                     }}>
                                         Quantity
-                                    </label>
-                                    <input
-                                        type="number"
-                                        min="1"
-                                        value={buyQuantity}
-                                        onChange={(e) => setBuyQuantity(parseInt(e.target.value) || 1)}
-                                        style={{
-                                            width: '100%',
-                                            padding: '12px',
-                                            backgroundColor: '#111',
-                                            border: '1px solid rgba(255,255,255,0.2)',
-                                            borderRadius: '8px',
-                                            color: '#fff',
-                                            fontSize: '1rem'
-                                        }}
-                                    />
-                                </div>
-                                <div style={{
-                                    color: 'rgba(255,255,255,0.5)',
-                                    fontSize: '0.9rem',
-                                    marginBottom: '15px'
-                                }}>
-                                    Total: {formatCurrency(unitPrice * buyQuantity)}
-                                </div>
-                                <button
-                                    onClick={handleBuyAsset}
-                                    style={{
-                                        width: '100%',
-                                        padding: '12px',
-                                        backgroundColor: '#10b981',
-                                        border: 'none',
-                                        borderRadius: '8px',
+                                    </div>
+                                    <div style={{ 
+                                        fontSize: '1.5rem',
+                                        fontWeight: 600,
                                         color: '#fff',
-                                        fontSize: '1rem',
-                                        fontWeight: '600',
-                                        cursor: 'pointer',
-                                        transition: 'all 0.2s'
-                                    }}
-                                    onMouseOver={(e) => e.target.style.backgroundColor = '#059669'}
-                                    onMouseOut={(e) => e.target.style.backgroundColor = '#10b981'}
-                                >
-                                    Buy {buyQuantity} {buyQuantity === 1 ? 'Unit' : 'Units'}
-                                </button>
-                            </div>
-
-                            {/* Sell Section */}
-                            <div style={{
-                                backgroundColor: 'rgba(239, 68, 68, 0.05)',
-                                border: '1px solid rgba(239, 68, 68, 0.2)',
-                                borderRadius: '12px',
-                                padding: '20px'
-                            }}>
-                                <h3 style={{ 
-                                    color: '#ef4444', 
-                                    margin: '0 0 15px 0',
-                                    fontSize: '1.1rem'
-                                }}>
-                                    Sell Position
-                                </h3>
-                                <div style={{ marginBottom: '15px' }}>
-                                    <label style={{ 
-                                        display: 'block',
-                                        color: 'rgba(255,255,255,0.6)',
-                                        fontSize: '0.85rem',
-                                        marginBottom: '8px'
+                                        marginBottom: '4px',
+                                        letterSpacing: '-0.02em'
                                     }}>
-                                        Quantity (Max: {selectedAsset.quantity})
-                                    </label>
-                                    <input
-                                        type="number"
-                                        min="1"
-                                        max={selectedAsset.quantity}
-                                        value={sellQuantity}
-                                        onChange={(e) => setSellQuantity(Math.min(parseInt(e.target.value) || 1, selectedAsset.quantity))}
+                                        {selectedAsset.quantity}
+                                    </div>
+                                    <div style={{
+                                        fontSize: '0.75rem',
+                                        color: 'rgba(255,255,255,0.5)'
+                                    }}>
+                                        {formatCurrency(totalValue)}
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Price Chart */}
+                            <div style={{
+                                border: '1px solid rgba(255,255,255,0.08)',
+                                borderRadius: '8px',
+                                padding: '12px',
+                                marginBottom: '20px',
+                                backgroundColor: 'rgba(0,0,0,0.3)',
+                                height: '200px'
+                            }}>
+                                <PriceChart 
+                                    symbol={selectedAsset.symbol} 
+                                    height={180}
+                                />
+                            </div>
+
+                            {/* Buy/Sell Actions */}
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '12px' }}>
+                                {/* Buy Section */}
+                                <div style={{
+                                    padding: '16px',
+                                    border: '1px solid rgba(255,255,255,0.08)',
+                                    borderRadius: '8px',
+                                    backgroundColor: 'rgba(255,255,255,0.02)'
+                                }}>
+                                    <div style={{ fontSize: '0.875rem', color: 'rgba(255,255,255,0.9)', marginBottom: '16px', fontWeight: 500 }}>
+                                        Buy More
+                                    </div>
+                                    <div style={{ marginBottom: '12px' }}>
+                                        <label style={{ 
+                                            display: 'block',
+                                            fontSize: '0.75rem',
+                                            color: 'rgba(255,255,255,0.5)',
+                                            marginBottom: '6px',
+                                            fontWeight: 500
+                                        }}>
+                                            Quantity
+                                        </label>
+                                        <input
+                                            type="number"
+                                            min="1"
+                                            value={buyQuantity}
+                                            onChange={(e) => setBuyQuantity(parseInt(e.target.value) || 1)}
+                                            style={{
+                                                width: '100%',
+                                                padding: '10px 12px',
+                                                backgroundColor: 'rgba(0,0,0,0.3)',
+                                                border: '1px solid rgba(255,255,255,0.1)',
+                                                borderRadius: '6px',
+                                                color: '#fff',
+                                                fontSize: '0.9rem',
+                                                outline: 'none',
+                                                transition: 'border-color 0.15s ease'
+                                            }}
+                                            onFocus={(e) => e.target.style.borderColor = 'rgba(255,255,255,0.3)'}
+                                            onBlur={(e) => e.target.style.borderColor = 'rgba(255,255,255,0.1)'}
+                                        />
+                                    </div>
+                                    <div style={{
+                                        fontSize: '0.8rem',
+                                        color: 'rgba(255,255,255,0.5)',
+                                        marginBottom: '16px'
+                                    }}>
+                                        Total: <span style={{ color: '#fff', fontWeight: 500 }}>{formatCurrency(unitPrice * buyQuantity)}</span>
+                                    </div>
+                                    <button
+                                        onClick={handleBuyAsset}
                                         style={{
                                             width: '100%',
-                                            padding: '12px',
-                                            backgroundColor: '#111',
-                                            border: '1px solid rgba(255,255,255,0.2)',
-                                            borderRadius: '8px',
-                                            color: '#fff',
-                                            fontSize: '1rem'
+                                            padding: '10px',
+                                            backgroundColor: '#fff',
+                                            color: '#000',
+                                            border: 'none',
+                                            borderRadius: '6px',
+                                            fontSize: '0.875rem',
+                                            fontWeight: 500,
+                                            cursor: 'pointer',
+                                            transition: 'all 0.15s ease'
                                         }}
-                                    />
+                                        onMouseOver={(e) => e.target.style.backgroundColor = 'rgba(255,255,255,0.9)'}
+                                        onMouseOut={(e) => e.target.style.backgroundColor = '#fff'}
+                                    >
+                                        Buy {buyQuantity} {buyQuantity === 1 ? 'Unit' : 'Units'}
+                                    </button>
                                 </div>
-                                <div style={{
-                                    color: 'rgba(255,255,255,0.5)',
-                                    fontSize: '0.9rem',
-                                    marginBottom: '15px'
-                                }}>
-                                    Total: {formatCurrency(unitPrice * sellQuantity)}
-                                </div>
-                                <button
-                                    onClick={handleSellAsset}
-                                    style={{
-                                        width: '100%',
-                                        padding: '12px',
-                                        backgroundColor: '#ef4444',
-                                        border: 'none',
-                                        borderRadius: '8px',
-                                        color: '#fff',
-                                        fontSize: '1rem',
-                                        fontWeight: '600',
-                                        cursor: 'pointer',
-                                        transition: 'all 0.2s'
-                                    }}
-                                    onMouseOver={(e) => e.target.style.backgroundColor = '#dc2626'}
-                                    onMouseOut={(e) => e.target.style.backgroundColor = '#ef4444'}
-                                >
-                                    Sell {sellQuantity} {sellQuantity === 1 ? 'Unit' : 'Units'}
-                                </button>
-                            </div>
-                        </div>
 
-                        {/* Details Button */}
-                        <button
-                            onClick={navigateToDetails}
-                            style={{
-                                width: '100%',
-                                padding: '14px',
-                                backgroundColor: '#3b82f6',
-                                border: 'none',
-                                borderRadius: '8px',
-                                color: '#fff',
-                                fontSize: '1rem',
-                                fontWeight: '600',
-                                cursor: 'pointer',
-                                transition: 'all 0.2s'
-                            }}
-                            onMouseOver={(e) => e.target.style.backgroundColor = '#2563eb'}
-                            onMouseOut={(e) => e.target.style.backgroundColor = '#3b82f6'}
-                        >
-                            View Full Details & Analysis
-                        </button>
+                                {/* Sell Section */}
+                                <div style={{
+                                    padding: '16px',
+                                    border: '1px solid rgba(255,255,255,0.08)',
+                                    borderRadius: '8px',
+                                    backgroundColor: 'rgba(255,255,255,0.02)'
+                                }}>
+                                    <div style={{ fontSize: '0.875rem', color: 'rgba(255,255,255,0.9)', marginBottom: '16px', fontWeight: 500 }}>
+                                        Sell Position
+                                    </div>
+                                    <div style={{ marginBottom: '12px' }}>
+                                        <label style={{ 
+                                            display: 'block',
+                                            fontSize: '0.75rem',
+                                            color: 'rgba(255,255,255,0.5)',
+                                            marginBottom: '6px',
+                                            fontWeight: 500
+                                        }}>
+                                            Quantity (Max: {selectedAsset.quantity})
+                                        </label>
+                                        <input
+                                            type="number"
+                                            min="1"
+                                            max={selectedAsset.quantity}
+                                            value={sellQuantity}
+                                            onChange={(e) => setSellQuantity(Math.min(parseInt(e.target.value) || 1, selectedAsset.quantity))}
+                                            style={{
+                                                width: '100%',
+                                                padding: '10px 12px',
+                                                backgroundColor: 'rgba(0,0,0,0.3)',
+                                                border: '1px solid rgba(255,255,255,0.1)',
+                                                borderRadius: '6px',
+                                                color: '#fff',
+                                                fontSize: '0.9rem',
+                                                outline: 'none',
+                                                transition: 'border-color 0.15s ease'
+                                            }}
+                                            onFocus={(e) => e.target.style.borderColor = 'rgba(255,255,255,0.3)'}
+                                            onBlur={(e) => e.target.style.borderColor = 'rgba(255,255,255,0.1)'}
+                                        />
+                                    </div>
+                                    <div style={{
+                                        fontSize: '0.8rem',
+                                        color: 'rgba(255,255,255,0.5)',
+                                        marginBottom: '16px'
+                                    }}>
+                                        Total: <span style={{ color: '#fff', fontWeight: 500 }}>{formatCurrency(unitPrice * sellQuantity)}</span>
+                                    </div>
+                                    <button
+                                        onClick={handleSellAsset}
+                                        style={{
+                                            width: '100%',
+                                            padding: '10px',
+                                            backgroundColor: 'transparent',
+                                            color: '#fff',
+                                            border: '1px solid rgba(255,255,255,0.2)',
+                                            borderRadius: '6px',
+                                            fontSize: '0.875rem',
+                                            fontWeight: 500,
+                                            cursor: 'pointer',
+                                            transition: 'all 0.15s ease'
+                                        }}
+                                        onMouseOver={(e) => {
+                                            e.target.style.backgroundColor = 'rgba(255,255,255,0.1)';
+                                            e.target.style.borderColor = 'rgba(255,255,255,0.3)';
+                                        }}
+                                        onMouseOut={(e) => {
+                                            e.target.style.backgroundColor = 'transparent';
+                                            e.target.style.borderColor = 'rgba(255,255,255,0.2)';
+                                        }}
+                                    >
+                                        Sell {sellQuantity} {sellQuantity === 1 ? 'Unit' : 'Units'}
+                                    </button>
+                                </div>
+                            </div>
+
+                            {/* Details Button */}
+                            <button
+                                onClick={navigateToDetails}
+                                style={{
+                                    width: '100%',
+                                    padding: '10px',
+                                    backgroundColor: 'transparent',
+                                    color: 'rgba(255,255,255,0.7)',
+                                    border: '1px solid rgba(255,255,255,0.1)',
+                                    borderRadius: '6px',
+                                    fontSize: '0.875rem',
+                                    fontWeight: 500,
+                                    cursor: 'pointer',
+                                    transition: 'all 0.15s ease'
+                                }}
+                                onMouseOver={(e) => {
+                                    e.target.style.backgroundColor = 'rgba(255,255,255,0.05)';
+                                    e.target.style.borderColor = 'rgba(255,255,255,0.2)';
+                                    e.target.style.color = '#fff';
+                                }}
+                                onMouseOut={(e) => {
+                                    e.target.style.backgroundColor = 'transparent';
+                                    e.target.style.borderColor = 'rgba(255,255,255,0.1)';
+                                    e.target.style.color = 'rgba(255,255,255,0.7)';
+                                }}
+                            >
+                                View Full Details & Analysis →
+                            </button>
+                            </>
+                            ) : (
+                                /* AI Recommendation Tab */
+                                <div>
+                                    {console.log('Rendering AI tab - analysis:', analysis, 'loading:', analysisLoading, 'error:', analysisError)}
+                                    {analysisLoading ? (
+                                        <div style={{ 
+                                            display: 'flex', 
+                                            justifyContent: 'center', 
+                                            alignItems: 'center',
+                                            padding: '60px 20px',
+                                            color: 'rgba(255,255,255,0.5)'
+                                        }}>
+                                            <div style={{ textAlign: 'center' }}>
+                                                <div style={{ fontSize: '2rem', marginBottom: '16px' }}>🤖</div>
+                                                <div>Analyzing {selectedAsset.companyName}...</div>
+                                            </div>
+                                        </div>
+                                    ) : analysisError ? (
+                                        <div style={{
+                                            padding: '20px',
+                                            border: '1px solid rgba(239, 68, 68, 0.3)',
+                                            borderRadius: '8px',
+                                            backgroundColor: 'rgba(239, 68, 68, 0.05)',
+                                            color: '#ef4444',
+                                            fontSize: '0.875rem'
+                                        }}>
+                                            {analysisError}
+                                            <button
+                                                onClick={fetchAnalysis}
+                                                style={{
+                                                    marginTop: '12px',
+                                                    padding: '8px 16px',
+                                                    backgroundColor: 'transparent',
+                                                    color: '#ef4444',
+                                                    border: '1px solid rgba(239, 68, 68, 0.3)',
+                                                    borderRadius: '6px',
+                                                    fontSize: '0.875rem',
+                                                    cursor: 'pointer',
+                                                    display: 'block'
+                                                }}
+                                            >
+                                                Retry
+                                            </button>
+                                        </div>
+                                    ) : analysis ? (
+                                        <div>
+                                            {console.log('Rendering analysis content:', analysis)}
+                                            {/* Recommendation Badge */}
+                                            {analysis.action && (
+                                                <div style={{
+                                                    padding: '16px',
+                                                    border: '1px solid rgba(255,255,255,0.08)',
+                                                    borderRadius: '8px',
+                                                    backgroundColor: 'rgba(255,255,255,0.02)',
+                                                    marginBottom: '16px'
+                                                }}>
+                                                    <div style={{
+                                                        fontSize: '0.75rem',
+                                                        color: 'rgba(255,255,255,0.5)',
+                                                        marginBottom: '8px',
+                                                        fontWeight: 500
+                                                    }}>
+                                                        AI Recommendation
+                                                    </div>
+                                                    <div style={{
+                                                        display: 'inline-block',
+                                                        padding: '6px 14px',
+                                                        backgroundColor: analysis.action.includes('BUY') ? 'rgba(16, 185, 129, 0.1)' :
+                                                                        analysis.action.includes('SELL') ? 'rgba(239, 68, 68, 0.1)' :
+                                                                        'rgba(245, 158, 11, 0.1)',
+                                                        border: `1px solid ${analysis.action.includes('BUY') ? 'rgba(16, 185, 129, 0.3)' :
+                                                                            analysis.action.includes('SELL') ? 'rgba(239, 68, 68, 0.3)' :
+                                                                            'rgba(245, 158, 11, 0.3)'}`,
+                                                        borderRadius: '6px',
+                                                        color: analysis.action.includes('BUY') ? '#10b981' :
+                                                               analysis.action.includes('SELL') ? '#ef4444' :
+                                                               '#f59e0b',
+                                                        fontSize: '0.95rem',
+                                                        fontWeight: 600
+                                                    }}>
+                                                        {analysis.action}
+                                                    </div>
+                                                </div>
+                                            )}
+
+                                            {/* Reasoning */}
+                                            {analysis.reasoning && (
+                                                <div style={{
+                                                    padding: '16px',
+                                                    border: '1px solid rgba(255,255,255,0.08)',
+                                                    borderRadius: '8px',
+                                                    backgroundColor: 'rgba(255,255,255,0.02)',
+                                                    marginBottom: '16px'
+                                                }}>
+                                                    <div style={{
+                                                        fontSize: '0.75rem',
+                                                        color: 'rgba(255,255,255,0.5)',
+                                                        marginBottom: '8px',
+                                                        fontWeight: 500
+                                                    }}>
+                                                        Analysis
+                                                    </div>
+                                                    <div style={{
+                                                        color: 'rgba(255,255,255,0.9)',
+                                                        fontSize: '0.875rem',
+                                                        lineHeight: '1.6'
+                                                    }}>
+                                                        {analysis.reasoning}
+                                                    </div>
+                                                </div>
+                                            )}
+
+                                            {/* Metrics Grid */}
+                                            <div style={{
+                                                display: 'grid',
+                                                gridTemplateColumns: 'repeat(2, 1fr)',
+                                                gap: '12px',
+                                                marginBottom: '16px'
+                                            }}>
+                                                {/* News Sentiment */}
+                                                {analysis.newsSentiment && (
+                                                    <div style={{
+                                                        padding: '16px',
+                                                        border: '1px solid rgba(255,255,255,0.08)',
+                                                        borderRadius: '8px',
+                                                        backgroundColor: 'rgba(255,255,255,0.02)'
+                                                    }}>
+                                                        <div style={{
+                                                            fontSize: '0.75rem',
+                                                            color: 'rgba(255,255,255,0.5)',
+                                                            marginBottom: '8px',
+                                                            fontWeight: 500
+                                                        }}>
+                                                            News Sentiment
+                                                        </div>
+                                                        <div style={{
+                                                            fontSize: '1.25rem',
+                                                            fontWeight: 600,
+                                                            color: analysis.newsSentiment === 'positive' ? '#10b981' :
+                                                                   analysis.newsSentiment === 'negative' ? '#ef4444' : '#888',
+                                                            textTransform: 'uppercase',
+                                                            marginBottom: '4px'
+                                                        }}>
+                                                            {analysis.newsSentiment}
+                                                        </div>
+                                                        <div style={{
+                                                            fontSize: '0.75rem',
+                                                            color: 'rgba(255,255,255,0.5)'
+                                                        }}>
+                                                            Score: {analysis.sentimentScore?.toFixed(2) || '0.00'}
+                                                        </div>
+                                                    </div>
+                                                )}
+
+                                                {/* Analyst Recommendation */}
+                                                {analysis.analystRecommendation && (
+                                                    <div style={{
+                                                        padding: '16px',
+                                                        border: '1px solid rgba(255,255,255,0.08)',
+                                                        borderRadius: '8px',
+                                                        backgroundColor: 'rgba(255,255,255,0.02)'
+                                                    }}>
+                                                        <div style={{
+                                                            fontSize: '0.75rem',
+                                                            color: 'rgba(255,255,255,0.5)',
+                                                            marginBottom: '8px',
+                                                            fontWeight: 500
+                                                        }}>
+                                                            Analysts
+                                                        </div>
+                                                        <div style={{
+                                                            fontSize: '1.1rem',
+                                                            fontWeight: 600,
+                                                            color: '#fff',
+                                                            textTransform: 'uppercase',
+                                                            marginBottom: '4px'
+                                                        }}>
+                                                            {analysis.analystRecommendation.replace('_', ' ')}
+                                                        </div>
+                                                        <div style={{
+                                                            fontSize: '0.75rem',
+                                                            color: 'rgba(255,255,255,0.5)'
+                                                        }}>
+                                                            Confidence: {(analysis.analystConfidence * 100)?.toFixed(0) || '0'}%
+                                                        </div>
+                                                    </div>
+                                                )}
+
+                                                {/* RSI */}
+                                                {analysis.rsi && (
+                                                    <div style={{
+                                                        padding: '16px',
+                                                        border: '1px solid rgba(255,255,255,0.08)',
+                                                        borderRadius: '8px',
+                                                        backgroundColor: 'rgba(255,255,255,0.02)'
+                                                    }}>
+                                                        <div style={{
+                                                            fontSize: '0.75rem',
+                                                            color: 'rgba(255,255,255,0.5)',
+                                                            marginBottom: '8px',
+                                                            fontWeight: 500
+                                                        }}>
+                                                            RSI (14-period)
+                                                        </div>
+                                                        <div style={{
+                                                            fontSize: '1.25rem',
+                                                            fontWeight: 600,
+                                                            color: analysis.rsi > 70 ? '#ef4444' :
+                                                                   analysis.rsi < 30 ? '#10b981' : '#888',
+                                                            marginBottom: '4px'
+                                                        }}>
+                                                            {analysis.rsi.toFixed(2)}
+                                                        </div>
+                                                        <div style={{
+                                                            fontSize: '0.75rem',
+                                                            color: analysis.rsiSignal?.includes('oversold') ? '#10b981' :
+                                                                   analysis.rsiSignal?.includes('overbought') ? '#ef4444' : '#888',
+                                                            textTransform: 'uppercase'
+                                                        }}>
+                                                            {analysis.rsiSignal?.replace('_', ' ')}
+                                                        </div>
+                                                    </div>
+                                                )}
+
+                                                {/* Risk Level */}
+                                                {analysis.riskLevel && (
+                                                    <div style={{
+                                                        padding: '16px',
+                                                        border: '1px solid rgba(255,255,255,0.08)',
+                                                        borderRadius: '8px',
+                                                        backgroundColor: 'rgba(255,255,255,0.02)'
+                                                    }}>
+                                                        <div style={{
+                                                            fontSize: '0.75rem',
+                                                            color: 'rgba(255,255,255,0.5)',
+                                                            marginBottom: '8px',
+                                                            fontWeight: 500
+                                                        }}>
+                                                            Risk Level
+                                                        </div>
+                                                        <div style={{
+                                                            fontSize: '1.1rem',
+                                                            fontWeight: 600,
+                                                            color: analysis.riskLevel === 'low' ? '#10b981' :
+                                                                   analysis.riskLevel === 'very_high' ? '#ef4444' : '#fbbf24',
+                                                            textTransform: 'uppercase',
+                                                            marginBottom: '4px'
+                                                        }}>
+                                                            {analysis.riskLevel.replace('_', ' ')}
+                                                        </div>
+                                                        {analysis.volatility && (
+                                                            <div style={{
+                                                                fontSize: '0.75rem',
+                                                                color: 'rgba(255,255,255,0.5)'
+                                                            }}>
+                                                                Volatility: {analysis.volatility.toFixed(2)}%
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <div style={{ 
+                                            textAlign: 'center', 
+                                            padding: '60px 20px',
+                                            color: 'rgba(255,255,255,0.5)'
+                                        }}>
+                                            <div style={{ fontSize: '2rem', marginBottom: '16px' }}>🤖</div>
+                                            <div>AI recommendation not available</div>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+                        </div>
                     </div>
                 </div>
             )}

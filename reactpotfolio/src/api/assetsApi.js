@@ -85,6 +85,48 @@ export const addAsset = async (assetData) => {
     }
 };
 
+// Buy asset - adds to existing or creates new with transaction recording
+export const buyAsset = async (symbol, companyName, quantity, price, assetType) => {
+    try {
+        const response = await fetch(
+            `http://localhost:8080/api/pms/buy?symbol=${encodeURIComponent(symbol)}&companyName=${encodeURIComponent(companyName)}&quantity=${quantity}&price=${price}&assetType=${encodeURIComponent(assetType)}`,
+            {
+                method: 'POST',
+            }
+        );
+        if (!response.ok) {
+            const error = await response.text();
+            throw new Error(error || 'Failed to buy asset');
+        }
+        return await response.json();
+    } catch (error) {
+        console.error('Error buying asset:', error);
+        throw error;
+    }
+};
+
+// Sell asset - removes or reduces quantity with transaction recording
+export const sellAssetQuantity = async (symbol, quantity) => {
+    try {
+        const response = await fetch(
+            `http://localhost:8080/api/pms/sell?symbol=${encodeURIComponent(symbol)}&quantity=${quantity}`,
+            {
+                method: 'POST',
+            }
+        );
+        if (!response.ok) {
+            const error = await response.text();
+            throw new Error(error || 'Failed to sell asset');
+        }
+        // Returns null if entire position sold, otherwise returns updated asset
+        const text = await response.text();
+        return text ? JSON.parse(text) : null;
+    } catch (error) {
+        console.error('Error selling asset:', error);
+        throw error;
+    }
+};
+
 export const sellAsset = async (assetId) => {
     try {
         const response = await fetch(`http://localhost:8080/api/pms/remove/${assetId}`, {
