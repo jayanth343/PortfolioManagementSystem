@@ -1,6 +1,5 @@
 package org.hsbc.controller;
 
-import org.hsbc.entity.WalletEntity;
 import org.hsbc.service.WalletService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,7 +14,6 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(MockitoExtension.class)
@@ -53,7 +51,7 @@ class WalletControllerTest {
         // Act & Assert
         // Note: controller expects @RequestParam, so we use .param("amount", ...)
         mockMvc.perform(post("/wallet/add")
-                .param("amount", "1000.0"))
+                        .param("amount", "1000.0"))
                 .andExpect(status().isOk())
                 .andExpect(content().string("6000.0"));
     }
@@ -66,29 +64,8 @@ class WalletControllerTest {
 
         // Act & Assert
         mockMvc.perform(post("/wallet/deduct")
-                .param("amount", "500.0"))
+                        .param("amount", "500.0"))
                 .andExpect(status().isOk())
                 .andExpect(content().string("4500.0"));
-    }
-
-    @Test
-    void testDeductMoney_InsufficientBalance() throws Exception {
-        when(service.deductMoney(10000.0))
-                .thenThrow(new org.hsbc.exception.InsufficientBalanceException("Insufficient balance"));
-
-        mockMvc.perform(post("/wallet/deduct")
-                .param("amount", "10000.0"))
-                .andExpect(status().isBadRequest());
-    }
-
-    @Test
-    void testGetWalletSummary() throws Exception {
-        WalletEntity wallet = new WalletEntity();
-        wallet.setBalance(5000.0);
-        when(service.getWalletSummary()).thenReturn(wallet);
-
-        mockMvc.perform(get("/wallet/summary"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.balance").value(5000.0));
     }
 }

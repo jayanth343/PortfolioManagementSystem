@@ -39,8 +39,8 @@ class PmsControllerTest {
         when(service.addAsset(any(PmsEntity.class))).thenReturn(asset);
 
         mockMvc.perform(post("/api/pms/add")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(asset)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(asset)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.companyName").value("Apple"))
                 .andExpect(jsonPath("$.quantity").value(10));
@@ -66,7 +66,7 @@ class PmsControllerTest {
         when(service.updateQuantity(1L, 20)).thenReturn(updated);
 
         mockMvc.perform(put("/api/pms/update-quantity/1")
-                .param("quantity", "20"))
+                        .param("quantity", "20"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.quantity").value(20));
     }
@@ -137,7 +137,7 @@ class PmsControllerTest {
         when(service.updateCurrentPrice("AAPL", 150.0)).thenReturn(asset);
 
         mockMvc.perform(put("/api/pms/update-price/AAPL")
-                .param("price", "150.0"))
+                        .param("price", "150.0"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.currentPrice").value(150.0));
     }
