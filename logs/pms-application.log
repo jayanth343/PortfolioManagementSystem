@@ -1,157 +1,55 @@
-2026-02-06 03:42:07 WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=6h41m24s724ms166µs).
-2026-02-06 03:46:50 INFO  o.h.controller.StockDataController - Request received for stock: 0P0000XVFU.BO
-2026-02-06 03:46:50 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/stocks/0P0000XVFU.BO
-2026-02-06 03:46:50 INFO  o.h.controller.StockDataController - Successfully fetched stock data for: 0P0000XVFU.BO
-2026-02-06 03:46:50 INFO  o.h.controller.StockDataController - Request received for stock: 0P0000XVFU.BO
-2026-02-06 03:46:50 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/stocks/0P0000XVFU.BO
-2026-02-06 03:46:50 INFO  o.h.controller.StockDataController - Request received for history: 0P0000XVFU.BO with period: 1mo, interval: 1h
-2026-02-06 03:46:50 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/0P0000XVFU.BO?period=1MO&interval=1h
-2026-02-06 03:46:50 INFO  o.h.controller.StockDataController - Successfully fetched history for: 0P0000XVFU.BO (1mo, 1h)
-2026-02-06 03:46:50 INFO  o.h.controller.StockDataController - Request received for history: 0P0000XVFU.BO with period: 1mo, interval: 1h
-2026-02-06 03:46:50 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/0P0000XVFU.BO?period=1MO&interval=1h
-2026-02-06 03:46:50 INFO  o.h.controller.StockDataController - Successfully fetched history for: 0P0000XVFU.BO (1mo, 1h)
-2026-02-06 03:46:51 INFO  o.h.controller.StockDataController - Successfully fetched stock data for: 0P0000XVFU.BO
-2026-02-06 03:47:11 INFO  o.h.controller.StockDataController - Request received for history: 0P0000XVFU.BO with period: 1mo, interval: 1h
-2026-02-06 03:47:11 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/0P0000XVFU.BO?period=1MO&interval=1h
-2026-02-06 03:47:11 INFO  o.h.controller.StockDataController - Successfully fetched history for: 0P0000XVFU.BO (1mo, 1h)
-2026-02-06 03:47:11 INFO  o.h.controller.StockDataController - Request received for history: 0P0000XVFU.BO with period: 1mo, interval: 1h
-2026-02-06 03:47:11 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/0P0000XVFU.BO?period=1MO&interval=1h
-2026-02-06 03:47:11 INFO  o.h.controller.StockDataController - Successfully fetched history for: 0P0000XVFU.BO (1mo, 1h)
-2026-02-06 03:47:29 INFO  o.h.controller.StockDataController - Stock analysis request for: 0P0000XVFU.BO (inPortfolio=true, buyPrice=59.49)
-2026-02-06 03:47:29 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/stock/0P0000XVFU.BO/analysis?inPortfolio=true&buyPrice=59.49
-2026-02-06 03:47:29 WARN  o.h.controller.StockDataController - Unable to analyze stock: 0P0000XVFU.BO
-2026-02-06 03:47:31 INFO  o.h.controller.StockDataController - Stock analysis request for: 0P0000XVFU.BO (inPortfolio=true, buyPrice=59.49)
-2026-02-06 03:47:31 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/stock/0P0000XVFU.BO/analysis?inPortfolio=true&buyPrice=59.49
-2026-02-06 03:47:31 WARN  o.h.controller.StockDataController - Unable to analyze stock: 0P0000XVFU.BO
-2026-02-06 03:48:17 INFO  o.h.controller.StockDataController - Request received for history: DOGE-USD with period: 1mo, interval: 1h
-2026-02-06 03:48:17 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/DOGE-USD?period=1MO&interval=1h
-2026-02-06 03:48:17 INFO  o.h.controller.StockDataController - Successfully fetched history for: DOGE-USD (1mo, 1h)
-2026-02-06 03:48:17 INFO  o.h.controller.StockDataController - Request received for history: DOGE-USD with period: 1mo, interval: 1h
-2026-02-06 03:48:17 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/DOGE-USD?period=1MO&interval=1h
-2026-02-06 03:48:18 INFO  o.h.controller.StockDataController - Successfully fetched history for: DOGE-USD (1mo, 1h)
-2026-02-06 03:48:21 INFO  o.h.controller.StockDataController - Stock analysis request for: DOGE-USD (inPortfolio=true, buyPrice=0.1)
-2026-02-06 03:48:21 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/stock/DOGE-USD/analysis?inPortfolio=true&buyPrice=0.1
-2026-02-06 03:48:29 INFO  o.h.controller.StockDataController - Stock analysis completed successfully for: DOGE-USD
-2026-02-06 03:49:04 INFO  o.h.controller.StockDataController - Request received for history: PLTR with period: 1mo, interval: 1h
-2026-02-06 03:49:04 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/PLTR?period=1MO&interval=1h
-2026-02-06 03:49:04 INFO  o.h.controller.StockDataController - Successfully fetched history for: PLTR (1mo, 1h)
-2026-02-06 03:49:04 INFO  o.h.controller.StockDataController - Request received for history: PLTR with period: 1mo, interval: 1h
-2026-02-06 03:49:04 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/PLTR?period=1MO&interval=1h
-2026-02-06 03:49:04 INFO  o.h.controller.StockDataController - Successfully fetched history for: PLTR (1mo, 1h)
-2026-02-06 03:49:07 INFO  o.h.controller.StockDataController - Stock analysis request for: PLTR (inPortfolio=true, buyPrice=132.0)
-2026-02-06 03:49:07 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/stock/PLTR/analysis?inPortfolio=true&buyPrice=132.0
-2026-02-06 03:49:10 INFO  o.h.controller.StockDataController - Stock analysis completed successfully for: PLTR
-2026-02-06 04:01:52 INFO  o.h.controller.StockDataController - Request received for history: AMZN with period: 1mo, interval: 1h
-2026-02-06 04:01:52 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/AMZN?period=1MO&interval=1h
-2026-02-06 04:01:52 INFO  o.h.controller.StockDataController - Successfully fetched history for: AMZN (1mo, 1h)
-2026-02-06 04:01:52 INFO  o.h.controller.StockDataController - Request received for history: AMZN with period: 1mo, interval: 1h
-2026-02-06 04:01:52 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/AMZN?period=1MO&interval=1h
-2026-02-06 04:01:52 INFO  o.h.controller.StockDataController - Successfully fetched history for: AMZN (1mo, 1h)
-2026-02-06 04:01:54 INFO  o.h.controller.StockDataController - Stock analysis request for: AMZN (inPortfolio=true, buyPrice=232.93)
-2026-02-06 04:01:54 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/stock/AMZN/analysis?inPortfolio=true&buyPrice=232.93
-2026-02-06 04:01:56 INFO  o.h.controller.StockDataController - Stock analysis completed successfully for: AMZN
-2026-02-06 04:02:14 INFO  o.h.controller.StockDataController - Request received for history: ITC.NS with period: 1mo, interval: 1h
-2026-02-06 04:02:14 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/ITC.NS?period=1MO&interval=1h
-2026-02-06 04:02:14 INFO  o.h.controller.StockDataController - Successfully fetched history for: ITC.NS (1mo, 1h)
-2026-02-06 04:02:14 INFO  o.h.controller.StockDataController - Request received for history: ITC.NS with period: 1mo, interval: 1h
-2026-02-06 04:02:14 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/ITC.NS?period=1MO&interval=1h
-2026-02-06 04:02:14 INFO  o.h.controller.StockDataController - Successfully fetched history for: ITC.NS (1mo, 1h)
-2026-02-06 04:02:17 INFO  o.h.controller.StockDataController - Stock analysis request for: ITC.NS (inPortfolio=true, buyPrice=310.1)
-2026-02-06 04:02:17 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/stock/ITC.NS/analysis?inPortfolio=true&buyPrice=310.1
-2026-02-06 04:02:18 INFO  o.h.controller.StockDataController - Stock analysis completed successfully for: ITC.NS
-2026-02-06 04:02:51 INFO  o.h.controller.StockDataController - Search request received with query: itc
-2026-02-06 04:02:51 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/search?q=itc
-2026-02-06 04:02:52 INFO  o.h.controller.StockDataController - Search completed successfully for query: itc
-2026-02-06 04:02:58 INFO  o.h.controller.StockDataController - Request received for stock: ITC.NS
-2026-02-06 04:02:58 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/stocks/ITC.NS
-2026-02-06 04:02:58 INFO  o.h.controller.StockDataController - Successfully fetched stock data for: ITC.NS
-2026-02-06 04:02:58 INFO  o.h.controller.StockDataController - Request received for stock: ITC.NS
-2026-02-06 04:02:58 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/stocks/ITC.NS
-2026-02-06 04:02:58 INFO  o.h.controller.StockDataController - Request received for history: ITC.NS with period: 1mo, interval: 1h
-2026-02-06 04:02:58 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/ITC.NS?period=1MO&interval=1h
-2026-02-06 04:02:58 INFO  o.h.controller.StockDataController - Successfully fetched history for: ITC.NS (1mo, 1h)
-2026-02-06 04:02:58 INFO  o.h.controller.StockDataController - Request received for history: ITC.NS with period: 1mo, interval: 1h
-2026-02-06 04:02:58 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/ITC.NS?period=1MO&interval=1h
-2026-02-06 04:02:58 INFO  o.h.controller.StockDataController - Successfully fetched stock data for: ITC.NS
-2026-02-06 04:02:58 INFO  o.h.controller.StockDataController - Successfully fetched history for: ITC.NS (1mo, 1h)
-2026-02-06 04:07:27 INFO  o.h.controller.StockDataController - Request received for history: ITC.NS with period: 5y, interval: 1d
-2026-02-06 04:07:27 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/ITC.NS?period=5Y&interval=1d
-2026-02-06 04:07:27 INFO  o.h.controller.StockDataController - Successfully fetched history for: ITC.NS (5y, 1d)
-2026-02-06 04:07:33 INFO  o.h.controller.StockDataController - Stock analysis request for: ITC.NS (inPortfolio=false, buyPrice=null)
-2026-02-06 04:07:33 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/stock/ITC.NS/analysis?inPortfolio=false
-2026-02-06 04:07:34 INFO  o.h.controller.StockDataController - Stock analysis completed successfully for: ITC.NS
-2026-02-06 04:09:20 INFO  o.s.api.AbstractOpenApiResource - Init duration for springdoc-openapi is: 639 ms
-2026-02-06 04:11:32 INFO  o.h.controller.StockDataController - Request received for crypto: USDT-USD
-2026-02-06 04:11:32 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/crypto/USDT-USD
-2026-02-06 04:11:32 INFO  o.h.controller.StockDataController - Successfully fetched crypto data for: USDT-USD
-2026-02-06 04:11:32 INFO  o.h.controller.StockDataController - Request received for crypto: USDT-USD
-2026-02-06 04:11:32 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/crypto/USDT-USD
-2026-02-06 04:11:32 INFO  o.h.controller.StockDataController - Request received for history: USDT-USD with period: 1mo, interval: 1h
-2026-02-06 04:11:32 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/USDT-USD?period=1MO&interval=1h
-2026-02-06 04:11:32 INFO  o.h.controller.StockDataController - Successfully fetched history for: USDT-USD (1mo, 1h)
-2026-02-06 04:11:32 INFO  o.h.controller.StockDataController - Request received for history: USDT-USD with period: 1mo, interval: 1h
-2026-02-06 04:11:32 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/USDT-USD?period=1MO&interval=1h
-2026-02-06 04:11:32 INFO  o.h.controller.StockDataController - Successfully fetched history for: USDT-USD (1mo, 1h)
-2026-02-06 04:11:32 INFO  o.h.controller.StockDataController - Successfully fetched crypto data for: USDT-USD
-2026-02-06 04:11:44 INFO  o.h.controller.StockDataController - Request received for history: USDT-USD with period: 1mo, interval: 1h
-2026-02-06 04:11:44 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/USDT-USD?period=1MO&interval=1h
-2026-02-06 04:11:44 INFO  o.h.controller.StockDataController - Successfully fetched history for: USDT-USD (1mo, 1h)
-2026-02-06 04:11:44 INFO  o.h.controller.StockDataController - Request received for history: USDT-USD with period: 1mo, interval: 1h
-2026-02-06 04:11:44 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/USDT-USD?period=1MO&interval=1h
-2026-02-06 04:11:44 INFO  o.h.controller.StockDataController - Successfully fetched history for: USDT-USD (1mo, 1h)
-2026-02-06 04:12:48 INFO  o.h.controller.StockDataController - Request received for crypto: DOGE-USD
-2026-02-06 04:12:48 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/crypto/DOGE-USD
-2026-02-06 04:12:48 INFO  o.h.controller.StockDataController - Successfully fetched crypto data for: DOGE-USD
-2026-02-06 04:12:48 INFO  o.h.controller.StockDataController - Request received for crypto: DOGE-USD
-2026-02-06 04:12:48 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/crypto/DOGE-USD
-2026-02-06 04:12:48 INFO  o.h.controller.StockDataController - Request received for history: DOGE-USD with period: 1mo, interval: 1h
-2026-02-06 04:12:48 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/DOGE-USD?period=1MO&interval=1h
-2026-02-06 04:12:48 INFO  o.h.controller.StockDataController - Successfully fetched history for: DOGE-USD (1mo, 1h)
-2026-02-06 04:12:48 INFO  o.h.controller.StockDataController - Request received for history: DOGE-USD with period: 1mo, interval: 1h
-2026-02-06 04:12:48 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/DOGE-USD?period=1MO&interval=1h
-2026-02-06 04:12:48 INFO  o.h.controller.StockDataController - Successfully fetched history for: DOGE-USD (1mo, 1h)
-2026-02-06 04:12:48 INFO  o.h.controller.StockDataController - Successfully fetched crypto data for: DOGE-USD
-2026-02-06 04:12:57 INFO  o.h.controller.StockDataController - Request received for history: DOGE-USD with period: 1mo, interval: 1h
-2026-02-06 04:12:57 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/DOGE-USD?period=1MO&interval=1h
-2026-02-06 04:12:57 INFO  o.h.controller.StockDataController - Successfully fetched history for: DOGE-USD (1mo, 1h)
-2026-02-06 04:12:57 INFO  o.h.controller.StockDataController - Request received for history: DOGE-USD with period: 1mo, interval: 1h
-2026-02-06 04:12:57 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/DOGE-USD?period=1MO&interval=1h
-2026-02-06 04:12:57 INFO  o.h.controller.StockDataController - Successfully fetched history for: DOGE-USD (1mo, 1h)
-2026-02-06 04:13:18 INFO  o.h.controller.StockDataController - Request received for history: DOGE-USD with period: 1mo, interval: 1h
-2026-02-06 04:13:18 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/DOGE-USD?period=1MO&interval=1h
-2026-02-06 04:13:18 INFO  o.h.controller.StockDataController - Successfully fetched history for: DOGE-USD (1mo, 1h)
-2026-02-06 04:13:18 INFO  o.h.controller.StockDataController - Request received for history: DOGE-USD with period: 1mo, interval: 1h
-2026-02-06 04:13:18 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/DOGE-USD?period=1MO&interval=1h
-2026-02-06 04:13:18 INFO  o.h.controller.StockDataController - Successfully fetched history for: DOGE-USD (1mo, 1h)
-2026-02-06 04:13:28 ERROR o.a.c.c.C.[.[.[.[dispatcherServlet] - Servlet.service() for servlet [dispatcherServlet] in context with path [] threw exception [Request processing failed: org.springframework.dao.IncorrectResultSizeDataAccessException: Query did not return a unique result: 2 results were returned] with root cause
-org.hibernate.NonUniqueResultException: Query did not return a unique result: 2 results were returned
-	at org.hibernate.query.spi.AbstractSelectionQuery.uniqueElement(AbstractSelectionQuery.java:586)
-	at org.hibernate.query.spi.AbstractSelectionQuery.getSingleResult(AbstractSelectionQuery.java:570)
-	at org.springframework.data.jpa.repository.query.JpaQueryExecution$SingleEntityExecution.doExecute(JpaQueryExecution.java:223)
-	at org.springframework.data.jpa.repository.query.JpaQueryExecution.execute(JpaQueryExecution.java:92)
-	at org.springframework.data.jpa.repository.query.AbstractJpaQuery.doExecute(AbstractJpaQuery.java:149)
-	at org.springframework.data.jpa.repository.query.AbstractJpaQuery.execute(AbstractJpaQuery.java:137)
-	at org.springframework.data.repository.core.support.RepositoryMethodInvoker.doInvoke(RepositoryMethodInvoker.java:170)
-	at org.springframework.data.repository.core.support.RepositoryMethodInvoker.invoke(RepositoryMethodInvoker.java:158)
-	at org.springframework.data.repository.core.support.QueryExecutorMethodInterceptor.doInvoke(QueryExecutorMethodInterceptor.java:164)
-	at org.springframework.data.repository.core.support.QueryExecutorMethodInterceptor.invoke(QueryExecutorMethodInterceptor.java:143)
-	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184)
-	at org.springframework.data.projection.DefaultMethodInvokingMethodInterceptor.invoke(DefaultMethodInvokingMethodInterceptor.java:70)
-	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184)
-	at org.springframework.transaction.interceptor.TransactionInterceptor$1.proceedWithInvocation(TransactionInterceptor.java:123)
-	at org.springframework.transaction.interceptor.TransactionAspectSupport.invokeWithinTransaction(TransactionAspectSupport.java:392)
-	at org.springframework.transaction.interceptor.TransactionInterceptor.invoke(TransactionInterceptor.java:119)
-	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184)
-	at org.springframework.dao.support.PersistenceExceptionTranslationInterceptor.invoke(PersistenceExceptionTranslationInterceptor.java:137)
-	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184)
-	at org.springframework.data.jpa.repository.support.CrudMethodMetadataPostProcessor$CrudMethodMetadataPopulatingMethodInterceptor.invoke(CrudMethodMetadataPostProcessor.java:135)
-	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184)
-	at org.springframework.aop.interceptor.ExposeInvocationInterceptor.invoke(ExposeInvocationInterceptor.java:97)
-	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184)
-	at org.springframework.aop.framework.JdkDynamicAopProxy.invoke(JdkDynamicAopProxy.java:220)
-	at jdk.proxy2/jdk.proxy2.$Proxy119.findBySymbol(Unknown Source)
-	at org.hsbc.service.PmsServiceimp.sellAsset(PmsServiceimp.java:186)
-	at org.hsbc.controller.PmsController.sellAsset(PmsController.java:92)
+2026-02-05 13:18:53 INFO  o.hsbc.controller.PmsControllerTest - Starting PmsControllerTest using Java 22.0.2 with PID 13868 (started by Administrator in C:\Users\Administrator\PortfolioManagementSystem)
+2026-02-05 13:18:53 DEBUG o.hsbc.controller.PmsControllerTest - Running with Spring Boot v3.2.4, Spring v6.1.5
+2026-02-05 13:18:53 INFO  o.hsbc.controller.PmsControllerTest - No active profile set, falling back to 1 default profile: "default"
+2026-02-05 13:18:55 INFO  o.s.b.t.m.w.SpringBootMockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-02-05 13:18:55 INFO  o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-02-05 13:18:55 INFO  o.s.t.w.s.TestDispatcherServlet - Completed initialization in 1 ms
+2026-02-05 13:18:55 INFO  o.hsbc.controller.PmsControllerTest - Started PmsControllerTest in 2.331 seconds (process running for 7.338)
+2026-02-05 13:18:56 INFO  o.h.controller.StockDataController - StockDataController initialized
+2026-02-05 13:18:56 INFO  o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-02-05 13:18:56 INFO  o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-02-05 13:18:56 INFO  o.s.t.w.s.TestDispatcherServlet - Completed initialization in 1 ms
+2026-02-05 13:18:56 INFO  o.h.controller.StockDataController - Request received for commodity: GC=F
+2026-02-05 13:18:56 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/commodities/GC=F
+2026-02-05 13:18:56 INFO  o.h.controller.StockDataController - Successfully fetched commodity data for: GC=F
+2026-02-05 13:18:56 INFO  o.h.controller.StockDataController - StockDataController initialized
+2026-02-05 13:18:56 INFO  o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-02-05 13:18:56 INFO  o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-02-05 13:18:56 INFO  o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
+2026-02-05 13:18:56 INFO  o.h.controller.StockDataController - Request received for mutual fund: VFIAX
+2026-02-05 13:18:56 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/mutual-funds/VFIAX
+2026-02-05 13:18:56 INFO  o.h.controller.StockDataController - Successfully fetched mutual fund data for: VFIAX
+2026-02-05 13:18:56 INFO  o.h.controller.StockDataController - StockDataController initialized
+2026-02-05 13:18:56 INFO  o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-02-05 13:18:56 INFO  o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-02-05 13:18:56 INFO  o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
+2026-02-05 13:18:56 INFO  o.h.controller.StockDataController - Request received for history: AAPL with period: 1MO, interval: null
+2026-02-05 13:18:56 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/AAPL?period=1MO
+2026-02-05 13:18:56 INFO  o.h.controller.StockDataController - Successfully fetched history for: AAPL (1MO, null)
+2026-02-05 13:18:56 INFO  o.h.controller.StockDataController - StockDataController initialized
+2026-02-05 13:18:56 INFO  o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-02-05 13:18:56 INFO  o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-02-05 13:18:56 INFO  o.s.t.w.s.TestDispatcherServlet - Completed initialization in 1 ms
+2026-02-05 13:18:56 INFO  o.h.controller.StockDataController - Request received for crypto: BTC
+2026-02-05 13:18:56 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/crypto/BTC
+2026-02-05 13:18:56 INFO  o.h.controller.StockDataController - Successfully fetched crypto data for: BTC
+2026-02-05 13:18:56 INFO  o.h.controller.StockDataController - StockDataController initialized
+2026-02-05 13:18:56 INFO  o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-02-05 13:18:56 INFO  o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-02-05 13:18:56 INFO  o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
+2026-02-05 13:18:56 INFO  o.h.controller.StockDataController - Search request received with query: Apple
+2026-02-05 13:18:56 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/search?q=Apple
+2026-02-05 13:18:56 INFO  o.h.controller.StockDataController - Search completed successfully for query: Apple
+2026-02-05 13:18:56 INFO  o.h.controller.StockDataController - StockDataController initialized
+2026-02-05 13:18:56 INFO  o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-02-05 13:18:56 INFO  o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-02-05 13:18:56 INFO  o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
+2026-02-05 13:18:56 INFO  o.h.controller.StockDataController - Request received for stock: AAPL
+2026-02-05 13:18:56 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/stocks/AAPL
+2026-02-05 13:18:56 ERROR o.h.controller.StockDataController - Error fetching stock data for AAPL: Flask down
+java.lang.RuntimeException: Flask down
+	at org.springframework.web.client.RestTemplate.getForEntity(RestTemplate.java:429)
+	at org.hsbc.controller.StockDataController.getStock(StockDataController.java:42)
 	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
 	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
 	at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:255)
@@ -163,76 +61,15 @@ org.hibernate.NonUniqueResultException: Query did not return a unique result: 2 
 	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:1089)
 	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:979)
 	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1014)
-	at org.springframework.web.servlet.FrameworkServlet.doPost(FrameworkServlet.java:914)
-	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:590)
+	at org.springframework.web.servlet.FrameworkServlet.doGet(FrameworkServlet.java:903)
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:564)
 	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:885)
+	at org.springframework.test.web.servlet.TestDispatcherServlet.service(TestDispatcherServlet.java:72)
 	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:658)
-	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:205)
-	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149)
-	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:51)
-	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174)
-	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149)
-	at org.springframework.web.filter.CorsFilter.doFilterInternal(CorsFilter.java:91)
-	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
-	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174)
-	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149)
-	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100)
-	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
-	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174)
-	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149)
-	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93)
-	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
-	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174)
-	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149)
-	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:201)
-	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
-	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174)
-	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149)
-	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:167)
-	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:90)
-	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:482)
-	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:115)
-	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:93)
-	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:74)
-	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:344)
-	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:391)
-	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63)
-	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:896)
-	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1744)
-	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52)
-	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1191)
-	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659)
-	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63)
-	at java.base/java.lang.Thread.run(Thread.java:1583)
-2026-02-06 04:13:34 ERROR o.a.c.c.C.[.[.[.[dispatcherServlet] - Servlet.service() for servlet [dispatcherServlet] in context with path [] threw exception [Request processing failed: org.springframework.dao.IncorrectResultSizeDataAccessException: Query did not return a unique result: 2 results were returned] with root cause
-org.hibernate.NonUniqueResultException: Query did not return a unique result: 2 results were returned
-	at org.hibernate.query.spi.AbstractSelectionQuery.uniqueElement(AbstractSelectionQuery.java:586)
-	at org.hibernate.query.spi.AbstractSelectionQuery.getSingleResult(AbstractSelectionQuery.java:570)
-	at org.springframework.data.jpa.repository.query.JpaQueryExecution$SingleEntityExecution.doExecute(JpaQueryExecution.java:223)
-	at org.springframework.data.jpa.repository.query.JpaQueryExecution.execute(JpaQueryExecution.java:92)
-	at org.springframework.data.jpa.repository.query.AbstractJpaQuery.doExecute(AbstractJpaQuery.java:149)
-	at org.springframework.data.jpa.repository.query.AbstractJpaQuery.execute(AbstractJpaQuery.java:137)
-	at org.springframework.data.repository.core.support.RepositoryMethodInvoker.doInvoke(RepositoryMethodInvoker.java:170)
-	at org.springframework.data.repository.core.support.RepositoryMethodInvoker.invoke(RepositoryMethodInvoker.java:158)
-	at org.springframework.data.repository.core.support.QueryExecutorMethodInterceptor.doInvoke(QueryExecutorMethodInterceptor.java:164)
-	at org.springframework.data.repository.core.support.QueryExecutorMethodInterceptor.invoke(QueryExecutorMethodInterceptor.java:143)
-	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184)
-	at org.springframework.data.projection.DefaultMethodInvokingMethodInterceptor.invoke(DefaultMethodInvokingMethodInterceptor.java:70)
-	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184)
-	at org.springframework.transaction.interceptor.TransactionInterceptor$1.proceedWithInvocation(TransactionInterceptor.java:123)
-	at org.springframework.transaction.interceptor.TransactionAspectSupport.invokeWithinTransaction(TransactionAspectSupport.java:392)
-	at org.springframework.transaction.interceptor.TransactionInterceptor.invoke(TransactionInterceptor.java:119)
-	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184)
-	at org.springframework.dao.support.PersistenceExceptionTranslationInterceptor.invoke(PersistenceExceptionTranslationInterceptor.java:137)
-	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184)
-	at org.springframework.data.jpa.repository.support.CrudMethodMetadataPostProcessor$CrudMethodMetadataPopulatingMethodInterceptor.invoke(CrudMethodMetadataPostProcessor.java:135)
-	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184)
-	at org.springframework.aop.interceptor.ExposeInvocationInterceptor.invoke(ExposeInvocationInterceptor.java:97)
-	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184)
-	at org.springframework.aop.framework.JdkDynamicAopProxy.invoke(JdkDynamicAopProxy.java:220)
-	at jdk.proxy2/jdk.proxy2.$Proxy119.findBySymbol(Unknown Source)
-	at org.hsbc.service.PmsServiceimp.sellAsset(PmsServiceimp.java:186)
-	at org.hsbc.controller.PmsController.sellAsset(PmsController.java:92)
+	at org.springframework.mock.web.MockFilterChain$ServletFilterProxy.doFilter(MockFilterChain.java:165)
+	at org.springframework.mock.web.MockFilterChain.doFilter(MockFilterChain.java:132)
+	at org.springframework.test.web.servlet.MockMvc.perform(MockMvc.java:201)
+	at org.hsbc.controller.StockDataControllerTest.getStock_ServerError(StockDataControllerTest.java:81)
 	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
 	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
 	at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:255)

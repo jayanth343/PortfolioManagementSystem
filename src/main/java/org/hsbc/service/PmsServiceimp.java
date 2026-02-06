@@ -1,6 +1,5 @@
 package org.hsbc.service;
 
-
 //Import statemnts
 import org.hsbc.entity.PmsEntity;
 import org.hsbc.entity.TransactionEntity;
@@ -9,43 +8,37 @@ import org.hsbc.repo.PmsRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
-
 
 import java.time.LocalDate;
+import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class PmsServiceimp implements PmsService {
-    private static final Logger log =
-            LoggerFactory.getLogger(PmsServiceimp.class);
-        @Autowired
-        private PmsRepository repository;
-        
-        @Autowired
-        private WalletService walletService;
-        
-        @Autowired
-        private TransactionService transactionService;
+    private static final Logger log = LoggerFactory.getLogger(PmsServiceimp.class);
+    @Autowired
+    private PmsRepository repository;
 
-        // 1️⃣ Add Asset
-        @Override
-        public PmsEntity addAsset(PmsEntity asset) {
-            // Calculate total cost
-            double totalCost = asset.getBuyPrice() * asset.getQuantity();
-            
-            // Check and deduct from wallet (this will throw exception if insufficient balance)
-            walletService.deductMoney(totalCost);
-            
-            // Set purchase date and buying value
-            asset.setPurchaseDate(LocalDate.now());
-            asset.setBuyingValue(totalCost);
-            
-            return repository.save(asset);
-        }
+    @Autowired
+    private WalletService walletService;
+
+    // 1️⃣ Add Asset
+    @Override
+    public PmsEntity addAsset(PmsEntity asset) {
+        // Calculate total cost
+        double totalCost = asset.getBuyPrice() * asset.getQuantity();
+
+        // Check and deduct from wallet (this will throw exception if insufficient
+        // balance)
+        walletService.deductMoney(totalCost);
+
+        // Set purchase date and buying value
+        asset.setPurchaseDate(LocalDate.now());
+        asset.setBuyingValue(totalCost);
+
+        return repository.save(asset);
+    }
 
     // 2️⃣ Remove Asset
     @Override
@@ -84,7 +77,8 @@ public class PmsServiceimp implements PmsService {
         double buyingValue = asset.getBuyPrice() * asset.getQuantity();
         double pl = calculatePL(id);
 
-        if (buyingValue == 0) return 0;
+        if (buyingValue == 0)
+            return 0;
 
         return (pl / buyingValue) * 100;
     }
@@ -97,6 +91,7 @@ public class PmsServiceimp implements PmsService {
                 .mapToDouble(a -> a.getCurrentPrice() * a.getQuantity())
                 .sum();
     }
+
     public PmsServiceimp(PmsRepository repository) {
         this.repository = repository;
     }
@@ -105,6 +100,7 @@ public class PmsServiceimp implements PmsService {
     public List<PmsEntity> getAllAssets() {
         return repository.findAll();
     }
+
     @Override
     public PmsEntity getAssetById(Long id) throws InvalidPmsIdException {
         Optional<PmsEntity> optAsset = repository.findById(id);
@@ -124,10 +120,7 @@ public class PmsServiceimp implements PmsService {
                 return repository.save(asset);
             }
         }
-        throw new ResponseStatusException(
-                HttpStatus.NOT_FOUND,
-                "Asset not found with symbol " + symbol
-        );
+        throw new org.hsbc.exception.ResourceNotFoundException("Asset not found with symbol " + symbol);
     }
 
     @Override
