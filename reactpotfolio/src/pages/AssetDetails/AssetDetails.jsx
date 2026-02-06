@@ -494,7 +494,7 @@ const AssetDetails = () => {
                     >
                         <Tab label="Fundamentals" />
                         <Tab label="News" />
-                        <Tab label="Expert Opinions" />
+                        {type?.toLowerCase() !== 'mutualfund' && <Tab label="Expert Opinions" />}
                         {type?.toLowerCase() !== 'mutualfund' && <Tab label="AI Analysis" />}
                     </Tabs>
 
@@ -672,7 +672,7 @@ const AssetDetails = () => {
                     )}
 
                     {/* Recommendations Tab */}
-                    {tabValue === 2 && (
+                    {tabValue === 2 && type?.toLowerCase() !== 'mutualfund' && (
                         <Box sx={{ p: 4 }}>
                             <Typography variant="h5" fontWeight="700" mb={1} sx={{ color: '#fff' }}>
                                 What Experts Think
@@ -833,7 +833,7 @@ const AssetDetails = () => {
                     )}
 
                     {/* AI Analysis Tab */}
-                    {tabValue === 3 && (
+                    {tabValue === 3 && type?.toLowerCase() !== 'mutualfund' && (
                         <Box sx={{ p: 4 }}>
                             <Stack direction="row" justifyContent="space-between" alignItems="center" mb={3}>
                                 <Typography variant="h5" fontWeight="700" sx={{ color: '#fff' }}>
