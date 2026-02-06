@@ -169,16 +169,26 @@ const Home = () => {
 
     const isPositive = liveGain >= 0;
 
-    // Format last update time
+    // Format time since last update
     const formatUpdateTime = (timestamp) => {
         if (!timestamp) return 'Updating...';
-        const date = new Date(timestamp);
-        return date.toLocaleTimeString('en-IN', { 
-            timeZone: 'Asia/Kolkata',
-            hour: '2-digit', 
-            minute: '2-digit',
-            second: '2-digit'
-        }) + ' IST';
+        const now = new Date();
+        const updateTime = new Date(timestamp);
+        const diffMs = now - updateTime;
+        const diffSeconds = Math.floor(diffMs / 1000);
+        
+        if (diffSeconds < 60) {
+            return `${diffSeconds} second${diffSeconds !== 1 ? 's' : ''} ago`;
+        } else if (diffSeconds < 3600) {
+            const minutes = Math.floor(diffSeconds / 60);
+            return `${minutes} minute${minutes !== 1 ? 's' : ''} ago`;
+        } else if (diffSeconds < 86400) {
+            const hours = Math.floor(diffSeconds / 3600);
+            return `${hours} hour${hours !== 1 ? 's' : ''} ago`;
+        } else {
+            const days = Math.floor(diffSeconds / 86400);
+            return `${days} day${days !== 1 ? 's' : ''} ago`;
+        }
     };
 
     return (

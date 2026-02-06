@@ -126,7 +126,7 @@ const Landing = () => {
                         <div className="feature-icon">🤖</div>
                         <h3 className="feature-title">AI Recommendations</h3>
                         <p className="feature-description">
-                            Get intelligent buy/sell signals based on advanced technical analysis
+                            Get intelligent add/remove signals based on advanced technical analysis
                         </p>
                     </div>
 

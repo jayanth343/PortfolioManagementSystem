@@ -69,7 +69,7 @@ const Transactions = () => {
                     <span style={{ fontSize: '4rem', display: 'block', marginBottom: '20px' }}>📝</span>
                     <h3 style={{ marginTop: 0, marginBottom: '10px', fontSize: '1.5rem' }}>No transactions yet</h3>
                     <p style={{ color: 'var(--text-secondary)', margin: 0, fontSize: '1.1rem' }}>
-                        Buy or sell assets to see your history here.
+                        Add or remove assets to see your history here.
                     </p>
                 </div>
             ) : (

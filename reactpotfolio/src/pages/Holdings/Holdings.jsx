@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { io } from 'socket.io-client';
+import { Snackbar, Alert, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button } from '@mui/material';
 import AssetCard from '../../components/cards/AssetCard';
 import BuyAssetModal from '../../components/modals/BuyAssetModal';
 import PriceChart from '../../components/charts/PriceChart';
@@ -25,6 +26,8 @@ const Holdings = () => {
     const [analysis, setAnalysis] = useState(null);
     const [analysisLoading, setAnalysisLoading] = useState(false);
     const [analysisError, setAnalysisError] = useState(null);
+    const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
+    const [errorDialog, setErrorDialog] = useState({ open: false, title: '', message: '' });
 
     const fetchAssets = async () => {
         try {
@@ -152,11 +155,29 @@ const Holdings = () => {
     };
 
     const handleBuyAsset = async () => {
-        if (!selectedAsset || buyQuantity <= 0) return;
+        if (!selectedAsset || buyQuantity <= 0) {
+            setErrorDialog({
+                open: true,
+                title: 'Invalid Quantity',
+                message: 'Please enter a valid quantity greater than 0.'
+            });
+            return;
+        }
         
         try {
             // Get current price (unit price)
             const currentUnitPrice = livePrices[selectedAsset.symbol] || selectedAsset.currentPrice;
+            const totalCost = currentUnitPrice * buyQuantity;
+            
+            // Check if user has sufficient balance
+            if (totalCost > walletBalance) {
+                setErrorDialog({
+                    open: true,
+                    title: 'Insufficient Balance',
+                    message: `You need ${formatCurrency(totalCost)} but only have ${formatCurrency(walletBalance)} in your wallet. Please add funds or reduce the quantity.`
+                });
+                return;
+            }
             
             // Use new buyAsset function that handles add/update and transaction recording
             await buyAsset(
@@ -175,19 +196,45 @@ const Holdings = () => {
             
             setShowDetailsModal(false);
             setBuyQuantity(1);
+            
+            setSnackbar({
+                open: true,
+                message: `Successfully added ${buyQuantity} units of ${selectedAsset.companyName} for ${formatCurrency(totalCost)}`,
+                severity: 'success'
+            });
         } catch (error) {
             console.error("Error buying asset:", error);
-            alert(error.message || "Failed to buy asset");
+            setErrorDialog({
+                open: true,
+                title: 'Transaction Failed',
+                message: error.message || 'Failed to complete the purchase. Please try again.'
+            });
         }
     };
 
     const handleSellAsset = async () => {
-        if (!selectedAsset || sellQuantity <= 0 || sellQuantity > selectedAsset.quantity) {
-            alert("Invalid sell quantity");
+        if (!selectedAsset || sellQuantity <= 0) {
+            setErrorDialog({
+                open: true,
+                title: 'Invalid Quantity',
+                message: 'Please enter a valid quantity greater than 0.'
+            });
+            return;
+        }
+        
+        if (sellQuantity > selectedAsset.quantity) {
+            setErrorDialog({
+                open: true,
+                title: 'Insufficient Holdings',
+                message: `You only have ${selectedAsset.quantity} units of ${selectedAsset.companyName}. Cannot remove ${sellQuantity} units.`
+            });
             return;
         }
         
         try {
+            const currentUnitPrice = livePrices[selectedAsset.symbol] || selectedAsset.currentPrice;
+            const totalValue = currentUnitPrice * sellQuantity;
+            
             // Use new sellAssetQuantity function that handles remove/reduce and transaction recording
             await sellAssetQuantity(selectedAsset.symbol, sellQuantity);
             
@@ -199,9 +246,19 @@ const Holdings = () => {
             
             setShowDetailsModal(false);
             setSellQuantity(1);
+            
+            setSnackbar({
+                open: true,
+                message: `Successfully removed ${sellQuantity} units of ${selectedAsset.companyName} for ${formatCurrency(totalValue)}`,
+                severity: 'success'
+            });
         } catch (error) {
             console.error("Error selling asset:", error);
-            alert(error.message || "Failed to sell asset");
+            setErrorDialog({
+                open: true,
+                title: 'Transaction Failed',
+                message: error.message || 'Failed to complete the sale. Please try again.'
+            });
         }
     };
 
@@ -300,7 +357,7 @@ const Holdings = () => {
                 }}>
                     <div style={{ fontSize: '3rem', marginBottom: '20px' }}>📊</div>
                     <h2 style={{ color: 'rgba(255,255,255,0.7)' }}>No Holdings Yet</h2>
-                    <p>Start building your portfolio by searching and buying assets</p>
+                    <p>Start building your portfolio by searching and adding assets</p>
                 </div>
             )}
 
@@ -443,23 +500,25 @@ const Holdings = () => {
                             >
                                 Overview
                             </button>
-                            <button
-                                onClick={() => setActiveTab('recommendation')}
-                                style={{
-                                    background: 'none',
-                                    border: 'none',
-                                    color: activeTab === 'recommendation' ? '#fff' : 'rgba(255,255,255,0.5)',
-                                    padding: '12px 0',
-                                    fontSize: '0.875rem',
-                                    fontWeight: 500,
-                                    cursor: 'pointer',
-                                    borderBottom: activeTab === 'recommendation' ? '2px solid #fff' : '2px solid transparent',
-                                    transition: 'all 0.15s ease',
-                                    marginBottom: '-1px'
-                                }}
-                            >
-                                AI Recommendation
-                            </button>
+                            {selectedAsset?.assetType?.toLowerCase() !== 'mutual funds' && (
+                                <button
+                                    onClick={() => setActiveTab('recommendation')}
+                                    style={{
+                                        background: 'none',
+                                        border: 'none',
+                                        color: activeTab === 'recommendation' ? '#fff' : 'rgba(255,255,255,0.5)',
+                                        padding: '12px 0',
+                                        fontSize: '0.875rem',
+                                        fontWeight: 500,
+                                        cursor: 'pointer',
+                                        borderBottom: activeTab === 'recommendation' ? '2px solid #fff' : '2px solid transparent',
+                                        transition: 'all 0.15s ease',
+                                        marginBottom: '-1px'
+                                    }}
+                                >
+                                    AI Recommendation
+                                </button>
+                            )}
                         </div>
 
                         {/* Content */}
@@ -611,9 +670,9 @@ const Holdings = () => {
                                 />
                             </div>
 
-                            {/* Buy/Sell Actions */}
+                            {/* Add/Remove Actions */}
                             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '12px' }}>
-                                {/* Buy Section */}
+                                {/* Add Section */}
                                 <div style={{
                                     padding: '16px',
                                     border: '1px solid rgba(255,255,255,0.08)',
@@ -677,11 +736,11 @@ const Holdings = () => {
                                         onMouseOver={(e) => e.target.style.backgroundColor = 'rgba(255,255,255,0.9)'}
                                         onMouseOut={(e) => e.target.style.backgroundColor = '#fff'}
                                     >
-                                        Buy {buyQuantity} {buyQuantity === 1 ? 'Unit' : 'Units'}
+                                        Add {buyQuantity} {buyQuantity === 1 ? 'Unit' : 'Units'}
                                     </button>
                                 </div>
 
-                                {/* Sell Section */}
+                                {/* Remove Section */}
                                 <div style={{
                                     padding: '16px',
                                     border: '1px solid rgba(255,255,255,0.08)',
@@ -752,7 +811,7 @@ const Holdings = () => {
                                             e.target.style.borderColor = 'rgba(255,255,255,0.2)';
                                         }}
                                     >
-                                        Sell {sellQuantity} {sellQuantity === 1 ? 'Unit' : 'Units'}
+                                        Remove {sellQuantity} {sellQuantity === 1 ? 'Unit' : 'Units'}
                                     </button>
                                 </div>
                             </div>
@@ -786,7 +845,7 @@ const Holdings = () => {
                                 View Full Details & Analysis →
                             </button>
                             </>
-                            ) : (
+                            ) : selectedAsset?.assetType?.toLowerCase() !== 'mutual funds' ? (
                                 /* AI Recommendation Tab */
                                 <div>
                                     {console.log('Rendering AI tab - analysis:', analysis, 'loading:', analysisLoading, 'error:', analysisError)}
@@ -834,42 +893,54 @@ const Holdings = () => {
                                         <div>
                                             {console.log('Rendering analysis content:', analysis)}
                                             {/* Recommendation Badge */}
-                                            {analysis.action && (
-                                                <div style={{
-                                                    padding: '16px',
-                                                    border: '1px solid rgba(255,255,255,0.08)',
-                                                    borderRadius: '8px',
-                                                    backgroundColor: 'rgba(255,255,255,0.02)',
-                                                    marginBottom: '16px'
-                                                }}>
+                                            {analysis.action && (() => {
+                                                // Transform action text for portfolio context
+                                                let displayAction = analysis.action;
+                                                if (analysis.action.includes('STRONG BUY')) {
+                                                    displayAction = 'ADD MORE';
+                                                } else if (analysis.action.includes('BUY') && !analysis.action.includes('DON\'T')) {
+                                                    displayAction = 'ACCUMULATE';
+                                                } else if (analysis.action.includes('SELL')) {
+                                                    displayAction = analysis.action; // Keep SELL as is
+                                                }
+                                                
+                                                return (
                                                     <div style={{
-                                                        fontSize: '0.75rem',
-                                                        color: 'rgba(255,255,255,0.5)',
-                                                        marginBottom: '8px',
-                                                        fontWeight: 500
+                                                        padding: '16px',
+                                                        border: '1px solid rgba(255,255,255,0.08)',
+                                                        borderRadius: '8px',
+                                                        backgroundColor: 'rgba(255,255,255,0.02)',
+                                                        marginBottom: '16px'
                                                     }}>
-                                                        AI Recommendation
+                                                        <div style={{
+                                                            fontSize: '0.75rem',
+                                                            color: 'rgba(255,255,255,0.5)',
+                                                            marginBottom: '8px',
+                                                            fontWeight: 500
+                                                        }}>
+                                                            AI Recommendation
+                                                        </div>
+                                                        <div style={{
+                                                            display: 'inline-block',
+                                                            padding: '6px 14px',
+                                                            backgroundColor: analysis.action.includes('BUY') ? 'rgba(16, 185, 129, 0.1)' :
+                                                                            analysis.action.includes('SELL') ? 'rgba(239, 68, 68, 0.1)' :
+                                                                            'rgba(245, 158, 11, 0.1)',
+                                                            border: `1px solid ${analysis.action.includes('BUY') ? 'rgba(16, 185, 129, 0.3)' :
+                                                                                analysis.action.includes('SELL') ? 'rgba(239, 68, 68, 0.3)' :
+                                                                                'rgba(245, 158, 11, 0.3)'}`,
+                                                            borderRadius: '6px',
+                                                            color: analysis.action.includes('BUY') ? '#10b981' :
+                                                                   analysis.action.includes('SELL') ? '#ef4444' :
+                                                                   '#f59e0b',
+                                                            fontSize: '0.95rem',
+                                                            fontWeight: 600
+                                                        }}>
+                                                            {displayAction}
+                                                        </div>
                                                     </div>
-                                                    <div style={{
-                                                        display: 'inline-block',
-                                                        padding: '6px 14px',
-                                                        backgroundColor: analysis.action.includes('BUY') ? 'rgba(16, 185, 129, 0.1)' :
-                                                                        analysis.action.includes('SELL') ? 'rgba(239, 68, 68, 0.1)' :
-                                                                        'rgba(245, 158, 11, 0.1)',
-                                                        border: `1px solid ${analysis.action.includes('BUY') ? 'rgba(16, 185, 129, 0.3)' :
-                                                                            analysis.action.includes('SELL') ? 'rgba(239, 68, 68, 0.3)' :
-                                                                            'rgba(245, 158, 11, 0.3)'}`,
-                                                        borderRadius: '6px',
-                                                        color: analysis.action.includes('BUY') ? '#10b981' :
-                                                               analysis.action.includes('SELL') ? '#ef4444' :
-                                                               '#f59e0b',
-                                                        fontSize: '0.95rem',
-                                                        fontWeight: 600
-                                                    }}>
-                                                        {analysis.action}
-                                                    </div>
-                                                </div>
-                                            )}
+                                                );
+                                            })()}
 
                                             {/* Reasoning */}
                                             {analysis.reasoning && (
@@ -1047,6 +1118,27 @@ const Holdings = () => {
                                                     </div>
                                                 )}
                                             </div>
+
+                                            {/* Disclaimer */}
+                                            <div style={{
+                                                marginTop: '20px',
+                                                padding: '12px 16px',
+                                                border: '1px solid rgba(251, 191, 36, 0.3)',
+                                                borderRadius: '8px',
+                                                backgroundColor: 'rgba(251, 191, 36, 0.05)',
+                                                display: 'flex',
+                                                gap: '12px',
+                                                alignItems: 'start'
+                                            }}>
+                                                <div style={{ fontSize: '1.2rem', flexShrink: 0 }}>⚠️</div>
+                                                <div style={{
+                                                    fontSize: '0.75rem',
+                                                    color: 'rgba(255,255,255,0.7)',
+                                                    lineHeight: '1.5'
+                                                }}>
+                                                    <strong style={{ color: '#fbbf24' }}>Disclaimer:</strong> This is an AI-generated recommendation for informational purposes only. Investment decisions should not be made solely based on this advice. Please conduct your own research and consider consulting with a financial advisor before making any investment decisions.
+                                                </div>
+                                            </div>
                                         </div>
                                     ) : (
                                         <div style={{ 
@@ -1059,11 +1151,72 @@ const Holdings = () => {
                                         </div>
                                     )}
                                 </div>
+                            ) : (
+                                /* Mutual Funds - No AI Tab */
+                                <div style={{ 
+                                    textAlign: 'center', 
+                                    padding: '60px 20px',
+                                    color: 'rgba(255,255,255,0.5)'
+                                }}>
+                                    <div style={{ fontSize: '2rem', marginBottom: '16px' }}>📊</div>
+                                    <div>AI recommendations are not available for mutual funds</div>
+                                </div>
                             )}
                         </div>
                     </div>
                 </div>
             )}
+
+            {/* Success Notification Snackbar */}
+            <Snackbar 
+                open={snackbar.open} 
+                autoHideDuration={6000} 
+                onClose={() => setSnackbar({ ...snackbar, open: false })}
+                anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+            >
+                <Alert 
+                    onClose={() => setSnackbar({ ...snackbar, open: false })} 
+                    severity={snackbar.severity}
+                    sx={{ width: '100%' }}
+                >
+                    {snackbar.message}
+                </Alert>
+            </Snackbar>
+
+            {/* Error Dialog */}
+            <Dialog
+                open={errorDialog.open}
+                onClose={() => setErrorDialog({ ...errorDialog, open: false })}
+                PaperProps={{
+                    style: {
+                        backgroundColor: '#1a1a1a',
+                        border: '1px solid rgba(244, 67, 54, 0.3)',
+                        borderRadius: '12px',
+                        padding: '8px'
+                    }
+                }}
+            >
+                <DialogTitle style={{ color: '#f44336', fontWeight: 600 }}>
+                    {errorDialog.title}
+                </DialogTitle>
+                <DialogContent>
+                    <div style={{ color: 'rgba(255,255,255,0.9)', padding: '8px 0' }}>
+                        {errorDialog.message}
+                    </div>
+                </DialogContent>
+                <DialogActions>
+                    <Button 
+                        onClick={() => setErrorDialog({ ...errorDialog, open: false })}
+                        style={{
+                            color: '#f44336',
+                            textTransform: 'none',
+                            fontWeight: 500
+                        }}
+                    >
+                        Close
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </div>
     );
 };

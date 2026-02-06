@@ -20,6 +20,7 @@ import {
     Modal,
     TextField,
     Link,
+    Snackbar,
 } from '@mui/material';
 import {
     ArrowBack,
@@ -54,6 +55,7 @@ const AssetDetails = () => {
     const [priceTimestamp, setPriceTimestamp] = useState(null);
     const [buyLoading, setBuyLoading] = useState(false);
     const [buyError, setBuyError] = useState(null);
+    const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
     const [analysis, setAnalysis] = useState(null);
     const [analysisLoading, setAnalysisLoading] = useState(false);
     const [analysisError, setAnalysisError] = useState(null);
@@ -181,7 +183,11 @@ const AssetDetails = () => {
                 type
             );
 
-            alert(`Successfully purchased ${quantity} shares of ${asset.name}`);
+            setSnackbar({
+                open: true,
+                message: `Successfully added ${quantity} shares of ${asset.name} to your portfolio`,
+                severity: 'success'
+            });
             handleBuyClose();
             
             // Dispatch event to update wallet balance in header
@@ -191,7 +197,7 @@ const AssetDetails = () => {
             if (err.message && err.message.includes('Insufficient')) {
                 setBuyError('Insufficient wallet balance. Please add funds to your wallet.');
             } else {
-                setBuyError(err.message || 'Failed to complete purchase');
+                setBuyError(err.message || 'Failed to add asset to portfolio');
             }
         } finally {
             setBuyLoading(false);
@@ -489,7 +495,7 @@ const AssetDetails = () => {
                         <Tab label="Fundamentals" />
                         <Tab label="News" />
                         <Tab label="Expert Opinions" />
-                        <Tab label="AI Analysis" />
+                        {type?.toLowerCase() !== 'mutualfund' && <Tab label="AI Analysis" />}
                     </Tabs>
 
                     {/* Fundamentals Tab */}
@@ -909,7 +915,10 @@ const AssetDetails = () => {
                                                 Recommendation
                                             </Typography>
                                             <Chip 
-                                                label={analysis.action || 'N/A'}
+                                                label={(() => {
+                                                    const action = analysis.action || 'N/A';
+                                                    return action.includes('HOLD') ? 'WATCH' : action;
+                                                })()}
                                                 sx={{
                                                     bgcolor: analysis.action?.includes('BUY') ? 'rgba(16, 185, 129, 0.2)' : 
                                                              analysis.action?.includes('SELL') ? 'rgba(239, 68, 68, 0.2)' : 
@@ -1035,6 +1044,23 @@ const AssetDetails = () => {
                                             </Typography>
                                         </Card>
                                     </Box>
+
+                                    {/* Disclaimer */}
+                                    <Box sx={{
+                                        mt: 3,
+                                        p: 2,
+                                        border: '1px solid rgba(251, 191, 36, 0.3)',
+                                        borderRadius: 2,
+                                        bgcolor: 'rgba(251, 191, 36, 0.05)',
+                                        display: 'flex',
+                                        gap: 1.5,
+                                        alignItems: 'flex-start'
+                                    }}>
+                                        <Typography sx={{ fontSize: '1.2rem', flexShrink: 0 }}>⚠️</Typography>
+                                        <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.7)', lineHeight: 1.6 }}>
+                                            <strong style={{ color: '#fbbf24' }}>Disclaimer:</strong> This is an AI-generated recommendation for informational purposes only. Investment decisions should not be made solely based on this advice. Please conduct your own research and consider consulting with a financial advisor before making any investment decisions.
+                                        </Typography>
+                                    </Box>
                                 </Stack>
                             ) : (
                                 <Typography variant="body1" sx={{ color: '#666', textAlign: 'center', py: 8 }}>
@@ -1081,7 +1107,7 @@ const AssetDetails = () => {
                     </IconButton>
 
                     <Typography variant="h5" fontWeight="700" mb={3} sx={{ color: '#fff' }}>
-                        Buy {asset?.name}
+                        Add {asset?.name} to Portfolio
                     </Typography>
 
                     <Stack spacing={3}>
@@ -1154,12 +1180,28 @@ const AssetDetails = () => {
                                     '&:disabled': { bgcolor: '#333', color: '#666' }
                                 }}
                             >
-                                {buyLoading ? 'Processing...' : 'Confirm Purchase'}
+                                {buyLoading ? 'Processing...' : 'Confirm Addition'}
                             </Button>
                         </Stack>
                     </Stack>
                 </Paper>
             </Modal>
+
+            {/* Success Notification Snackbar */}
+            <Snackbar 
+                open={snackbar.open} 
+                autoHideDuration={6000} 
+                onClose={() => setSnackbar({ ...snackbar, open: false })}
+                anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+            >
+                <Alert 
+                    onClose={() => setSnackbar({ ...snackbar, open: false })} 
+                    severity={snackbar.severity}
+                    sx={{ width: '100%' }}
+                >
+                    {snackbar.message}
+                </Alert>
+            </Snackbar>
         </Box>
     );
 };

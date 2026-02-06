@@ -1,227 +1,129 @@
-2026-02-05 09:31:03 INFO  o.h.PortfolioManagementSystemApplication - Starting PortfolioManagementSystemApplication using Java 21.0.9 with PID 11356 (C:\Users\Administrator\JavaLearning\PortfolioManagementSystem\target\classes started by Administrator in C:\Users\Administrator\JavaLearning\PortfolioManagementSystem)
-2026-02-05 09:31:03 DEBUG o.h.PortfolioManagementSystemApplication - Running with Spring Boot v3.2.4, Spring v6.1.5
-2026-02-05 09:31:03 INFO  o.h.PortfolioManagementSystemApplication - No active profile set, falling back to 1 default profile: "default"
-2026-02-05 09:31:06 INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
-2026-02-05 09:31:07 INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 172 ms. Found 3 JPA repository interfaces.
-2026-02-05 09:31:08 INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
-2026-02-05 09:31:08 INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
-2026-02-05 09:31:08 INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.19]
-2026-02-05 09:31:08 INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
-2026-02-05 09:31:08 INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 4965 ms
-2026-02-05 09:31:09 INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
-2026-02-05 09:31:09 INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.4.4.Final
-2026-02-05 09:31:09 INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
-2026-02-05 09:31:10 INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
-2026-02-05 09:31:10 INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
-2026-02-05 09:31:12 INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@1dbff71c
-2026-02-05 09:31:12 INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
-2026-02-05 09:31:18 INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
-2026-02-05 09:31:18 INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
-2026-02-05 09:31:18 INFO  o.s.d.j.r.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
-2026-02-05 09:31:19 INFO  o.h.controller.StockDataController - StockDataController initialized
-2026-02-05 09:31:20 WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
-2026-02-05 09:31:21 INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path ''
-2026-02-05 09:31:21 INFO  o.h.PortfolioManagementSystemApplication - Started PortfolioManagementSystemApplication in 18.526 seconds (process running for 21.327)
-2026-02-05 09:33:00 INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
-2026-02-05 09:33:00 INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
-2026-02-05 09:33:00 INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
-2026-02-05 09:35:43 INFO  o.h.PortfolioManagementSystemApplication - Starting PortfolioManagementSystemApplication using Java 21.0.9 with PID 7052 (C:\Users\Administrator\JavaLearning\PortfolioManagementSystem\target\classes started by Administrator in C:\Users\Administrator\JavaLearning\PortfolioManagementSystem)
-2026-02-05 09:35:43 DEBUG o.h.PortfolioManagementSystemApplication - Running with Spring Boot v3.2.4, Spring v6.1.5
-2026-02-05 09:35:43 INFO  o.h.PortfolioManagementSystemApplication - No active profile set, falling back to 1 default profile: "default"
-2026-02-05 09:35:44 INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
-2026-02-05 09:35:44 INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 73 ms. Found 3 JPA repository interfaces.
-2026-02-05 09:35:45 INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
-2026-02-05 09:35:45 INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
-2026-02-05 09:35:45 INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.19]
-2026-02-05 09:35:45 INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
-2026-02-05 09:35:45 INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 2256 ms
-2026-02-05 09:35:45 INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
-2026-02-05 09:35:45 INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.4.4.Final
-2026-02-05 09:35:45 INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
-2026-02-05 09:35:46 INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
-2026-02-05 09:35:46 INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
-2026-02-05 09:35:46 INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@110620d
-2026-02-05 09:35:46 INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
-2026-02-05 09:35:48 INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
-2026-02-05 09:35:48 INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
-2026-02-05 09:35:48 INFO  o.s.d.j.r.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
-2026-02-05 09:35:49 INFO  o.h.controller.StockDataController - StockDataController initialized
-2026-02-05 09:35:49 WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
-2026-02-05 09:35:50 INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path ''
-2026-02-05 09:35:50 INFO  o.h.PortfolioManagementSystemApplication - Started PortfolioManagementSystemApplication in 7.926 seconds (process running for 8.494)
-2026-02-05 09:35:55 INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
-2026-02-05 09:35:55 INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
-2026-02-05 09:35:55 INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 2 ms
-2026-02-05 09:41:38 INFO  o.h.controller.StockDataController - Request received for stock: 0P0000XVFU.BO
-2026-02-05 09:41:38 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/stocks/0P0000XVFU.BO
-2026-02-05 09:41:39 INFO  o.h.controller.StockDataController - Successfully fetched stock data for: 0P0000XVFU.BO
-2026-02-05 09:41:39 INFO  o.h.controller.StockDataController - Request received for stock: 0P0000XVFU.BO
-2026-02-05 09:41:39 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/stocks/0P0000XVFU.BO
-2026-02-05 09:41:39 INFO  o.h.controller.StockDataController - Request received for history: 0P0000XVFU.BO with period: 1mo, interval: 1h
-2026-02-05 09:41:39 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/0P0000XVFU.BO?period=1MO&interval=1h
-2026-02-05 09:41:39 INFO  o.h.controller.StockDataController - Successfully fetched history for: 0P0000XVFU.BO (1mo, 1h)
-2026-02-05 09:41:39 INFO  o.h.controller.StockDataController - Request received for history: 0P0000XVFU.BO with period: 1mo, interval: 1h
-2026-02-05 09:41:39 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/0P0000XVFU.BO?period=1MO&interval=1h
-2026-02-05 09:41:39 INFO  o.h.controller.StockDataController - Successfully fetched history for: 0P0000XVFU.BO (1mo, 1h)
-2026-02-05 09:41:39 INFO  o.h.controller.StockDataController - Successfully fetched stock data for: 0P0000XVFU.BO
-2026-02-05 09:41:50 INFO  o.h.controller.StockDataController - Search request received with query: eth
-2026-02-05 09:41:50 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/search?q=eth
-2026-02-05 09:41:51 INFO  o.h.controller.StockDataController - Search completed successfully for query: eth
-2026-02-05 09:41:51 INFO  o.h.controller.StockDataController - Search request received with query: eth
-2026-02-05 09:41:51 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/search?q=eth
-2026-02-05 09:41:51 INFO  o.h.controller.StockDataController - Search completed successfully for query: eth
-2026-02-05 09:41:53 INFO  o.h.controller.StockDataController - Request received for crypto: ETH-USD
-2026-02-05 09:41:53 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/crypto/ETH-USD
-2026-02-05 09:41:53 INFO  o.h.controller.StockDataController - Successfully fetched crypto data for: ETH-USD
-2026-02-05 09:41:53 INFO  o.h.controller.StockDataController - Request received for crypto: ETH-USD
-2026-02-05 09:41:53 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/crypto/ETH-USD
-2026-02-05 09:41:54 INFO  o.h.controller.StockDataController - Request received for history: ETH-USD with period: 1mo, interval: 1h
-2026-02-05 09:41:54 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/ETH-USD?period=1MO&interval=1h
-2026-02-05 09:41:54 INFO  o.h.controller.StockDataController - Successfully fetched history for: ETH-USD (1mo, 1h)
-2026-02-05 09:41:54 INFO  o.h.controller.StockDataController - Request received for history: ETH-USD with period: 1mo, interval: 1h
-2026-02-05 09:41:54 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/ETH-USD?period=1MO&interval=1h
-2026-02-05 09:41:54 INFO  o.h.controller.StockDataController - Successfully fetched crypto data for: ETH-USD
-2026-02-05 09:41:54 INFO  o.h.controller.StockDataController - Successfully fetched history for: ETH-USD (1mo, 1h)
-2026-02-05 09:56:47 INFO  o.h.controller.StockDataController - Search request received with query: itc
-2026-02-05 09:56:47 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/search?q=itc
-2026-02-05 09:56:47 INFO  o.h.controller.StockDataController - Search completed successfully for query: itc
-2026-02-05 09:56:47 INFO  o.h.controller.StockDataController - Search request received with query: itc
-2026-02-05 09:56:47 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/search?q=itc
-2026-02-05 09:56:47 INFO  o.h.controller.StockDataController - Search completed successfully for query: itc
-2026-02-05 09:56:58 INFO  o.h.controller.StockDataController - Request received for stock: ITC.NS
-2026-02-05 09:56:58 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/stocks/ITC.NS
-2026-02-05 09:56:58 INFO  o.h.controller.StockDataController - Successfully fetched stock data for: ITC.NS
-2026-02-05 09:56:58 INFO  o.h.controller.StockDataController - Request received for stock: ITC.NS
-2026-02-05 09:56:58 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/stocks/ITC.NS
-2026-02-05 09:56:58 INFO  o.h.controller.StockDataController - Request received for history: ITC.NS with period: 1mo, interval: 1h
-2026-02-05 09:56:58 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/ITC.NS?period=1MO&interval=1h
-2026-02-05 09:56:58 INFO  o.h.controller.StockDataController - Successfully fetched history for: ITC.NS (1mo, 1h)
-2026-02-05 09:56:58 INFO  o.h.controller.StockDataController - Request received for history: ITC.NS with period: 1mo, interval: 1h
-2026-02-05 09:56:58 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/ITC.NS?period=1MO&interval=1h
-2026-02-05 09:56:58 INFO  o.h.controller.StockDataController - Successfully fetched history for: ITC.NS (1mo, 1h)
-2026-02-05 09:56:58 INFO  o.h.controller.StockDataController - Successfully fetched stock data for: ITC.NS
-2026-02-05 09:57:05 INFO  o.h.controller.StockDataController - Request received for history: ITC.NS with period: 1d, interval: 1m
-2026-02-05 09:57:05 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/ITC.NS?period=1D&interval=1m
-2026-02-05 09:57:05 INFO  o.h.controller.StockDataController - Successfully fetched history for: ITC.NS (1d, 1m)
-2026-02-05 09:57:06 INFO  o.h.controller.StockDataController - Request received for history: ITC.NS with period: 3mo, interval: 1d
-2026-02-05 09:57:06 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/ITC.NS?period=3MO&interval=1d
-2026-02-05 09:57:07 INFO  o.h.controller.StockDataController - Successfully fetched history for: ITC.NS (3mo, 1d)
-2026-02-05 09:57:08 INFO  o.h.controller.StockDataController - Request received for history: ITC.NS with period: max, interval: 1mo
-2026-02-05 09:57:08 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/ITC.NS?period=MAX&interval=1mo
-2026-02-05 09:57:09 INFO  o.h.controller.StockDataController - Successfully fetched history for: ITC.NS (max, 1mo)
-2026-02-05 09:58:06 INFO  o.h.controller.StockDataController - Request received for stock: ITC.NS
-2026-02-05 09:58:06 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/stocks/ITC.NS
-2026-02-05 09:58:06 INFO  o.h.controller.StockDataController - Successfully fetched stock data for: ITC.NS
-2026-02-05 09:58:06 INFO  o.h.controller.StockDataController - Request received for stock: ITC.NS
-2026-02-05 09:58:06 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/stocks/ITC.NS
-2026-02-05 09:58:06 INFO  o.h.controller.StockDataController - Request received for history: ITC.NS with period: 1mo, interval: 1h
-2026-02-05 09:58:06 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/ITC.NS?period=1MO&interval=1h
-2026-02-05 09:58:07 INFO  o.h.controller.StockDataController - Successfully fetched history for: ITC.NS (1mo, 1h)
-2026-02-05 09:58:07 INFO  o.h.controller.StockDataController - Request received for history: ITC.NS with period: 1mo, interval: 1h
-2026-02-05 09:58:07 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/ITC.NS?period=1MO&interval=1h
-2026-02-05 09:58:07 INFO  o.h.controller.StockDataController - Successfully fetched history for: ITC.NS (1mo, 1h)
-2026-02-05 09:58:07 INFO  o.h.controller.StockDataController - Successfully fetched stock data for: ITC.NS
-2026-02-05 09:58:15 INFO  o.h.controller.StockDataController - Stock analysis request for: ITC.NS (inPortfolio=false, buyPrice=null)
-2026-02-05 09:58:15 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/stock/ITC.NS/analysis?inPortfolio=false
-2026-02-05 09:58:19 INFO  o.h.controller.StockDataController - Stock analysis completed successfully for: ITC.NS
-2026-02-05 10:37:49 INFO  o.a.coyote.http11.Http11Processor - Error parsing HTTP request header
- Note: further occurrences of HTTP request parsing errors will be logged at DEBUG level.
-java.lang.IllegalArgumentException: Invalid character found in method name [MGLNDD_54.169.242.19_80800x0a...]. HTTP method names must be tokens
-	at org.apache.coyote.http11.Http11InputBuffer.parseRequestLine(Http11InputBuffer.java:407)
-	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:264)
-	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63)
-	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:896)
-	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1744)
-	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52)
-	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1191)
-	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659)
-	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63)
-	at java.base/java.lang.Thread.run(Thread.java:1583)
-2026-02-05 11:17:53 INFO  o.h.controller.StockDataController - Request received for history: AAPL with period: 1mo, interval: 1h
-2026-02-05 11:17:53 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/AAPL?period=1MO&interval=1h
-2026-02-05 11:17:53 INFO  o.h.controller.StockDataController - Successfully fetched history for: AAPL (1mo, 1h)
-2026-02-05 11:17:53 INFO  o.h.controller.StockDataController - Request received for history: AAPL with period: 1mo, interval: 1h
-2026-02-05 11:17:53 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/AAPL?period=1MO&interval=1h
-2026-02-05 11:17:54 INFO  o.h.controller.StockDataController - Successfully fetched history for: AAPL (1mo, 1h)
-2026-02-05 11:22:08 INFO  o.h.controller.StockDataController - Search request received with query: search
-2026-02-05 11:22:08 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/search?q=search
-2026-02-05 11:22:09 INFO  o.h.controller.StockDataController - Search completed successfully for query: search
-2026-02-05 11:22:09 INFO  o.h.controller.StockDataController - Search request received with query: search
-2026-02-05 11:22:09 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/search?q=search
-2026-02-05 11:22:09 INFO  o.h.controller.StockDataController - Search completed successfully for query: search
-2026-02-05 11:22:22 INFO  o.h.controller.StockDataController - Search request received with query: softbank
-2026-02-05 11:22:22 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/search?q=softbank
-2026-02-05 11:22:22 INFO  o.h.controller.StockDataController - Search completed successfully for query: softbank
-2026-02-05 11:22:28 INFO  o.h.controller.StockDataController - Search request received with query: trump
-2026-02-05 11:22:28 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/search?q=trump
-2026-02-05 11:22:29 INFO  o.h.controller.StockDataController - Search completed successfully for query: trump
-2026-02-05 11:22:38 INFO  o.h.controller.StockDataController - Search request received with query: sun
-2026-02-05 11:22:38 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/search?q=sun
-2026-02-05 11:22:38 INFO  o.h.controller.StockDataController - Search completed successfully for query: sun
-2026-02-05 11:23:01 INFO  o.h.controller.StockDataController - Request received for history: AAPL with period: 1mo, interval: 1h
-2026-02-05 11:23:01 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/AAPL?period=1MO&interval=1h
-2026-02-05 11:23:01 INFO  o.h.controller.StockDataController - Successfully fetched history for: AAPL (1mo, 1h)
-2026-02-05 11:23:01 INFO  o.h.controller.StockDataController - Request received for history: AAPL with period: 1mo, interval: 1h
-2026-02-05 11:23:01 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/AAPL?period=1MO&interval=1h
-2026-02-05 11:23:01 INFO  o.h.controller.StockDataController - Successfully fetched history for: AAPL (1mo, 1h)
-2026-02-05 11:23:22 INFO  o.h.controller.StockDataController - Request received for history: AMZN with period: 1mo, interval: 1h
-2026-02-05 11:23:22 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/AMZN?period=1MO&interval=1h
-2026-02-05 11:23:22 INFO  o.h.controller.StockDataController - Successfully fetched history for: AMZN (1mo, 1h)
-2026-02-05 11:23:22 INFO  o.h.controller.StockDataController - Request received for history: AMZN with period: 1mo, interval: 1h
-2026-02-05 11:23:22 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/AMZN?period=1MO&interval=1h
-2026-02-05 11:23:22 INFO  o.h.controller.StockDataController - Successfully fetched history for: AMZN (1mo, 1h)
-2026-02-05 11:51:13 INFO  o.a.coyote.http11.Http11Processor - Error parsing HTTP request header
- Note: further occurrences of HTTP request parsing errors will be logged at DEBUG level.
-java.lang.IllegalArgumentException: Invalid character found in method name [0x160x030x030x010xa60x010x000x010xa20x030x03u20x1f0x930x150xfd0x0f0x12#0xf60x0c0x850x83AI0x7f(j{0xee0xee0xf40xb10x1f=0xec;0x1a!*0x91H ]. HTTP method names must be tokens
-	at org.apache.coyote.http11.Http11InputBuffer.parseRequestLine(Http11InputBuffer.java:407)
-	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:264)
-	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63)
-	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:896)
-	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1744)
-	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52)
-	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1191)
-	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659)
-	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63)
-	at java.base/java.lang.Thread.run(Thread.java:1583)
-2026-02-05 13:45:13 WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=6m24s923ms881µs600ns).
-2026-02-05 14:30:04 WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=29m20s610ms674µs800ns).
-2026-02-05 14:31:06 INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
-2026-02-05 14:31:06 INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
-2026-02-05 14:31:06 INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
-2026-02-05 14:32:22 INFO  o.h.PortfolioManagementSystemApplication - Starting PortfolioManagementSystemApplication using Java 21.0.9 with PID 12216 (C:\Users\Administrator\JavaLearning\PortfolioManagementSystem\target\classes started by Administrator in C:\Users\Administrator\JavaLearning\PortfolioManagementSystem)
-2026-02-05 14:32:22 DEBUG o.h.PortfolioManagementSystemApplication - Running with Spring Boot v3.2.4, Spring v6.1.5
-2026-02-05 14:32:22 INFO  o.h.PortfolioManagementSystemApplication - No active profile set, falling back to 1 default profile: "default"
-2026-02-05 14:32:24 INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
-2026-02-05 14:32:24 INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 141 ms. Found 3 JPA repository interfaces.
-2026-02-05 14:32:26 INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
-2026-02-05 14:32:26 INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
-2026-02-05 14:32:26 INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.19]
-2026-02-05 14:32:26 INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
-2026-02-05 14:32:26 INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 3448 ms
-2026-02-05 14:32:26 INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
-2026-02-05 14:32:26 INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.4.4.Final
-2026-02-05 14:32:26 INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
-2026-02-05 14:32:27 INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
-2026-02-05 14:32:27 INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
-2026-02-05 14:32:29 INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@66d2885c
-2026-02-05 14:32:29 INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
-2026-02-05 14:32:32 INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
-2026-02-05 14:32:32 INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
-2026-02-05 14:32:33 INFO  o.s.d.j.r.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
-2026-02-05 14:32:34 INFO  o.h.controller.StockDataController - StockDataController initialized
-2026-02-05 14:32:35 WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
-2026-02-05 14:32:36 INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path ''
-2026-02-05 14:32:36 INFO  o.h.PortfolioManagementSystemApplication - Started PortfolioManagementSystemApplication in 15.119 seconds (process running for 15.983)
-2026-02-05 14:32:49 INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
-2026-02-05 14:32:49 INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
-2026-02-05 14:32:49 INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 2 ms
-2026-02-05 14:34:03 INFO  o.h.controller.StockDataController - Request received for history: AMZN with period: 1mo, interval: 1h
-2026-02-05 14:34:03 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/AMZN?period=1MO&interval=1h
-2026-02-05 14:34:03 INFO  o.h.controller.StockDataController - Successfully fetched history for: AMZN (1mo, 1h)
-2026-02-05 14:34:03 INFO  o.h.controller.StockDataController - Request received for history: AMZN with period: 1mo, interval: 1h
-2026-02-05 14:34:03 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/AMZN?period=1MO&interval=1h
-2026-02-05 14:34:03 INFO  o.h.controller.StockDataController - Successfully fetched history for: AMZN (1mo, 1h)
-2026-02-05 14:34:26 ERROR o.a.c.c.C.[.[.[.[dispatcherServlet] - Servlet.service() for servlet [dispatcherServlet] in context with path [] threw exception [Request processing failed: org.springframework.dao.IncorrectResultSizeDataAccessException: Query did not return a unique result: 2 results were returned] with root cause
+2026-02-06 03:42:07 WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=6h41m24s724ms166µs).
+2026-02-06 03:46:50 INFO  o.h.controller.StockDataController - Request received for stock: 0P0000XVFU.BO
+2026-02-06 03:46:50 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/stocks/0P0000XVFU.BO
+2026-02-06 03:46:50 INFO  o.h.controller.StockDataController - Successfully fetched stock data for: 0P0000XVFU.BO
+2026-02-06 03:46:50 INFO  o.h.controller.StockDataController - Request received for stock: 0P0000XVFU.BO
+2026-02-06 03:46:50 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/stocks/0P0000XVFU.BO
+2026-02-06 03:46:50 INFO  o.h.controller.StockDataController - Request received for history: 0P0000XVFU.BO with period: 1mo, interval: 1h
+2026-02-06 03:46:50 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/0P0000XVFU.BO?period=1MO&interval=1h
+2026-02-06 03:46:50 INFO  o.h.controller.StockDataController - Successfully fetched history for: 0P0000XVFU.BO (1mo, 1h)
+2026-02-06 03:46:50 INFO  o.h.controller.StockDataController - Request received for history: 0P0000XVFU.BO with period: 1mo, interval: 1h
+2026-02-06 03:46:50 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/0P0000XVFU.BO?period=1MO&interval=1h
+2026-02-06 03:46:50 INFO  o.h.controller.StockDataController - Successfully fetched history for: 0P0000XVFU.BO (1mo, 1h)
+2026-02-06 03:46:51 INFO  o.h.controller.StockDataController - Successfully fetched stock data for: 0P0000XVFU.BO
+2026-02-06 03:47:11 INFO  o.h.controller.StockDataController - Request received for history: 0P0000XVFU.BO with period: 1mo, interval: 1h
+2026-02-06 03:47:11 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/0P0000XVFU.BO?period=1MO&interval=1h
+2026-02-06 03:47:11 INFO  o.h.controller.StockDataController - Successfully fetched history for: 0P0000XVFU.BO (1mo, 1h)
+2026-02-06 03:47:11 INFO  o.h.controller.StockDataController - Request received for history: 0P0000XVFU.BO with period: 1mo, interval: 1h
+2026-02-06 03:47:11 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/0P0000XVFU.BO?period=1MO&interval=1h
+2026-02-06 03:47:11 INFO  o.h.controller.StockDataController - Successfully fetched history for: 0P0000XVFU.BO (1mo, 1h)
+2026-02-06 03:47:29 INFO  o.h.controller.StockDataController - Stock analysis request for: 0P0000XVFU.BO (inPortfolio=true, buyPrice=59.49)
+2026-02-06 03:47:29 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/stock/0P0000XVFU.BO/analysis?inPortfolio=true&buyPrice=59.49
+2026-02-06 03:47:29 WARN  o.h.controller.StockDataController - Unable to analyze stock: 0P0000XVFU.BO
+2026-02-06 03:47:31 INFO  o.h.controller.StockDataController - Stock analysis request for: 0P0000XVFU.BO (inPortfolio=true, buyPrice=59.49)
+2026-02-06 03:47:31 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/stock/0P0000XVFU.BO/analysis?inPortfolio=true&buyPrice=59.49
+2026-02-06 03:47:31 WARN  o.h.controller.StockDataController - Unable to analyze stock: 0P0000XVFU.BO
+2026-02-06 03:48:17 INFO  o.h.controller.StockDataController - Request received for history: DOGE-USD with period: 1mo, interval: 1h
+2026-02-06 03:48:17 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/DOGE-USD?period=1MO&interval=1h
+2026-02-06 03:48:17 INFO  o.h.controller.StockDataController - Successfully fetched history for: DOGE-USD (1mo, 1h)
+2026-02-06 03:48:17 INFO  o.h.controller.StockDataController - Request received for history: DOGE-USD with period: 1mo, interval: 1h
+2026-02-06 03:48:17 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/DOGE-USD?period=1MO&interval=1h
+2026-02-06 03:48:18 INFO  o.h.controller.StockDataController - Successfully fetched history for: DOGE-USD (1mo, 1h)
+2026-02-06 03:48:21 INFO  o.h.controller.StockDataController - Stock analysis request for: DOGE-USD (inPortfolio=true, buyPrice=0.1)
+2026-02-06 03:48:21 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/stock/DOGE-USD/analysis?inPortfolio=true&buyPrice=0.1
+2026-02-06 03:48:29 INFO  o.h.controller.StockDataController - Stock analysis completed successfully for: DOGE-USD
+2026-02-06 03:49:04 INFO  o.h.controller.StockDataController - Request received for history: PLTR with period: 1mo, interval: 1h
+2026-02-06 03:49:04 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/PLTR?period=1MO&interval=1h
+2026-02-06 03:49:04 INFO  o.h.controller.StockDataController - Successfully fetched history for: PLTR (1mo, 1h)
+2026-02-06 03:49:04 INFO  o.h.controller.StockDataController - Request received for history: PLTR with period: 1mo, interval: 1h
+2026-02-06 03:49:04 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/PLTR?period=1MO&interval=1h
+2026-02-06 03:49:04 INFO  o.h.controller.StockDataController - Successfully fetched history for: PLTR (1mo, 1h)
+2026-02-06 03:49:07 INFO  o.h.controller.StockDataController - Stock analysis request for: PLTR (inPortfolio=true, buyPrice=132.0)
+2026-02-06 03:49:07 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/stock/PLTR/analysis?inPortfolio=true&buyPrice=132.0
+2026-02-06 03:49:10 INFO  o.h.controller.StockDataController - Stock analysis completed successfully for: PLTR
+2026-02-06 04:01:52 INFO  o.h.controller.StockDataController - Request received for history: AMZN with period: 1mo, interval: 1h
+2026-02-06 04:01:52 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/AMZN?period=1MO&interval=1h
+2026-02-06 04:01:52 INFO  o.h.controller.StockDataController - Successfully fetched history for: AMZN (1mo, 1h)
+2026-02-06 04:01:52 INFO  o.h.controller.StockDataController - Request received for history: AMZN with period: 1mo, interval: 1h
+2026-02-06 04:01:52 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/AMZN?period=1MO&interval=1h
+2026-02-06 04:01:52 INFO  o.h.controller.StockDataController - Successfully fetched history for: AMZN (1mo, 1h)
+2026-02-06 04:01:54 INFO  o.h.controller.StockDataController - Stock analysis request for: AMZN (inPortfolio=true, buyPrice=232.93)
+2026-02-06 04:01:54 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/stock/AMZN/analysis?inPortfolio=true&buyPrice=232.93
+2026-02-06 04:01:56 INFO  o.h.controller.StockDataController - Stock analysis completed successfully for: AMZN
+2026-02-06 04:02:14 INFO  o.h.controller.StockDataController - Request received for history: ITC.NS with period: 1mo, interval: 1h
+2026-02-06 04:02:14 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/ITC.NS?period=1MO&interval=1h
+2026-02-06 04:02:14 INFO  o.h.controller.StockDataController - Successfully fetched history for: ITC.NS (1mo, 1h)
+2026-02-06 04:02:14 INFO  o.h.controller.StockDataController - Request received for history: ITC.NS with period: 1mo, interval: 1h
+2026-02-06 04:02:14 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/ITC.NS?period=1MO&interval=1h
+2026-02-06 04:02:14 INFO  o.h.controller.StockDataController - Successfully fetched history for: ITC.NS (1mo, 1h)
+2026-02-06 04:02:17 INFO  o.h.controller.StockDataController - Stock analysis request for: ITC.NS (inPortfolio=true, buyPrice=310.1)
+2026-02-06 04:02:17 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/stock/ITC.NS/analysis?inPortfolio=true&buyPrice=310.1
+2026-02-06 04:02:18 INFO  o.h.controller.StockDataController - Stock analysis completed successfully for: ITC.NS
+2026-02-06 04:02:51 INFO  o.h.controller.StockDataController - Search request received with query: itc
+2026-02-06 04:02:51 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/search?q=itc
+2026-02-06 04:02:52 INFO  o.h.controller.StockDataController - Search completed successfully for query: itc
+2026-02-06 04:02:58 INFO  o.h.controller.StockDataController - Request received for stock: ITC.NS
+2026-02-06 04:02:58 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/stocks/ITC.NS
+2026-02-06 04:02:58 INFO  o.h.controller.StockDataController - Successfully fetched stock data for: ITC.NS
+2026-02-06 04:02:58 INFO  o.h.controller.StockDataController - Request received for stock: ITC.NS
+2026-02-06 04:02:58 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/stocks/ITC.NS
+2026-02-06 04:02:58 INFO  o.h.controller.StockDataController - Request received for history: ITC.NS with period: 1mo, interval: 1h
+2026-02-06 04:02:58 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/ITC.NS?period=1MO&interval=1h
+2026-02-06 04:02:58 INFO  o.h.controller.StockDataController - Successfully fetched history for: ITC.NS (1mo, 1h)
+2026-02-06 04:02:58 INFO  o.h.controller.StockDataController - Request received for history: ITC.NS with period: 1mo, interval: 1h
+2026-02-06 04:02:58 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/ITC.NS?period=1MO&interval=1h
+2026-02-06 04:02:58 INFO  o.h.controller.StockDataController - Successfully fetched stock data for: ITC.NS
+2026-02-06 04:02:58 INFO  o.h.controller.StockDataController - Successfully fetched history for: ITC.NS (1mo, 1h)
+2026-02-06 04:07:27 INFO  o.h.controller.StockDataController - Request received for history: ITC.NS with period: 5y, interval: 1d
+2026-02-06 04:07:27 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/ITC.NS?period=5Y&interval=1d
+2026-02-06 04:07:27 INFO  o.h.controller.StockDataController - Successfully fetched history for: ITC.NS (5y, 1d)
+2026-02-06 04:07:33 INFO  o.h.controller.StockDataController - Stock analysis request for: ITC.NS (inPortfolio=false, buyPrice=null)
+2026-02-06 04:07:33 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/stock/ITC.NS/analysis?inPortfolio=false
+2026-02-06 04:07:34 INFO  o.h.controller.StockDataController - Stock analysis completed successfully for: ITC.NS
+2026-02-06 04:09:20 INFO  o.s.api.AbstractOpenApiResource - Init duration for springdoc-openapi is: 639 ms
+2026-02-06 04:11:32 INFO  o.h.controller.StockDataController - Request received for crypto: USDT-USD
+2026-02-06 04:11:32 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/crypto/USDT-USD
+2026-02-06 04:11:32 INFO  o.h.controller.StockDataController - Successfully fetched crypto data for: USDT-USD
+2026-02-06 04:11:32 INFO  o.h.controller.StockDataController - Request received for crypto: USDT-USD
+2026-02-06 04:11:32 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/crypto/USDT-USD
+2026-02-06 04:11:32 INFO  o.h.controller.StockDataController - Request received for history: USDT-USD with period: 1mo, interval: 1h
+2026-02-06 04:11:32 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/USDT-USD?period=1MO&interval=1h
+2026-02-06 04:11:32 INFO  o.h.controller.StockDataController - Successfully fetched history for: USDT-USD (1mo, 1h)
+2026-02-06 04:11:32 INFO  o.h.controller.StockDataController - Request received for history: USDT-USD with period: 1mo, interval: 1h
+2026-02-06 04:11:32 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/USDT-USD?period=1MO&interval=1h
+2026-02-06 04:11:32 INFO  o.h.controller.StockDataController - Successfully fetched history for: USDT-USD (1mo, 1h)
+2026-02-06 04:11:32 INFO  o.h.controller.StockDataController - Successfully fetched crypto data for: USDT-USD
+2026-02-06 04:11:44 INFO  o.h.controller.StockDataController - Request received for history: USDT-USD with period: 1mo, interval: 1h
+2026-02-06 04:11:44 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/USDT-USD?period=1MO&interval=1h
+2026-02-06 04:11:44 INFO  o.h.controller.StockDataController - Successfully fetched history for: USDT-USD (1mo, 1h)
+2026-02-06 04:11:44 INFO  o.h.controller.StockDataController - Request received for history: USDT-USD with period: 1mo, interval: 1h
+2026-02-06 04:11:44 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/USDT-USD?period=1MO&interval=1h
+2026-02-06 04:11:44 INFO  o.h.controller.StockDataController - Successfully fetched history for: USDT-USD (1mo, 1h)
+2026-02-06 04:12:48 INFO  o.h.controller.StockDataController - Request received for crypto: DOGE-USD
+2026-02-06 04:12:48 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/crypto/DOGE-USD
+2026-02-06 04:12:48 INFO  o.h.controller.StockDataController - Successfully fetched crypto data for: DOGE-USD
+2026-02-06 04:12:48 INFO  o.h.controller.StockDataController - Request received for crypto: DOGE-USD
+2026-02-06 04:12:48 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/crypto/DOGE-USD
+2026-02-06 04:12:48 INFO  o.h.controller.StockDataController - Request received for history: DOGE-USD with period: 1mo, interval: 1h
+2026-02-06 04:12:48 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/DOGE-USD?period=1MO&interval=1h
+2026-02-06 04:12:48 INFO  o.h.controller.StockDataController - Successfully fetched history for: DOGE-USD (1mo, 1h)
+2026-02-06 04:12:48 INFO  o.h.controller.StockDataController - Request received for history: DOGE-USD with period: 1mo, interval: 1h
+2026-02-06 04:12:48 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/DOGE-USD?period=1MO&interval=1h
+2026-02-06 04:12:48 INFO  o.h.controller.StockDataController - Successfully fetched history for: DOGE-USD (1mo, 1h)
+2026-02-06 04:12:48 INFO  o.h.controller.StockDataController - Successfully fetched crypto data for: DOGE-USD
+2026-02-06 04:12:57 INFO  o.h.controller.StockDataController - Request received for history: DOGE-USD with period: 1mo, interval: 1h
+2026-02-06 04:12:57 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/DOGE-USD?period=1MO&interval=1h
+2026-02-06 04:12:57 INFO  o.h.controller.StockDataController - Successfully fetched history for: DOGE-USD (1mo, 1h)
+2026-02-06 04:12:57 INFO  o.h.controller.StockDataController - Request received for history: DOGE-USD with period: 1mo, interval: 1h
+2026-02-06 04:12:57 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/DOGE-USD?period=1MO&interval=1h
+2026-02-06 04:12:57 INFO  o.h.controller.StockDataController - Successfully fetched history for: DOGE-USD (1mo, 1h)
+2026-02-06 04:13:18 INFO  o.h.controller.StockDataController - Request received for history: DOGE-USD with period: 1mo, interval: 1h
+2026-02-06 04:13:18 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/DOGE-USD?period=1MO&interval=1h
+2026-02-06 04:13:18 INFO  o.h.controller.StockDataController - Successfully fetched history for: DOGE-USD (1mo, 1h)
+2026-02-06 04:13:18 INFO  o.h.controller.StockDataController - Request received for history: DOGE-USD with period: 1mo, interval: 1h
+2026-02-06 04:13:18 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/DOGE-USD?period=1MO&interval=1h
+2026-02-06 04:13:18 INFO  o.h.controller.StockDataController - Successfully fetched history for: DOGE-USD (1mo, 1h)
+2026-02-06 04:13:28 ERROR o.a.c.c.C.[.[.[.[dispatcherServlet] - Servlet.service() for servlet [dispatcherServlet] in context with path [] threw exception [Request processing failed: org.springframework.dao.IncorrectResultSizeDataAccessException: Query did not return a unique result: 2 results were returned] with root cause
 org.hibernate.NonUniqueResultException: Query did not return a unique result: 2 results were returned
 	at org.hibernate.query.spi.AbstractSelectionQuery.uniqueElement(AbstractSelectionQuery.java:586)
 	at org.hibernate.query.spi.AbstractSelectionQuery.getSingleResult(AbstractSelectionQuery.java:570)
@@ -248,7 +150,7 @@ org.hibernate.NonUniqueResultException: Query did not return a unique result: 2 
 	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184)
 	at org.springframework.aop.framework.JdkDynamicAopProxy.invoke(JdkDynamicAopProxy.java:220)
 	at jdk.proxy2/jdk.proxy2.$Proxy119.findBySymbol(Unknown Source)
-	at org.hsbc.service.PmsServiceimp.sellAsset(PmsServiceimp.java:182)
+	at org.hsbc.service.PmsServiceimp.sellAsset(PmsServiceimp.java:186)
 	at org.hsbc.controller.PmsController.sellAsset(PmsController.java:92)
 	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
 	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
@@ -302,351 +204,509 @@ org.hibernate.NonUniqueResultException: Query did not return a unique result: 2 
 	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659)
 	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63)
 	at java.base/java.lang.Thread.run(Thread.java:1583)
-2026-02-05 14:39:14 INFO  o.h.controller.StockDataController - Request received for history: ITC.NS with period: 1mo, interval: 1h
-2026-02-05 14:39:14 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/ITC.NS?period=1MO&interval=1h
-2026-02-05 14:39:14 INFO  o.h.controller.StockDataController - Successfully fetched history for: ITC.NS (1mo, 1h)
-2026-02-05 14:39:14 INFO  o.h.controller.StockDataController - Request received for history: ITC.NS with period: 1mo, interval: 1h
-2026-02-05 14:39:15 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/ITC.NS?period=1MO&interval=1h
-2026-02-05 14:39:15 INFO  o.h.controller.StockDataController - Successfully fetched history for: ITC.NS (1mo, 1h)
-2026-02-05 14:41:03 INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
-2026-02-05 14:41:03 INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
-2026-02-05 14:41:03 INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
-2026-02-05 14:41:28 INFO  o.h.PortfolioManagementSystemApplication - Starting PortfolioManagementSystemApplication using Java 21.0.9 with PID 14080 (C:\Users\Administrator\JavaLearning\PortfolioManagementSystem\target\classes started by Administrator in C:\Users\Administrator\JavaLearning\PortfolioManagementSystem)
-2026-02-05 14:41:28 DEBUG o.h.PortfolioManagementSystemApplication - Running with Spring Boot v3.2.4, Spring v6.1.5
-2026-02-05 14:41:28 INFO  o.h.PortfolioManagementSystemApplication - No active profile set, falling back to 1 default profile: "default"
-2026-02-05 14:41:30 INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
-2026-02-05 14:41:30 INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 131 ms. Found 3 JPA repository interfaces.
-2026-02-05 14:41:31 INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
-2026-02-05 14:41:31 INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
-2026-02-05 14:41:31 INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.19]
-2026-02-05 14:41:31 INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
-2026-02-05 14:41:31 INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 3371 ms
-2026-02-05 14:41:31 INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
-2026-02-05 14:41:32 INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.4.4.Final
-2026-02-05 14:41:32 INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
-2026-02-05 14:41:32 INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
-2026-02-05 14:41:32 INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
-2026-02-05 14:41:33 INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@13234ac9
-2026-02-05 14:41:33 INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
-2026-02-05 14:41:36 INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
-2026-02-05 14:41:36 INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
-2026-02-05 14:41:37 INFO  o.s.d.j.r.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
-2026-02-05 14:41:38 INFO  o.h.controller.StockDataController - StockDataController initialized
-2026-02-05 14:41:39 WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
-2026-02-05 14:41:40 INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path ''
-2026-02-05 14:41:40 INFO  o.h.PortfolioManagementSystemApplication - Started PortfolioManagementSystemApplication in 13.574 seconds (process running for 14.366)
-2026-02-05 14:41:55 INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
-2026-02-05 14:41:55 INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
-2026-02-05 14:41:55 INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 8 ms
-2026-02-05 14:41:55 INFO  o.h.controller.StockDataController - Request received for history: ITC.NS with period: 1mo, interval: 1h
-2026-02-05 14:41:55 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/ITC.NS?period=1MO&interval=1h
-2026-02-05 14:41:56 INFO  o.h.controller.StockDataController - Successfully fetched history for: ITC.NS (1mo, 1h)
-2026-02-05 14:41:56 INFO  o.h.controller.StockDataController - Request received for history: ITC.NS with period: 1mo, interval: 1h
-2026-02-05 14:41:56 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/ITC.NS?period=1MO&interval=1h
-2026-02-05 14:41:56 INFO  o.h.controller.StockDataController - Successfully fetched history for: ITC.NS (1mo, 1h)
-2026-02-05 14:44:34 INFO  o.h.controller.StockDataController - Request received for history: GC=F with period: 1mo, interval: 1h
-2026-02-05 14:44:34 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/GC=F?period=1MO&interval=1h
-2026-02-05 14:44:35 INFO  o.h.controller.StockDataController - Successfully fetched history for: GC=F (1mo, 1h)
-2026-02-05 14:44:35 INFO  o.h.controller.StockDataController - Request received for history: GC=F with period: 1mo, interval: 1h
-2026-02-05 14:44:35 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/GC=F?period=1MO&interval=1h
-2026-02-05 14:44:35 INFO  o.h.controller.StockDataController - Successfully fetched history for: GC=F (1mo, 1h)
-2026-02-05 14:50:47 INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
-2026-02-05 14:50:47 INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
-2026-02-05 14:50:47 INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
-2026-02-05 14:51:04 INFO  o.h.PortfolioManagementSystemApplication - Starting PortfolioManagementSystemApplication using Java 21.0.9 with PID 15908 (C:\Users\Administrator\JavaLearning\PortfolioManagementSystem\target\classes started by Administrator in C:\Users\Administrator\JavaLearning\PortfolioManagementSystem)
-2026-02-05 14:51:04 DEBUG o.h.PortfolioManagementSystemApplication - Running with Spring Boot v3.2.4, Spring v6.1.5
-2026-02-05 14:51:04 INFO  o.h.PortfolioManagementSystemApplication - No active profile set, falling back to 1 default profile: "default"
-2026-02-05 14:51:06 INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
-2026-02-05 14:51:06 INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 108 ms. Found 3 JPA repository interfaces.
-2026-02-05 14:51:07 INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
-2026-02-05 14:51:07 INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
-2026-02-05 14:51:07 INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.19]
-2026-02-05 14:51:07 INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
-2026-02-05 14:51:07 INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 2793 ms
-2026-02-05 14:51:08 INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
-2026-02-05 14:51:08 INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.4.4.Final
-2026-02-05 14:51:08 INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
-2026-02-05 14:51:09 INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
-2026-02-05 14:51:09 INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
-2026-02-05 14:51:10 INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@4f402027
-2026-02-05 14:51:10 INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
-2026-02-05 14:51:15 INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
-2026-02-05 14:51:15 INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
-2026-02-05 14:51:17 INFO  o.s.d.j.r.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
-2026-02-05 14:51:19 INFO  o.h.controller.StockDataController - StockDataController initialized
-2026-02-05 14:51:19 WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
-2026-02-05 14:51:20 INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path ''
-2026-02-05 14:51:20 INFO  o.h.PortfolioManagementSystemApplication - Started PortfolioManagementSystemApplication in 17.214 seconds (process running for 17.899)
-2026-02-05 14:51:36 INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
-2026-02-05 14:51:36 INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
-2026-02-05 14:51:36 INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 3 ms
-2026-02-05 14:51:46 INFO  o.h.controller.StockDataController - Request received for history: GC=F with period: 1mo, interval: 1h
-2026-02-05 14:51:46 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/GC=F?period=1MO&interval=1h
-2026-02-05 14:51:47 INFO  o.h.controller.StockDataController - Successfully fetched history for: GC=F (1mo, 1h)
-2026-02-05 14:51:47 INFO  o.h.controller.StockDataController - Request received for history: GC=F with period: 1mo, interval: 1h
-2026-02-05 14:51:47 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/GC=F?period=1MO&interval=1h
-2026-02-05 14:51:47 INFO  o.h.controller.StockDataController - Successfully fetched history for: GC=F (1mo, 1h)
-2026-02-05 14:52:01 INFO  o.h.controller.StockDataController - Request received for history: GC=F with period: 1mo, interval: 1h
-2026-02-05 14:52:01 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/GC=F?period=1MO&interval=1h
-2026-02-05 14:52:01 INFO  o.h.controller.StockDataController - Successfully fetched history for: GC=F (1mo, 1h)
-2026-02-05 14:52:01 INFO  o.h.controller.StockDataController - Request received for history: GC=F with period: 1mo, interval: 1h
-2026-02-05 14:52:01 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/GC=F?period=1MO&interval=1h
-2026-02-05 14:52:02 INFO  o.h.controller.StockDataController - Successfully fetched history for: GC=F (1mo, 1h)
-2026-02-05 14:52:08 INFO  o.h.controller.StockDataController - Request received for commodity: GC=F
-2026-02-05 14:52:08 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/commodities/GC=F
-2026-02-05 14:52:08 INFO  o.h.controller.StockDataController - Successfully fetched commodity data for: GC=F
-2026-02-05 14:52:08 INFO  o.h.controller.StockDataController - Request received for commodity: GC=F
-2026-02-05 14:52:08 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/commodities/GC=F
-2026-02-05 14:52:08 INFO  o.h.controller.StockDataController - Request received for history: GC=F with period: 1mo, interval: 1h
-2026-02-05 14:52:08 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/GC=F?period=1MO&interval=1h
-2026-02-05 14:52:08 INFO  o.h.controller.StockDataController - Successfully fetched commodity data for: GC=F
-2026-02-05 14:52:09 INFO  o.h.controller.StockDataController - Successfully fetched history for: GC=F (1mo, 1h)
-2026-02-05 14:52:09 INFO  o.h.controller.StockDataController - Request received for history: GC=F with period: 1mo, interval: 1h
-2026-02-05 14:52:09 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/GC=F?period=1MO&interval=1h
-2026-02-05 14:52:09 INFO  o.h.controller.StockDataController - Successfully fetched history for: GC=F (1mo, 1h)
-2026-02-05 14:52:17 INFO  o.h.controller.StockDataController - Stock analysis request for: GC=F (inPortfolio=false, buyPrice=null)
-2026-02-05 14:52:17 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/stock/GC=F/analysis?inPortfolio=false
-2026-02-05 14:52:25 INFO  o.h.controller.StockDataController - Stock analysis completed successfully for: GC=F
-2026-02-05 15:07:00 INFO  o.h.controller.StockDataController - Request received for history: AMZN with period: 1mo, interval: 1h
-2026-02-05 15:07:00 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/AMZN?period=1MO&interval=1h
-2026-02-05 15:07:01 INFO  o.h.controller.StockDataController - Successfully fetched history for: AMZN (1mo, 1h)
-2026-02-05 15:07:01 INFO  o.h.controller.StockDataController - Request received for history: AMZN with period: 1mo, interval: 1h
-2026-02-05 15:07:01 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/AMZN?period=1MO&interval=1h
-2026-02-05 15:07:01 INFO  o.h.controller.StockDataController - Successfully fetched history for: AMZN (1mo, 1h)
-2026-02-05 15:09:54 INFO  o.h.controller.StockDataController - Request received for history: AMZN with period: 1mo, interval: 1h
-2026-02-05 15:09:54 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/AMZN?period=1MO&interval=1h
-2026-02-05 15:09:55 INFO  o.h.controller.StockDataController - Successfully fetched history for: AMZN (1mo, 1h)
-2026-02-05 15:09:55 INFO  o.h.controller.StockDataController - Request received for history: AMZN with period: 1mo, interval: 1h
-2026-02-05 15:09:55 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/AMZN?period=1MO&interval=1h
-2026-02-05 15:09:55 INFO  o.h.controller.StockDataController - Successfully fetched history for: AMZN (1mo, 1h)
-2026-02-05 15:15:21 INFO  o.h.controller.StockDataController - Search request received with query: ap
-2026-02-05 15:15:21 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/search?q=ap
-2026-02-05 15:15:23 INFO  o.h.controller.StockDataController - Search completed successfully for query: ap
-2026-02-05 15:15:23 INFO  o.h.controller.StockDataController - Search request received with query: ap
-2026-02-05 15:15:23 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/search?q=ap
-2026-02-05 15:15:27 INFO  o.h.controller.StockDataController - Search completed successfully for query: ap
-2026-02-05 15:16:01 INFO  o.h.controller.StockDataController - Request received for history: AMZN with period: 1mo, interval: 1h
-2026-02-05 15:16:01 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/AMZN?period=1MO&interval=1h
-2026-02-05 15:16:01 INFO  o.h.controller.StockDataController - Successfully fetched history for: AMZN (1mo, 1h)
-2026-02-05 15:16:01 INFO  o.h.controller.StockDataController - Request received for history: AMZN with period: 1mo, interval: 1h
-2026-02-05 15:16:01 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/AMZN?period=1MO&interval=1h
-2026-02-05 15:16:01 INFO  o.h.controller.StockDataController - Successfully fetched history for: AMZN (1mo, 1h)
-2026-02-05 15:58:48 INFO  o.h.controller.StockDataController - Request received for history: AMZN with period: 1mo, interval: 1h
-2026-02-05 15:58:48 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/AMZN?period=1MO&interval=1h
-2026-02-05 15:58:48 INFO  o.h.controller.StockDataController - Successfully fetched history for: AMZN (1mo, 1h)
-2026-02-05 15:58:48 INFO  o.h.controller.StockDataController - Request received for history: AMZN with period: 1mo, interval: 1h
-2026-02-05 15:58:48 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/AMZN?period=1MO&interval=1h
-2026-02-05 15:58:48 INFO  o.h.controller.StockDataController - Successfully fetched history for: AMZN (1mo, 1h)
-2026-02-05 16:07:34 INFO  o.h.controller.StockDataController - Request received for history: AMZN with period: 1mo, interval: 1h
-2026-02-05 16:07:34 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/AMZN?period=1MO&interval=1h
-2026-02-05 16:07:34 INFO  o.h.controller.StockDataController - Successfully fetched history for: AMZN (1mo, 1h)
-2026-02-05 16:07:35 INFO  o.h.controller.StockDataController - Request received for history: AMZN with period: 1mo, interval: 1h
-2026-02-05 16:07:35 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/AMZN?period=1MO&interval=1h
-2026-02-05 16:07:35 INFO  o.h.controller.StockDataController - Successfully fetched history for: AMZN (1mo, 1h)
-2026-02-05 16:37:18 INFO  o.h.controller.StockDataController - Request received for history: AMZN with period: 1mo, interval: 1h
-2026-02-05 16:37:18 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/AMZN?period=1MO&interval=1h
-2026-02-05 16:37:19 INFO  o.h.controller.StockDataController - Successfully fetched history for: AMZN (1mo, 1h)
-2026-02-05 16:37:19 INFO  o.h.controller.StockDataController - Request received for history: AMZN with period: 1mo, interval: 1h
-2026-02-05 16:37:19 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/AMZN?period=1MO&interval=1h
-2026-02-05 16:37:19 INFO  o.h.controller.StockDataController - Successfully fetched history for: AMZN (1mo, 1h)
-2026-02-05 16:38:47 INFO  o.h.controller.StockDataController - Stock analysis request for: AMZN (inPortfolio=true, buyPrice=232.93)
-2026-02-05 16:38:47 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/stock/AMZN/analysis?inPortfolio=true&buyPrice=232.93
-2026-02-05 16:38:51 INFO  o.h.controller.StockDataController - Stock analysis completed successfully for: AMZN
-2026-02-05 16:39:53 INFO  o.h.controller.StockDataController - Request received for history: ITC.NS with period: 1mo, interval: 1h
-2026-02-05 16:39:53 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/ITC.NS?period=1MO&interval=1h
-2026-02-05 16:39:54 INFO  o.h.controller.StockDataController - Successfully fetched history for: ITC.NS (1mo, 1h)
-2026-02-05 16:39:54 INFO  o.h.controller.StockDataController - Request received for history: ITC.NS with period: 1mo, interval: 1h
-2026-02-05 16:39:54 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/ITC.NS?period=1MO&interval=1h
-2026-02-05 16:39:54 INFO  o.h.controller.StockDataController - Successfully fetched history for: ITC.NS (1mo, 1h)
-2026-02-05 16:39:57 INFO  o.h.controller.StockDataController - Stock analysis request for: ITC.NS (inPortfolio=true, buyPrice=310.1)
-2026-02-05 16:39:57 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/stock/ITC.NS/analysis?inPortfolio=true&buyPrice=310.1
-2026-02-05 16:39:58 INFO  o.h.controller.StockDataController - Stock analysis completed successfully for: ITC.NS
-2026-02-05 16:41:17 INFO  o.h.controller.StockDataController - Search request received with query: lensk
-2026-02-05 16:41:17 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/search?q=lensk
-2026-02-05 16:41:22 INFO  o.h.controller.StockDataController - Search completed successfully for query: lensk
-2026-02-05 16:41:22 INFO  o.h.controller.StockDataController - Search request received with query: lensk
-2026-02-05 16:41:22 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/search?q=lensk
-2026-02-05 16:41:28 INFO  o.h.controller.StockDataController - Search completed successfully for query: lensk
-2026-02-05 16:41:55 INFO  o.h.controller.StockDataController - Request received for history: AMZN with period: 1mo, interval: 1h
-2026-02-05 16:41:55 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/AMZN?period=1MO&interval=1h
-2026-02-05 16:41:56 INFO  o.h.controller.StockDataController - Successfully fetched history for: AMZN (1mo, 1h)
-2026-02-05 16:41:56 INFO  o.h.controller.StockDataController - Request received for history: AMZN with period: 1mo, interval: 1h
-2026-02-05 16:41:56 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/AMZN?period=1MO&interval=1h
-2026-02-05 16:41:56 INFO  o.h.controller.StockDataController - Successfully fetched history for: AMZN (1mo, 1h)
-2026-02-05 16:42:09 INFO  o.h.controller.StockDataController - Stock analysis request for: AMZN (inPortfolio=true, buyPrice=232.93)
-2026-02-05 16:42:09 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/stock/AMZN/analysis?inPortfolio=true&buyPrice=232.93
-2026-02-05 16:42:14 INFO  o.h.controller.StockDataController - Stock analysis completed successfully for: AMZN
-2026-02-05 16:42:59 INFO  o.h.controller.StockDataController - Request received for history: AMZN with period: 1mo, interval: 1h
-2026-02-05 16:42:59 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/AMZN?period=1MO&interval=1h
-2026-02-05 16:42:59 INFO  o.h.controller.StockDataController - Successfully fetched history for: AMZN (1mo, 1h)
-2026-02-05 16:42:59 INFO  o.h.controller.StockDataController - Request received for history: AMZN with period: 1mo, interval: 1h
-2026-02-05 16:42:59 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/AMZN?period=1MO&interval=1h
-2026-02-05 16:42:59 INFO  o.h.controller.StockDataController - Successfully fetched history for: AMZN (1mo, 1h)
-2026-02-05 16:47:52 INFO  o.h.controller.StockDataController - Request received for history: AMZN with period: 1mo, interval: 1h
-2026-02-05 16:47:52 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/AMZN?period=1MO&interval=1h
-2026-02-05 16:47:52 INFO  o.h.controller.StockDataController - Successfully fetched history for: AMZN (1mo, 1h)
-2026-02-05 16:47:52 INFO  o.h.controller.StockDataController - Request received for history: AMZN with period: 1mo, interval: 1h
-2026-02-05 16:47:52 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/AMZN?period=1MO&interval=1h
-2026-02-05 16:47:52 INFO  o.h.controller.StockDataController - Successfully fetched history for: AMZN (1mo, 1h)
-2026-02-05 16:48:05 INFO  o.h.controller.StockDataController - Request received for history: AMZN with period: 1mo, interval: 1h
-2026-02-05 16:48:05 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/AMZN?period=1MO&interval=1h
-2026-02-05 16:48:05 INFO  o.h.controller.StockDataController - Successfully fetched history for: AMZN (1mo, 1h)
-2026-02-05 16:48:07 INFO  o.h.controller.StockDataController - Request received for history: AMZN with period: 1mo, interval: 1h
-2026-02-05 16:48:07 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/AMZN?period=1MO&interval=1h
-2026-02-05 16:48:07 INFO  o.h.controller.StockDataController - Successfully fetched history for: AMZN (1mo, 1h)
-2026-02-05 17:50:48 INFO  o.h.controller.StockDataController - Search request received with query: palantir
-2026-02-05 17:50:48 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/search?q=palantir
-2026-02-05 17:50:48 INFO  o.h.controller.StockDataController - Search completed successfully for query: palantir
-2026-02-05 17:50:48 INFO  o.h.controller.StockDataController - Search request received with query: palantir
-2026-02-05 17:50:48 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/search?q=palantir
-2026-02-05 17:50:49 INFO  o.h.controller.StockDataController - Search completed successfully for query: palantir
-2026-02-05 17:50:52 INFO  o.h.controller.StockDataController - Request received for stock: PLTR
-2026-02-05 17:50:52 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/stocks/PLTR
-2026-02-05 17:50:52 INFO  o.h.controller.StockDataController - Successfully fetched stock data for: PLTR
-2026-02-05 17:50:52 INFO  o.h.controller.StockDataController - Request received for stock: PLTR
-2026-02-05 17:50:52 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/stocks/PLTR
-2026-02-05 17:50:52 INFO  o.h.controller.StockDataController - Request received for history: PLTR with period: 1mo, interval: 1h
-2026-02-05 17:50:52 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/PLTR?period=1MO&interval=1h
-2026-02-05 17:50:52 INFO  o.h.controller.StockDataController - Successfully fetched history for: PLTR (1mo, 1h)
-2026-02-05 17:50:52 INFO  o.h.controller.StockDataController - Successfully fetched stock data for: PLTR
-2026-02-05 17:50:52 INFO  o.h.controller.StockDataController - Request received for history: PLTR with period: 1mo, interval: 1h
-2026-02-05 17:50:52 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/PLTR?period=1MO&interval=1h
-2026-02-05 17:50:53 INFO  o.h.controller.StockDataController - Successfully fetched history for: PLTR (1mo, 1h)
-2026-02-05 17:52:18 INFO  o.h.controller.StockDataController - Request received for stock: PLTR
-2026-02-05 17:52:18 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/stocks/PLTR
-2026-02-05 17:52:18 INFO  o.h.controller.StockDataController - Successfully fetched stock data for: PLTR
-2026-02-05 17:52:18 INFO  o.h.controller.StockDataController - Request received for stock: PLTR
-2026-02-05 17:52:18 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/stocks/PLTR
-2026-02-05 17:52:18 INFO  o.h.controller.StockDataController - Request received for history: PLTR with period: 1mo, interval: 1h
-2026-02-05 17:52:18 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/PLTR?period=1MO&interval=1h
-2026-02-05 17:52:18 INFO  o.h.controller.StockDataController - Successfully fetched history for: PLTR (1mo, 1h)
-2026-02-05 17:52:18 INFO  o.h.controller.StockDataController - Request received for history: PLTR with period: 1mo, interval: 1h
-2026-02-05 17:52:18 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/PLTR?period=1MO&interval=1h
-2026-02-05 17:52:18 INFO  o.h.controller.StockDataController - Successfully fetched stock data for: PLTR
-2026-02-05 17:52:19 INFO  o.h.controller.StockDataController - Successfully fetched history for: PLTR (1mo, 1h)
-2026-02-05 17:54:35 INFO  o.h.controller.StockDataController - Stock analysis request for: PLTR (inPortfolio=false, buyPrice=null)
-2026-02-05 17:54:35 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/stock/PLTR/analysis?inPortfolio=false
-2026-02-05 17:54:39 INFO  o.h.controller.StockDataController - Stock analysis completed successfully for: PLTR
-2026-02-05 17:54:57 INFO  o.h.controller.StockDataController - Stock analysis request for: PLTR (inPortfolio=false, buyPrice=null)
-2026-02-05 17:54:57 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/stock/PLTR/analysis?inPortfolio=false
-2026-02-05 17:55:01 INFO  o.h.controller.StockDataController - Stock analysis completed successfully for: PLTR
-2026-02-05 18:26:52 INFO  o.h.controller.StockDataController - Search request received with query: palantir
-2026-02-05 18:26:52 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/search?q=palantir
-2026-02-05 18:26:52 INFO  o.h.controller.StockDataController - Search completed successfully for query: palantir
-2026-02-05 18:26:52 INFO  o.h.controller.StockDataController - Search request received with query: palantir
-2026-02-05 18:26:52 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/search?q=palantir
-2026-02-05 18:26:53 INFO  o.h.controller.StockDataController - Search completed successfully for query: palantir
-2026-02-05 18:26:55 INFO  o.h.controller.StockDataController - Request received for stock: PLTR
-2026-02-05 18:26:55 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/stocks/PLTR
-2026-02-05 18:26:56 INFO  o.h.controller.StockDataController - Successfully fetched stock data for: PLTR
-2026-02-05 18:26:56 INFO  o.h.controller.StockDataController - Request received for stock: PLTR
-2026-02-05 18:26:56 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/stocks/PLTR
-2026-02-05 18:26:56 INFO  o.h.controller.StockDataController - Request received for history: PLTR with period: 1mo, interval: 1h
-2026-02-05 18:26:56 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/PLTR?period=1MO&interval=1h
-2026-02-05 18:26:56 INFO  o.h.controller.StockDataController - Successfully fetched history for: PLTR (1mo, 1h)
-2026-02-05 18:26:56 INFO  o.h.controller.StockDataController - Request received for history: PLTR with period: 1mo, interval: 1h
-2026-02-05 18:26:56 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/PLTR?period=1MO&interval=1h
-2026-02-05 18:26:56 INFO  o.h.controller.StockDataController - Successfully fetched stock data for: PLTR
-2026-02-05 18:26:56 INFO  o.h.controller.StockDataController - Successfully fetched history for: PLTR (1mo, 1h)
-2026-02-05 18:27:18 INFO  o.h.controller.StockDataController - Search request received with query: usdt
-2026-02-05 18:27:18 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/search?q=usdt
-2026-02-05 18:27:19 INFO  o.h.controller.StockDataController - Search completed successfully for query: usdt
-2026-02-05 18:27:19 INFO  o.h.controller.StockDataController - Search request received with query: usdt
-2026-02-05 18:27:19 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/search?q=usdt
-2026-02-05 18:27:19 INFO  o.h.controller.StockDataController - Search completed successfully for query: usdt
-2026-02-05 18:27:24 INFO  o.h.controller.StockDataController - Request received for crypto: USDT-USD
-2026-02-05 18:27:24 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/crypto/USDT-USD
-2026-02-05 18:27:25 INFO  o.h.controller.StockDataController - Successfully fetched crypto data for: USDT-USD
-2026-02-05 18:27:25 INFO  o.h.controller.StockDataController - Request received for crypto: USDT-USD
-2026-02-05 18:27:25 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/crypto/USDT-USD
-2026-02-05 18:27:25 INFO  o.h.controller.StockDataController - Request received for history: USDT-USD with period: 1mo, interval: 1h
-2026-02-05 18:27:25 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/USDT-USD?period=1MO&interval=1h
-2026-02-05 18:27:25 INFO  o.h.controller.StockDataController - Successfully fetched history for: USDT-USD (1mo, 1h)
-2026-02-05 18:27:25 INFO  o.h.controller.StockDataController - Request received for history: USDT-USD with period: 1mo, interval: 1h
-2026-02-05 18:27:25 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/USDT-USD?period=1MO&interval=1h
-2026-02-05 18:27:25 INFO  o.h.controller.StockDataController - Successfully fetched crypto data for: USDT-USD
-2026-02-05 18:27:25 INFO  o.h.controller.StockDataController - Successfully fetched history for: USDT-USD (1mo, 1h)
-2026-02-05 18:33:40 INFO  o.h.controller.StockDataController - Search request received with query: spy
-2026-02-05 18:33:40 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/search?q=spy
-2026-02-05 18:33:40 INFO  o.h.controller.StockDataController - Search completed successfully for query: spy
-2026-02-05 18:33:40 INFO  o.h.controller.StockDataController - Search request received with query: spy
-2026-02-05 18:33:40 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/search?q=spy
-2026-02-05 18:33:40 INFO  o.h.controller.StockDataController - Search completed successfully for query: spy
-2026-02-05 18:38:32 INFO  o.h.controller.StockDataController - Search request received with query: spy
-2026-02-05 18:38:32 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/search?q=spy
-2026-02-05 18:38:49 INFO  o.h.controller.StockDataController - Search completed successfully for query: spy
-2026-02-05 18:41:50 INFO  o.h.controller.StockDataController - Search request received with query: spy
-2026-02-05 18:41:50 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/search?q=spy
-2026-02-05 18:41:50 INFO  o.h.controller.StockDataController - Search completed successfully for query: spy
-2026-02-05 18:41:50 INFO  o.h.controller.StockDataController - Search request received with query: spy
-2026-02-05 18:41:50 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/search?q=spy
-2026-02-05 18:41:51 INFO  o.h.controller.StockDataController - Search completed successfully for query: spy
-2026-02-05 18:42:55 INFO  o.h.controller.StockDataController - Search request received with query: i
-2026-02-05 18:42:55 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/search?q=i
-2026-02-05 18:42:55 INFO  o.h.controller.StockDataController - Search completed successfully for query: i
-2026-02-05 18:43:03 INFO  o.h.controller.StockDataController - Request received for stock: MU
-2026-02-05 18:43:03 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/stocks/MU
-2026-02-05 18:43:04 INFO  o.h.controller.StockDataController - Successfully fetched stock data for: MU
-2026-02-05 18:43:04 INFO  o.h.controller.StockDataController - Request received for stock: MU
-2026-02-05 18:43:04 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/stocks/MU
-2026-02-05 18:43:04 INFO  o.h.controller.StockDataController - Request received for history: MU with period: 1mo, interval: 1h
-2026-02-05 18:43:04 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/MU?period=1MO&interval=1h
-2026-02-05 18:43:04 INFO  o.h.controller.StockDataController - Successfully fetched history for: MU (1mo, 1h)
-2026-02-05 18:43:04 INFO  o.h.controller.StockDataController - Request received for history: MU with period: 1mo, interval: 1h
-2026-02-05 18:43:04 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/MU?period=1MO&interval=1h
-2026-02-05 18:43:04 INFO  o.h.controller.StockDataController - Successfully fetched stock data for: MU
-2026-02-05 18:43:04 INFO  o.h.controller.StockDataController - Successfully fetched history for: MU (1mo, 1h)
-2026-02-05 18:47:10 INFO  o.h.controller.StockDataController - Request received for stock: MU
-2026-02-05 18:47:10 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/stocks/MU
-2026-02-05 18:47:10 INFO  o.h.controller.StockDataController - Successfully fetched stock data for: MU
-2026-02-05 18:47:10 INFO  o.h.controller.StockDataController - Request received for stock: MU
-2026-02-05 18:47:10 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/stocks/MU
-2026-02-05 18:47:11 INFO  o.h.controller.StockDataController - Request received for history: MU with period: 1mo, interval: 1h
-2026-02-05 18:47:11 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/MU?period=1MO&interval=1h
-2026-02-05 18:47:11 INFO  o.h.controller.StockDataController - Successfully fetched history for: MU (1mo, 1h)
-2026-02-05 18:47:11 INFO  o.h.controller.StockDataController - Request received for history: MU with period: 1mo, interval: 1h
-2026-02-05 18:47:11 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/MU?period=1MO&interval=1h
-2026-02-05 18:47:11 INFO  o.h.controller.StockDataController - Successfully fetched stock data for: MU
-2026-02-05 18:47:11 INFO  o.h.controller.StockDataController - Successfully fetched history for: MU (1mo, 1h)
-2026-02-05 18:51:51 INFO  o.h.controller.StockDataController - Search request received with query: aapl
-2026-02-05 18:51:51 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/search?q=aapl
-2026-02-05 18:51:51 INFO  o.h.controller.StockDataController - Search completed successfully for query: aapl
-2026-02-05 18:51:51 INFO  o.h.controller.StockDataController - Search request received with query: aapl
-2026-02-05 18:51:51 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/search?q=aapl
-2026-02-05 18:51:51 INFO  o.h.controller.StockDataController - Search completed successfully for query: aapl
-2026-02-05 18:51:54 INFO  o.h.controller.StockDataController - Request received for stock: AAPL
-2026-02-05 18:51:54 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/stocks/AAPL
-2026-02-05 18:51:54 INFO  o.h.controller.StockDataController - Successfully fetched stock data for: AAPL
-2026-02-05 18:51:54 INFO  o.h.controller.StockDataController - Request received for stock: AAPL
-2026-02-05 18:51:54 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/stocks/AAPL
-2026-02-05 18:51:54 INFO  o.h.controller.StockDataController - Request received for history: AAPL with period: 1mo, interval: 1h
-2026-02-05 18:51:54 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/AAPL?period=1MO&interval=1h
-2026-02-05 18:51:54 INFO  o.h.controller.StockDataController - Successfully fetched history for: AAPL (1mo, 1h)
-2026-02-05 18:51:54 INFO  o.h.controller.StockDataController - Request received for history: AAPL with period: 1mo, interval: 1h
-2026-02-05 18:51:54 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/AAPL?period=1MO&interval=1h
-2026-02-05 18:51:54 INFO  o.h.controller.StockDataController - Successfully fetched stock data for: AAPL
-2026-02-05 18:51:54 INFO  o.h.controller.StockDataController - Successfully fetched history for: AAPL (1mo, 1h)
-2026-02-05 18:53:30 INFO  o.h.controller.StockDataController - Request received for stock: AAPL
-2026-02-05 18:53:30 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/stocks/AAPL
-2026-02-05 18:53:30 INFO  o.h.controller.StockDataController - Successfully fetched stock data for: AAPL
-2026-02-05 18:53:30 INFO  o.h.controller.StockDataController - Request received for stock: AAPL
-2026-02-05 18:53:30 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/stocks/AAPL
-2026-02-05 18:53:30 INFO  o.h.controller.StockDataController - Request received for history: AAPL with period: 1mo, interval: 1h
-2026-02-05 18:53:30 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/AAPL?period=1MO&interval=1h
-2026-02-05 18:53:30 INFO  o.h.controller.StockDataController - Successfully fetched history for: AAPL (1mo, 1h)
-2026-02-05 18:53:30 INFO  o.h.controller.StockDataController - Successfully fetched stock data for: AAPL
-2026-02-05 18:53:30 INFO  o.h.controller.StockDataController - Request received for history: AAPL with period: 1mo, interval: 1h
-2026-02-05 18:53:30 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/AAPL?period=1MO&interval=1h
-2026-02-05 18:53:31 INFO  o.h.controller.StockDataController - Successfully fetched history for: AAPL (1mo, 1h)
-2026-02-05 18:55:30 INFO  o.h.controller.StockDataController - Request received for stock: AAPL
-2026-02-05 18:55:30 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/stocks/AAPL
-2026-02-05 18:55:30 INFO  o.h.controller.StockDataController - Successfully fetched stock data for: AAPL
-2026-02-05 18:55:30 INFO  o.h.controller.StockDataController - Request received for stock: AAPL
-2026-02-05 18:55:30 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/stocks/AAPL
-2026-02-05 18:55:30 INFO  o.h.controller.StockDataController - Successfully fetched stock data for: AAPL
-2026-02-05 18:55:30 INFO  o.h.controller.StockDataController - Request received for history: AAPL with period: 1mo, interval: 1h
-2026-02-05 18:55:30 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/AAPL?period=1MO&interval=1h
-2026-02-05 18:55:30 INFO  o.h.controller.StockDataController - Successfully fetched history for: AAPL (1mo, 1h)
-2026-02-05 18:55:31 INFO  o.h.controller.StockDataController - Request received for history: AAPL with period: 1mo, interval: 1h
-2026-02-05 18:55:31 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/AAPL?period=1MO&interval=1h
-2026-02-05 18:55:31 INFO  o.h.controller.StockDataController - Successfully fetched history for: AAPL (1mo, 1h)
+2026-02-06 04:13:34 ERROR o.a.c.c.C.[.[.[.[dispatcherServlet] - Servlet.service() for servlet [dispatcherServlet] in context with path [] threw exception [Request processing failed: org.springframework.dao.IncorrectResultSizeDataAccessException: Query did not return a unique result: 2 results were returned] with root cause
+org.hibernate.NonUniqueResultException: Query did not return a unique result: 2 results were returned
+	at org.hibernate.query.spi.AbstractSelectionQuery.uniqueElement(AbstractSelectionQuery.java:586)
+	at org.hibernate.query.spi.AbstractSelectionQuery.getSingleResult(AbstractSelectionQuery.java:570)
+	at org.springframework.data.jpa.repository.query.JpaQueryExecution$SingleEntityExecution.doExecute(JpaQueryExecution.java:223)
+	at org.springframework.data.jpa.repository.query.JpaQueryExecution.execute(JpaQueryExecution.java:92)
+	at org.springframework.data.jpa.repository.query.AbstractJpaQuery.doExecute(AbstractJpaQuery.java:149)
+	at org.springframework.data.jpa.repository.query.AbstractJpaQuery.execute(AbstractJpaQuery.java:137)
+	at org.springframework.data.repository.core.support.RepositoryMethodInvoker.doInvoke(RepositoryMethodInvoker.java:170)
+	at org.springframework.data.repository.core.support.RepositoryMethodInvoker.invoke(RepositoryMethodInvoker.java:158)
+	at org.springframework.data.repository.core.support.QueryExecutorMethodInterceptor.doInvoke(QueryExecutorMethodInterceptor.java:164)
+	at org.springframework.data.repository.core.support.QueryExecutorMethodInterceptor.invoke(QueryExecutorMethodInterceptor.java:143)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184)
+	at org.springframework.data.projection.DefaultMethodInvokingMethodInterceptor.invoke(DefaultMethodInvokingMethodInterceptor.java:70)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184)
+	at org.springframework.transaction.interceptor.TransactionInterceptor$1.proceedWithInvocation(TransactionInterceptor.java:123)
+	at org.springframework.transaction.interceptor.TransactionAspectSupport.invokeWithinTransaction(TransactionAspectSupport.java:392)
+	at org.springframework.transaction.interceptor.TransactionInterceptor.invoke(TransactionInterceptor.java:119)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184)
+	at org.springframework.dao.support.PersistenceExceptionTranslationInterceptor.invoke(PersistenceExceptionTranslationInterceptor.java:137)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184)
+	at org.springframework.data.jpa.repository.support.CrudMethodMetadataPostProcessor$CrudMethodMetadataPopulatingMethodInterceptor.invoke(CrudMethodMetadataPostProcessor.java:135)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184)
+	at org.springframework.aop.interceptor.ExposeInvocationInterceptor.invoke(ExposeInvocationInterceptor.java:97)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184)
+	at org.springframework.aop.framework.JdkDynamicAopProxy.invoke(JdkDynamicAopProxy.java:220)
+	at jdk.proxy2/jdk.proxy2.$Proxy119.findBySymbol(Unknown Source)
+	at org.hsbc.service.PmsServiceimp.sellAsset(PmsServiceimp.java:186)
+	at org.hsbc.controller.PmsController.sellAsset(PmsController.java:92)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:255)
+	at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:188)
+	at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:118)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:925)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:830)
+	at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:87)
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:1089)
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:979)
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1014)
+	at org.springframework.web.servlet.FrameworkServlet.doPost(FrameworkServlet.java:914)
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:590)
+	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:885)
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:658)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:205)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149)
+	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:51)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149)
+	at org.springframework.web.filter.CorsFilter.doFilterInternal(CorsFilter.java:91)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149)
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149)
+	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149)
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:201)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:167)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:90)
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:482)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:115)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:93)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:74)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:344)
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:391)
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63)
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:896)
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1744)
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1191)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+2026-02-06 04:15:15 INFO  o.h.controller.StockDataController - Request received for history: DOGE-USD with period: 1mo, interval: 1h
+2026-02-06 04:15:15 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/DOGE-USD?period=1MO&interval=1h
+2026-02-06 04:15:15 INFO  o.h.controller.StockDataController - Successfully fetched history for: DOGE-USD (1mo, 1h)
+2026-02-06 04:15:15 INFO  o.h.controller.StockDataController - Request received for history: DOGE-USD with period: 1mo, interval: 1h
+2026-02-06 04:15:15 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/DOGE-USD?period=1MO&interval=1h
+2026-02-06 04:15:15 INFO  o.h.controller.StockDataController - Successfully fetched history for: DOGE-USD (1mo, 1h)
+2026-02-06 04:16:12 INFO  o.h.controller.StockDataController - Request received for history: PLTR with period: 1mo, interval: 1h
+2026-02-06 04:16:12 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/PLTR?period=1MO&interval=1h
+2026-02-06 04:16:12 INFO  o.h.controller.StockDataController - Successfully fetched history for: PLTR (1mo, 1h)
+2026-02-06 04:16:12 INFO  o.h.controller.StockDataController - Request received for history: PLTR with period: 1mo, interval: 1h
+2026-02-06 04:16:12 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/PLTR?period=1MO&interval=1h
+2026-02-06 04:16:12 INFO  o.h.controller.StockDataController - Successfully fetched history for: PLTR (1mo, 1h)
+2026-02-06 04:17:09 INFO  o.h.controller.StockDataController - Request received for history: PLTR with period: 1mo, interval: 1h
+2026-02-06 04:17:09 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/PLTR?period=1MO&interval=1h
+2026-02-06 04:17:09 INFO  o.h.controller.StockDataController - Successfully fetched history for: PLTR (1mo, 1h)
+2026-02-06 04:17:09 INFO  o.h.controller.StockDataController - Request received for history: PLTR with period: 1mo, interval: 1h
+2026-02-06 04:17:09 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/PLTR?period=1MO&interval=1h
+2026-02-06 04:17:09 INFO  o.h.controller.StockDataController - Successfully fetched history for: PLTR (1mo, 1h)
+2026-02-06 04:18:06 INFO  o.h.controller.StockDataController - Request received for history: USDT-USD with period: 1mo, interval: 1h
+2026-02-06 04:18:06 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/USDT-USD?period=1MO&interval=1h
+2026-02-06 04:18:07 INFO  o.h.controller.StockDataController - Successfully fetched history for: USDT-USD (1mo, 1h)
+2026-02-06 04:18:07 INFO  o.h.controller.StockDataController - Request received for history: USDT-USD with period: 1mo, interval: 1h
+2026-02-06 04:18:07 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/USDT-USD?period=1MO&interval=1h
+2026-02-06 04:18:07 INFO  o.h.controller.StockDataController - Successfully fetched history for: USDT-USD (1mo, 1h)
+2026-02-06 04:24:42 INFO  o.h.controller.StockDataController - Search request received with query: diamond
+2026-02-06 04:24:42 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/search?q=diamond
+2026-02-06 04:24:42 INFO  o.h.controller.StockDataController - Search completed successfully for query: diamond
+2026-02-06 04:24:42 INFO  o.h.controller.StockDataController - Search request received with query: diamond
+2026-02-06 04:24:42 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/search?q=diamond
+2026-02-06 04:24:43 INFO  o.h.controller.StockDataController - Search completed successfully for query: diamond
+2026-02-06 04:24:54 INFO  o.h.controller.StockDataController - Search request received with query: nvidia
+2026-02-06 04:24:54 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/search?q=nvidia
+2026-02-06 04:24:54 INFO  o.h.controller.StockDataController - Search completed successfully for query: nvidia
+2026-02-06 04:25:01 INFO  o.h.controller.StockDataController - Request received for stock: 1NVDA.MI
+2026-02-06 04:25:01 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/stocks/1NVDA.MI
+2026-02-06 04:25:02 INFO  o.h.controller.StockDataController - Successfully fetched stock data for: 1NVDA.MI
+2026-02-06 04:25:02 INFO  o.h.controller.StockDataController - Request received for stock: 1NVDA.MI
+2026-02-06 04:25:02 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/stocks/1NVDA.MI
+2026-02-06 04:25:02 INFO  o.h.controller.StockDataController - Request received for history: 1NVDA.MI with period: 1mo, interval: 1h
+2026-02-06 04:25:02 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/1NVDA.MI?period=1MO&interval=1h
+2026-02-06 04:25:02 INFO  o.h.controller.StockDataController - Successfully fetched history for: 1NVDA.MI (1mo, 1h)
+2026-02-06 04:25:02 INFO  o.h.controller.StockDataController - Request received for history: 1NVDA.MI with period: 1mo, interval: 1h
+2026-02-06 04:25:02 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/1NVDA.MI?period=1MO&interval=1h
+2026-02-06 04:25:02 INFO  o.h.controller.StockDataController - Successfully fetched stock data for: 1NVDA.MI
+2026-02-06 04:25:02 INFO  o.h.controller.StockDataController - Successfully fetched history for: 1NVDA.MI (1mo, 1h)
+2026-02-06 04:25:09 INFO  o.h.controller.StockDataController - Search request received with query: byd
+2026-02-06 04:25:09 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/search?q=byd
+2026-02-06 04:25:09 INFO  o.h.controller.StockDataController - Search completed successfully for query: byd
+2026-02-06 04:25:09 INFO  o.h.controller.StockDataController - Search request received with query: byd
+2026-02-06 04:25:09 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/search?q=byd
+2026-02-06 04:25:10 INFO  o.h.controller.StockDataController - Search completed successfully for query: byd
+2026-02-06 04:25:19 INFO  o.h.controller.StockDataController - Search request received with query: gold
+2026-02-06 04:25:19 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/search?q=gold
+2026-02-06 04:25:20 INFO  o.h.controller.StockDataController - Search completed successfully for query: gold
+2026-02-06 04:25:23 INFO  o.h.controller.StockDataController - Request received for commodity: GC=F
+2026-02-06 04:25:23 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/commodities/GC=F
+2026-02-06 04:25:23 INFO  o.h.controller.StockDataController - Successfully fetched commodity data for: GC=F
+2026-02-06 04:25:23 INFO  o.h.controller.StockDataController - Request received for commodity: GC=F
+2026-02-06 04:25:23 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/commodities/GC=F
+2026-02-06 04:25:23 INFO  o.h.controller.StockDataController - Request received for history: GC=F with period: 1mo, interval: 1h
+2026-02-06 04:25:23 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/GC=F?period=1MO&interval=1h
+2026-02-06 04:25:23 INFO  o.h.controller.StockDataController - Successfully fetched commodity data for: GC=F
+2026-02-06 04:25:23 INFO  o.h.controller.StockDataController - Successfully fetched history for: GC=F (1mo, 1h)
+2026-02-06 04:25:23 INFO  o.h.controller.StockDataController - Request received for history: GC=F with period: 1mo, interval: 1h
+2026-02-06 04:25:23 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/GC=F?period=1MO&interval=1h
+2026-02-06 04:25:23 INFO  o.h.controller.StockDataController - Successfully fetched history for: GC=F (1mo, 1h)
+2026-02-06 04:25:35 WARN  o.s.w.s.m.s.DefaultHandlerExceptionResolver - Resolved [org.springframework.web.method.annotation.MethodArgumentTypeMismatchException: Failed to convert value of type 'java.lang.String' to required type 'int'; For input string: "19999999999999"]
+2026-02-06 04:26:22 INFO  o.h.controller.StockDataController - Request received for commodity: GC=F
+2026-02-06 04:26:22 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/commodities/GC=F
+2026-02-06 04:26:22 INFO  o.h.controller.StockDataController - Successfully fetched commodity data for: GC=F
+2026-02-06 04:26:22 INFO  o.h.controller.StockDataController - Request received for commodity: GC=F
+2026-02-06 04:26:22 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/commodities/GC=F
+2026-02-06 04:26:23 INFO  o.h.controller.StockDataController - Request received for history: GC=F with period: 1mo, interval: 1h
+2026-02-06 04:26:23 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/GC=F?period=1MO&interval=1h
+2026-02-06 04:26:23 INFO  o.h.controller.StockDataController - Successfully fetched commodity data for: GC=F
+2026-02-06 04:26:23 INFO  o.h.controller.StockDataController - Successfully fetched history for: GC=F (1mo, 1h)
+2026-02-06 04:26:23 INFO  o.h.controller.StockDataController - Request received for history: GC=F with period: 1mo, interval: 1h
+2026-02-06 04:26:23 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/GC=F?period=1MO&interval=1h
+2026-02-06 04:26:23 INFO  o.h.controller.StockDataController - Successfully fetched history for: GC=F (1mo, 1h)
+2026-02-06 04:26:58 INFO  o.h.controller.StockDataController - Request received for commodity: GC=F
+2026-02-06 04:26:58 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/commodities/GC=F
+2026-02-06 04:26:58 INFO  o.h.controller.StockDataController - Successfully fetched commodity data for: GC=F
+2026-02-06 04:26:58 INFO  o.h.controller.StockDataController - Request received for commodity: GC=F
+2026-02-06 04:26:58 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/commodities/GC=F
+2026-02-06 04:26:58 INFO  o.h.controller.StockDataController - Request received for history: GC=F with period: 1mo, interval: 1h
+2026-02-06 04:26:58 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/GC=F?period=1MO&interval=1h
+2026-02-06 04:26:58 INFO  o.h.controller.StockDataController - Successfully fetched history for: GC=F (1mo, 1h)
+2026-02-06 04:26:58 INFO  o.h.controller.StockDataController - Request received for history: GC=F with period: 1mo, interval: 1h
+2026-02-06 04:26:58 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/GC=F?period=1MO&interval=1h
+2026-02-06 04:26:58 INFO  o.h.controller.StockDataController - Successfully fetched commodity data for: GC=F
+2026-02-06 04:26:59 INFO  o.h.controller.StockDataController - Successfully fetched history for: GC=F (1mo, 1h)
+2026-02-06 04:27:04 INFO  o.h.controller.StockDataController - Request received for history: GC=F with period: 1mo, interval: 1h
+2026-02-06 04:27:04 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/GC=F?period=1MO&interval=1h
+2026-02-06 04:27:04 INFO  o.h.controller.StockDataController - Successfully fetched history for: GC=F (1mo, 1h)
+2026-02-06 04:27:04 INFO  o.h.controller.StockDataController - Request received for history: GC=F with period: 1mo, interval: 1h
+2026-02-06 04:27:04 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/GC=F?period=1MO&interval=1h
+2026-02-06 04:27:04 INFO  o.h.controller.StockDataController - Successfully fetched history for: GC=F (1mo, 1h)
+2026-02-06 04:27:15 INFO  o.h.controller.StockDataController - Stock analysis request for: GC=F (inPortfolio=true, buyPrice=4840.113567839196)
+2026-02-06 04:27:15 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/stock/GC=F/analysis?inPortfolio=true&buyPrice=4840.113567839196
+2026-02-06 04:27:19 INFO  o.h.controller.StockDataController - Stock analysis completed successfully for: GC=F
+2026-02-06 04:27:58 INFO  o.h.controller.StockDataController - Request received for history: 0P0000XVFU.BO with period: 1mo, interval: 1h
+2026-02-06 04:27:58 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/0P0000XVFU.BO?period=1MO&interval=1h
+2026-02-06 04:27:58 INFO  o.h.controller.StockDataController - Successfully fetched history for: 0P0000XVFU.BO (1mo, 1h)
+2026-02-06 04:27:58 INFO  o.h.controller.StockDataController - Request received for history: 0P0000XVFU.BO with period: 1mo, interval: 1h
+2026-02-06 04:27:58 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/0P0000XVFU.BO?period=1MO&interval=1h
+2026-02-06 04:27:58 INFO  o.h.controller.StockDataController - Successfully fetched history for: 0P0000XVFU.BO (1mo, 1h)
+2026-02-06 04:28:00 INFO  o.h.controller.StockDataController - Request received for history: AMZN with period: 1mo, interval: 1h
+2026-02-06 04:28:00 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/AMZN?period=1MO&interval=1h
+2026-02-06 04:28:00 INFO  o.h.controller.StockDataController - Successfully fetched history for: AMZN (1mo, 1h)
+2026-02-06 04:28:00 INFO  o.h.controller.StockDataController - Request received for history: AMZN with period: 1mo, interval: 1h
+2026-02-06 04:28:00 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/AMZN?period=1MO&interval=1h
+2026-02-06 04:28:00 INFO  o.h.controller.StockDataController - Successfully fetched history for: AMZN (1mo, 1h)
+2026-02-06 04:28:02 INFO  o.h.controller.StockDataController - Stock analysis request for: AMZN (inPortfolio=true, buyPrice=232.93)
+2026-02-06 04:28:02 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/stock/AMZN/analysis?inPortfolio=true&buyPrice=232.93
+2026-02-06 04:28:05 INFO  o.h.controller.StockDataController - Stock analysis completed successfully for: AMZN
+2026-02-06 04:28:56 INFO  o.h.controller.StockDataController - Request received for history: 0P0000XVFU.BO with period: 1mo, interval: 1h
+2026-02-06 04:28:56 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/0P0000XVFU.BO?period=1MO&interval=1h
+2026-02-06 04:28:56 INFO  o.h.controller.StockDataController - Successfully fetched history for: 0P0000XVFU.BO (1mo, 1h)
+2026-02-06 04:28:56 INFO  o.h.controller.StockDataController - Request received for history: 0P0000XVFU.BO with period: 1mo, interval: 1h
+2026-02-06 04:28:56 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/0P0000XVFU.BO?period=1MO&interval=1h
+2026-02-06 04:28:57 INFO  o.h.controller.StockDataController - Successfully fetched history for: 0P0000XVFU.BO (1mo, 1h)
+2026-02-06 04:29:00 INFO  o.h.controller.StockDataController - Request received for history: 0P0000XVFU.BO with period: 1mo, interval: 1h
+2026-02-06 04:29:00 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/0P0000XVFU.BO?period=1MO&interval=1h
+2026-02-06 04:29:00 INFO  o.h.controller.StockDataController - Successfully fetched history for: 0P0000XVFU.BO (1mo, 1h)
+2026-02-06 04:29:00 INFO  o.h.controller.StockDataController - Request received for history: 0P0000XVFU.BO with period: 1mo, interval: 1h
+2026-02-06 04:29:00 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/0P0000XVFU.BO?period=1MO&interval=1h
+2026-02-06 04:29:00 INFO  o.h.controller.StockDataController - Successfully fetched history for: 0P0000XVFU.BO (1mo, 1h)
+2026-02-06 04:29:02 INFO  o.h.controller.StockDataController - Stock analysis request for: 0P0000XVFU.BO (inPortfolio=true, buyPrice=59.49)
+2026-02-06 04:29:02 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/stock/0P0000XVFU.BO/analysis?inPortfolio=true&buyPrice=59.49
+2026-02-06 04:29:02 WARN  o.h.controller.StockDataController - Unable to analyze stock: 0P0000XVFU.BO
+2026-02-06 04:29:04 INFO  o.h.controller.StockDataController - Request received for history: 0P0000XVFU.BO with period: 1mo, interval: 1h
+2026-02-06 04:29:04 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/0P0000XVFU.BO?period=1MO&interval=1h
+2026-02-06 04:29:04 INFO  o.h.controller.StockDataController - Successfully fetched history for: 0P0000XVFU.BO (1mo, 1h)
+2026-02-06 04:29:04 INFO  o.h.controller.StockDataController - Request received for history: 0P0000XVFU.BO with period: 1mo, interval: 1h
+2026-02-06 04:29:04 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/0P0000XVFU.BO?period=1MO&interval=1h
+2026-02-06 04:29:04 INFO  o.h.controller.StockDataController - Successfully fetched history for: 0P0000XVFU.BO (1mo, 1h)
+2026-02-06 04:29:58 INFO  o.h.controller.StockDataController - Request received for history: 0P0000XVFU.BO with period: 1mo, interval: 1h
+2026-02-06 04:29:58 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/0P0000XVFU.BO?period=1MO&interval=1h
+2026-02-06 04:29:58 INFO  o.h.controller.StockDataController - Successfully fetched history for: 0P0000XVFU.BO (1mo, 1h)
+2026-02-06 04:29:58 INFO  o.h.controller.StockDataController - Request received for history: 0P0000XVFU.BO with period: 1mo, interval: 1h
+2026-02-06 04:29:58 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/0P0000XVFU.BO?period=1MO&interval=1h
+2026-02-06 04:29:58 INFO  o.h.controller.StockDataController - Successfully fetched history for: 0P0000XVFU.BO (1mo, 1h)
+2026-02-06 04:30:00 INFO  o.h.controller.StockDataController - Stock analysis request for: 0P0000XVFU.BO (inPortfolio=true, buyPrice=59.49)
+2026-02-06 04:30:00 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/stock/0P0000XVFU.BO/analysis?inPortfolio=true&buyPrice=59.49
+2026-02-06 04:30:00 WARN  o.h.controller.StockDataController - Unable to analyze stock: 0P0000XVFU.BO
+2026-02-06 04:32:54 INFO  o.h.controller.StockDataController - Request received for history: AMZN with period: 1mo, interval: 1h
+2026-02-06 04:32:54 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/AMZN?period=1MO&interval=1h
+2026-02-06 04:32:54 INFO  o.h.controller.StockDataController - Successfully fetched history for: AMZN (1mo, 1h)
+2026-02-06 04:32:54 INFO  o.h.controller.StockDataController - Request received for history: AMZN with period: 1mo, interval: 1h
+2026-02-06 04:32:54 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/AMZN?period=1MO&interval=1h
+2026-02-06 04:32:54 INFO  o.h.controller.StockDataController - Successfully fetched history for: AMZN (1mo, 1h)
+2026-02-06 04:32:56 INFO  o.h.controller.StockDataController - Stock analysis request for: AMZN (inPortfolio=true, buyPrice=232.93)
+2026-02-06 04:32:56 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/stock/AMZN/analysis?inPortfolio=true&buyPrice=232.93
+2026-02-06 04:32:59 INFO  o.h.controller.StockDataController - Stock analysis completed successfully for: AMZN
+2026-02-06 04:33:10 INFO  o.h.controller.StockDataController - Request received for history: 0P0000XVFU.BO with period: 1mo, interval: 1h
+2026-02-06 04:33:10 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/0P0000XVFU.BO?period=1MO&interval=1h
+2026-02-06 04:33:10 INFO  o.h.controller.StockDataController - Successfully fetched history for: 0P0000XVFU.BO (1mo, 1h)
+2026-02-06 04:33:10 INFO  o.h.controller.StockDataController - Request received for history: 0P0000XVFU.BO with period: 1mo, interval: 1h
+2026-02-06 04:33:10 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/0P0000XVFU.BO?period=1MO&interval=1h
+2026-02-06 04:33:10 INFO  o.h.controller.StockDataController - Successfully fetched history for: 0P0000XVFU.BO (1mo, 1h)
+2026-02-06 04:33:12 INFO  o.h.controller.StockDataController - Stock analysis request for: 0P0000XVFU.BO (inPortfolio=true, buyPrice=59.49)
+2026-02-06 04:33:12 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/stock/0P0000XVFU.BO/analysis?inPortfolio=true&buyPrice=59.49
+2026-02-06 04:33:12 WARN  o.h.controller.StockDataController - Unable to analyze stock: 0P0000XVFU.BO
+2026-02-06 04:38:27 INFO  o.h.controller.StockDataController - Request received for history: GC=F with period: 1mo, interval: 1h
+2026-02-06 04:38:27 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/GC=F?period=1MO&interval=1h
+2026-02-06 04:38:28 INFO  o.h.controller.StockDataController - Successfully fetched history for: GC=F (1mo, 1h)
+2026-02-06 04:38:28 INFO  o.h.controller.StockDataController - Request received for history: GC=F with period: 1mo, interval: 1h
+2026-02-06 04:38:28 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/GC=F?period=1MO&interval=1h
+2026-02-06 04:38:28 INFO  o.h.controller.StockDataController - Successfully fetched history for: GC=F (1mo, 1h)
+2026-02-06 04:42:04 INFO  o.h.controller.StockDataController - Request received for history: ITC.NS with period: 1mo, interval: 1h
+2026-02-06 04:42:04 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/ITC.NS?period=1MO&interval=1h
+2026-02-06 04:42:04 INFO  o.h.controller.StockDataController - Successfully fetched history for: ITC.NS (1mo, 1h)
+2026-02-06 04:42:04 INFO  o.h.controller.StockDataController - Request received for history: ITC.NS with period: 1mo, interval: 1h
+2026-02-06 04:42:04 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/ITC.NS?period=1MO&interval=1h
+2026-02-06 04:42:04 INFO  o.h.controller.StockDataController - Successfully fetched history for: ITC.NS (1mo, 1h)
+2026-02-06 04:42:12 INFO  o.h.controller.StockDataController - Request received for history: ITC.NS with period: 1mo, interval: 1h
+2026-02-06 04:42:12 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/ITC.NS?period=1MO&interval=1h
+2026-02-06 04:42:12 INFO  o.h.controller.StockDataController - Successfully fetched history for: ITC.NS (1mo, 1h)
+2026-02-06 04:42:12 INFO  o.h.controller.StockDataController - Request received for history: ITC.NS with period: 1mo, interval: 1h
+2026-02-06 04:42:12 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/ITC.NS?period=1MO&interval=1h
+2026-02-06 04:42:12 INFO  o.h.controller.StockDataController - Successfully fetched history for: ITC.NS (1mo, 1h)
+2026-02-06 04:47:24 INFO  o.h.controller.StockDataController - Search request received with query: ace
+2026-02-06 04:47:24 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/search?q=ace
+2026-02-06 04:47:24 INFO  o.h.controller.StockDataController - Search completed successfully for query: ace
+2026-02-06 04:47:24 INFO  o.h.controller.StockDataController - Search request received with query: ace
+2026-02-06 04:47:24 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/search?q=ace
+2026-02-06 04:47:25 INFO  o.h.controller.StockDataController - Search completed successfully for query: ace
+2026-02-06 04:47:35 INFO  o.h.controller.StockDataController - Search request received with query: groww
+2026-02-06 04:47:35 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/search?q=groww
+2026-02-06 04:47:35 INFO  o.h.controller.StockDataController - Search completed successfully for query: groww
+2026-02-06 04:47:41 INFO  o.h.controller.StockDataController - Search request received with query: hitachi
+2026-02-06 04:47:41 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/search?q=hitachi
+2026-02-06 04:47:43 INFO  o.h.controller.StockDataController - Search completed successfully for query: hitachi
+2026-02-06 04:48:07 INFO  o.h.controller.StockDataController - Search request received with query: hitachi energy
+2026-02-06 04:48:07 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/search?q=hitachi energy
+2026-02-06 04:48:07 INFO  o.h.controller.StockDataController - Search completed successfully for query: hitachi energy
+2026-02-06 04:48:14 INFO  o.h.controller.StockDataController - Request received for stock: POWERINDIA.NS
+2026-02-06 04:48:14 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/stocks/POWERINDIA.NS
+2026-02-06 04:48:14 INFO  o.h.controller.StockDataController - Successfully fetched stock data for: POWERINDIA.NS
+2026-02-06 04:48:14 INFO  o.h.controller.StockDataController - Request received for stock: POWERINDIA.NS
+2026-02-06 04:48:14 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/stocks/POWERINDIA.NS
+2026-02-06 04:48:14 INFO  o.h.controller.StockDataController - Request received for history: POWERINDIA.NS with period: 1mo, interval: 1h
+2026-02-06 04:48:14 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/POWERINDIA.NS?period=1MO&interval=1h
+2026-02-06 04:48:14 INFO  o.h.controller.StockDataController - Successfully fetched history for: POWERINDIA.NS (1mo, 1h)
+2026-02-06 04:48:14 INFO  o.h.controller.StockDataController - Request received for history: POWERINDIA.NS with period: 1mo, interval: 1h
+2026-02-06 04:48:14 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/POWERINDIA.NS?period=1MO&interval=1h
+2026-02-06 04:48:14 INFO  o.h.controller.StockDataController - Successfully fetched stock data for: POWERINDIA.NS
+2026-02-06 04:48:14 INFO  o.h.controller.StockDataController - Successfully fetched history for: POWERINDIA.NS (1mo, 1h)
+2026-02-06 04:48:58 INFO  o.h.controller.StockDataController - Search request received with query: eth
+2026-02-06 04:48:58 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/search?q=eth
+2026-02-06 04:48:59 INFO  o.h.controller.StockDataController - Search completed successfully for query: eth
+2026-02-06 04:48:59 INFO  o.h.controller.StockDataController - Search request received with query: eth
+2026-02-06 04:48:59 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/search?q=eth
+2026-02-06 04:48:59 INFO  o.h.controller.StockDataController - Search completed successfully for query: eth
+2026-02-06 04:49:05 INFO  o.h.controller.StockDataController - Request received for crypto: ETH-USD
+2026-02-06 04:49:05 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/crypto/ETH-USD
+2026-02-06 04:49:05 INFO  o.h.controller.StockDataController - Successfully fetched crypto data for: ETH-USD
+2026-02-06 04:49:05 INFO  o.h.controller.StockDataController - Request received for crypto: ETH-USD
+2026-02-06 04:49:05 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/crypto/ETH-USD
+2026-02-06 04:49:05 INFO  o.h.controller.StockDataController - Request received for history: ETH-USD with period: 1mo, interval: 1h
+2026-02-06 04:49:05 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/ETH-USD?period=1MO&interval=1h
+2026-02-06 04:49:05 INFO  o.h.controller.StockDataController - Successfully fetched history for: ETH-USD (1mo, 1h)
+2026-02-06 04:49:05 INFO  o.h.controller.StockDataController - Request received for history: ETH-USD with period: 1mo, interval: 1h
+2026-02-06 04:49:05 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/ETH-USD?period=1MO&interval=1h
+2026-02-06 04:49:05 INFO  o.h.controller.StockDataController - Successfully fetched history for: ETH-USD (1mo, 1h)
+2026-02-06 04:49:05 INFO  o.h.controller.StockDataController - Successfully fetched crypto data for: ETH-USD
+2026-02-06 04:49:15 INFO  o.h.controller.StockDataController - Stock analysis request for: ETH-USD (inPortfolio=false, buyPrice=null)
+2026-02-06 04:49:15 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/stock/ETH-USD/analysis?inPortfolio=false
+2026-02-06 04:49:18 INFO  o.h.controller.StockDataController - Stock analysis completed successfully for: ETH-USD
+2026-02-06 04:58:07 INFO  o.h.controller.StockDataController - Request received for history: AMZN with period: 1mo, interval: 1h
+2026-02-06 04:58:07 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/AMZN?period=1MO&interval=1h
+2026-02-06 04:58:07 INFO  o.h.controller.StockDataController - Successfully fetched history for: AMZN (1mo, 1h)
+2026-02-06 04:58:07 INFO  o.h.controller.StockDataController - Request received for history: AMZN with period: 1mo, interval: 1h
+2026-02-06 04:58:07 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/AMZN?period=1MO&interval=1h
+2026-02-06 04:58:07 INFO  o.h.controller.StockDataController - Successfully fetched history for: AMZN (1mo, 1h)
+2026-02-06 04:58:23 INFO  o.h.controller.StockDataController - Request received for history: AMZN with period: 1d, interval: 1m
+2026-02-06 04:58:23 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/AMZN?period=1D&interval=1m
+2026-02-06 04:58:23 INFO  o.h.controller.StockDataController - Successfully fetched history for: AMZN (1d, 1m)
+2026-02-06 04:58:25 INFO  o.h.controller.StockDataController - Request received for history: AMZN with period: 5d, interval: 5m
+2026-02-06 04:58:25 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/AMZN?period=5D&interval=5m
+2026-02-06 04:58:25 INFO  o.h.controller.StockDataController - Successfully fetched history for: AMZN (5d, 5m)
+2026-02-06 04:58:26 INFO  o.h.controller.StockDataController - Request received for history: AMZN with period: max, interval: 1mo
+2026-02-06 04:58:26 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/AMZN?period=MAX&interval=1mo
+2026-02-06 04:58:27 INFO  o.h.controller.StockDataController - Successfully fetched history for: AMZN (max, 1mo)
+2026-02-06 04:58:45 INFO  o.h.controller.StockDataController - Request received for stock: AMZN
+2026-02-06 04:58:45 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/stocks/AMZN
+2026-02-06 04:58:45 INFO  o.h.controller.StockDataController - Successfully fetched stock data for: AMZN
+2026-02-06 04:58:45 INFO  o.h.controller.StockDataController - Request received for stock: AMZN
+2026-02-06 04:58:45 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/stocks/AMZN
+2026-02-06 04:58:45 INFO  o.h.controller.StockDataController - Request received for history: AMZN with period: 1mo, interval: 1h
+2026-02-06 04:58:45 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/AMZN?period=1MO&interval=1h
+2026-02-06 04:58:45 INFO  o.h.controller.StockDataController - Successfully fetched history for: AMZN (1mo, 1h)
+2026-02-06 04:58:45 INFO  o.h.controller.StockDataController - Request received for history: AMZN with period: 1mo, interval: 1h
+2026-02-06 04:58:45 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/AMZN?period=1MO&interval=1h
+2026-02-06 04:58:46 INFO  o.h.controller.StockDataController - Successfully fetched stock data for: AMZN
+2026-02-06 04:58:46 INFO  o.h.controller.StockDataController - Successfully fetched history for: AMZN (1mo, 1h)
+2026-02-06 04:58:57 INFO  o.h.controller.StockDataController - Search request received with query: itc
+2026-02-06 04:58:57 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/search?q=itc
+2026-02-06 04:58:58 INFO  o.h.controller.StockDataController - Search completed successfully for query: itc
+2026-02-06 04:58:58 INFO  o.h.controller.StockDataController - Search request received with query: itc
+2026-02-06 04:58:58 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/search?q=itc
+2026-02-06 04:58:58 INFO  o.h.controller.StockDataController - Search completed successfully for query: itc
+2026-02-06 04:59:11 INFO  o.h.controller.StockDataController - Request received for stock: ITC.NS
+2026-02-06 04:59:11 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/stocks/ITC.NS
+2026-02-06 04:59:11 INFO  o.h.controller.StockDataController - Successfully fetched stock data for: ITC.NS
+2026-02-06 04:59:11 INFO  o.h.controller.StockDataController - Request received for stock: ITC.NS
+2026-02-06 04:59:11 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/stocks/ITC.NS
+2026-02-06 04:59:11 INFO  o.h.controller.StockDataController - Request received for history: ITC.NS with period: 1mo, interval: 1h
+2026-02-06 04:59:11 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/ITC.NS?period=1MO&interval=1h
+2026-02-06 04:59:11 INFO  o.h.controller.StockDataController - Successfully fetched history for: ITC.NS (1mo, 1h)
+2026-02-06 04:59:11 INFO  o.h.controller.StockDataController - Request received for history: ITC.NS with period: 1mo, interval: 1h
+2026-02-06 04:59:11 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/ITC.NS?period=1MO&interval=1h
+2026-02-06 04:59:11 INFO  o.h.controller.StockDataController - Successfully fetched history for: ITC.NS (1mo, 1h)
+2026-02-06 04:59:11 INFO  o.h.controller.StockDataController - Successfully fetched stock data for: ITC.NS
+2026-02-06 05:00:51 INFO  o.h.controller.StockDataController - Request received for history: ITC.NS with period: max, interval: 1mo
+2026-02-06 05:00:51 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/ITC.NS?period=MAX&interval=1mo
+2026-02-06 05:00:51 INFO  o.h.controller.StockDataController - Successfully fetched history for: ITC.NS (max, 1mo)
+2026-02-06 05:00:53 INFO  o.h.controller.StockDataController - Request received for history: ITC.NS with period: 5d, interval: 5m
+2026-02-06 05:00:53 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/ITC.NS?period=5D&interval=5m
+2026-02-06 05:00:53 INFO  o.h.controller.StockDataController - Successfully fetched history for: ITC.NS (5d, 5m)
+2026-02-06 05:00:54 INFO  o.h.controller.StockDataController - Request received for history: ITC.NS with period: 1d, interval: 1m
+2026-02-06 05:00:54 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/ITC.NS?period=1D&interval=1m
+2026-02-06 05:00:54 INFO  o.h.controller.StockDataController - Successfully fetched history for: ITC.NS (1d, 1m)
+2026-02-06 05:02:15 INFO  o.h.controller.StockDataController - Stock analysis request for: ITC.NS (inPortfolio=false, buyPrice=null)
+2026-02-06 05:02:15 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/stock/ITC.NS/analysis?inPortfolio=false
+2026-02-06 05:02:16 INFO  o.h.controller.StockDataController - Stock analysis completed successfully for: ITC.NS
+2026-02-06 05:03:47 INFO  o.a.coyote.http11.Http11Processor - Error parsing HTTP request header
+ Note: further occurrences of HTTP request parsing errors will be logged at DEBUG level.
+java.lang.IllegalArgumentException: Invalid character found in method name [0x050x020x000x02...]. HTTP method names must be tokens
+	at org.apache.coyote.http11.Http11InputBuffer.parseRequestLine(Http11InputBuffer.java:407)
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:264)
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63)
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:896)
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1744)
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1191)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+2026-02-06 05:03:57 INFO  o.h.controller.StockDataController - Request received for history: AMZN with period: 1mo, interval: 1h
+2026-02-06 05:03:57 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/AMZN?period=1MO&interval=1h
+2026-02-06 05:03:57 INFO  o.h.controller.StockDataController - Successfully fetched history for: AMZN (1mo, 1h)
+2026-02-06 05:03:57 INFO  o.h.controller.StockDataController - Request received for history: AMZN with period: 1mo, interval: 1h
+2026-02-06 05:03:57 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/AMZN?period=1MO&interval=1h
+2026-02-06 05:03:57 INFO  o.h.controller.StockDataController - Successfully fetched history for: AMZN (1mo, 1h)
+2026-02-06 05:04:06 INFO  o.h.controller.StockDataController - Stock analysis request for: AMZN (inPortfolio=true, buyPrice=232.93)
+2026-02-06 05:04:06 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/stock/AMZN/analysis?inPortfolio=true&buyPrice=232.93
+2026-02-06 05:04:08 INFO  o.h.controller.StockDataController - Stock analysis completed successfully for: AMZN
+2026-02-06 05:05:02 INFO  o.h.controller.StockDataController - Request received for history: POWERINDIA.NS with period: 1mo, interval: 1h
+2026-02-06 05:05:02 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/POWERINDIA.NS?period=1MO&interval=1h
+2026-02-06 05:05:02 INFO  o.h.controller.StockDataController - Successfully fetched history for: POWERINDIA.NS (1mo, 1h)
+2026-02-06 05:05:02 INFO  o.h.controller.StockDataController - Request received for history: POWERINDIA.NS with period: 1mo, interval: 1h
+2026-02-06 05:05:02 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/POWERINDIA.NS?period=1MO&interval=1h
+2026-02-06 05:05:02 INFO  o.h.controller.StockDataController - Successfully fetched history for: POWERINDIA.NS (1mo, 1h)
+2026-02-06 05:06:14 INFO  o.h.controller.StockDataController - Request received for history: AMZN with period: 1mo, interval: 1h
+2026-02-06 05:06:14 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/AMZN?period=1MO&interval=1h
+2026-02-06 05:06:14 INFO  o.h.controller.StockDataController - Successfully fetched history for: AMZN (1mo, 1h)
+2026-02-06 05:06:14 INFO  o.h.controller.StockDataController - Request received for history: AMZN with period: 1mo, interval: 1h
+2026-02-06 05:06:14 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/AMZN?period=1MO&interval=1h
+2026-02-06 05:06:14 INFO  o.h.controller.StockDataController - Successfully fetched history for: AMZN (1mo, 1h)
+2026-02-06 06:11:20 INFO  o.h.controller.StockDataController - Request received for history: AMZN with period: 1mo, interval: 1h
+2026-02-06 06:11:20 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/AMZN?period=1MO&interval=1h
+2026-02-06 06:11:20 INFO  o.h.controller.StockDataController - Successfully fetched history for: AMZN (1mo, 1h)
+2026-02-06 06:11:20 INFO  o.h.controller.StockDataController - Request received for history: AMZN with period: 1mo, interval: 1h
+2026-02-06 06:11:20 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/AMZN?period=1MO&interval=1h
+2026-02-06 06:11:20 INFO  o.h.controller.StockDataController - Successfully fetched history for: AMZN (1mo, 1h)
+2026-02-06 06:11:22 INFO  o.h.controller.StockDataController - Stock analysis request for: AMZN (inPortfolio=true, buyPrice=232.93)
+2026-02-06 06:11:22 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/stock/AMZN/analysis?inPortfolio=true&buyPrice=232.93
+2026-02-06 06:11:26 INFO  o.h.controller.StockDataController - Stock analysis completed successfully for: AMZN
+2026-02-06 06:16:52 INFO  o.h.controller.StockDataController - Search request received with query: amd
+2026-02-06 06:16:52 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/search?q=amd
+2026-02-06 06:16:53 INFO  o.h.controller.StockDataController - Search completed successfully for query: amd
+2026-02-06 06:16:55 INFO  o.h.controller.StockDataController - Request received for stock: AMD
+2026-02-06 06:16:55 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/stocks/AMD
+2026-02-06 06:16:55 INFO  o.h.controller.StockDataController - Successfully fetched stock data for: AMD
+2026-02-06 06:16:55 INFO  o.h.controller.StockDataController - Request received for stock: AMD
+2026-02-06 06:16:55 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/stocks/AMD
+2026-02-06 06:16:55 INFO  o.h.controller.StockDataController - Request received for history: AMD with period: 1mo, interval: 1h
+2026-02-06 06:16:55 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/AMD?period=1MO&interval=1h
+2026-02-06 06:16:55 INFO  o.h.controller.StockDataController - Successfully fetched history for: AMD (1mo, 1h)
+2026-02-06 06:16:55 INFO  o.h.controller.StockDataController - Request received for history: AMD with period: 1mo, interval: 1h
+2026-02-06 06:16:55 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/AMD?period=1MO&interval=1h
+2026-02-06 06:16:55 INFO  o.h.controller.StockDataController - Successfully fetched stock data for: AMD
+2026-02-06 06:16:55 INFO  o.h.controller.StockDataController - Successfully fetched history for: AMD (1mo, 1h)
+2026-02-06 06:17:04 INFO  o.h.controller.StockDataController - Request received for history: AMD with period: 5d, interval: 5m
+2026-02-06 06:17:04 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/AMD?period=5D&interval=5m
+2026-02-06 06:17:04 INFO  o.h.controller.StockDataController - Successfully fetched history for: AMD (5d, 5m)
+2026-02-06 06:17:13 INFO  o.h.controller.StockDataController - Request received for history: AMD with period: 5y, interval: 1d
+2026-02-06 06:17:13 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/AMD?period=5Y&interval=1d
+2026-02-06 06:17:13 INFO  o.h.controller.StockDataController - Successfully fetched history for: AMD (5y, 1d)
+2026-02-06 06:17:16 INFO  o.h.controller.StockDataController - Request received for history: AMD with period: max, interval: 1mo
+2026-02-06 06:17:16 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/AMD?period=MAX&interval=1mo
+2026-02-06 06:17:16 INFO  o.h.controller.StockDataController - Successfully fetched history for: AMD (max, 1mo)
+2026-02-06 06:17:19 INFO  o.h.controller.StockDataController - Request received for history: AMD with period: 1d, interval: 1m
+2026-02-06 06:17:19 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/AMD?period=1D&interval=1m
+2026-02-06 06:17:19 INFO  o.h.controller.StockDataController - Successfully fetched history for: AMD (1d, 1m)
+2026-02-06 06:19:43 INFO  o.h.controller.StockDataController - Stock analysis request for: AMD (inPortfolio=false, buyPrice=null)
+2026-02-06 06:19:43 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/stock/AMD/analysis?inPortfolio=false
+2026-02-06 06:19:46 INFO  o.h.controller.StockDataController - Stock analysis completed successfully for: AMD
+2026-02-06 06:29:37 INFO  o.h.controller.StockDataController - Request received for history: AMZN with period: 1mo, interval: 1h
+2026-02-06 06:29:37 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/AMZN?period=1MO&interval=1h
+2026-02-06 06:29:38 INFO  o.h.controller.StockDataController - Successfully fetched history for: AMZN (1mo, 1h)
+2026-02-06 06:29:38 INFO  o.h.controller.StockDataController - Request received for history: AMZN with period: 1mo, interval: 1h
+2026-02-06 06:29:38 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/AMZN?period=1MO&interval=1h
+2026-02-06 06:29:38 INFO  o.h.controller.StockDataController - Successfully fetched history for: AMZN (1mo, 1h)
+2026-02-06 06:29:43 INFO  o.h.controller.StockDataController - Stock analysis request for: AMZN (inPortfolio=true, buyPrice=232.93)
+2026-02-06 06:29:43 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/stock/AMZN/analysis?inPortfolio=true&buyPrice=232.93
+2026-02-06 06:29:46 INFO  o.h.controller.StockDataController - Stock analysis completed successfully for: AMZN
+2026-02-06 06:30:17 INFO  o.h.controller.StockDataController - Search request received with query: sbi
+2026-02-06 06:30:17 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/search?q=sbi
+2026-02-06 06:30:17 INFO  o.h.controller.StockDataController - Search completed successfully for query: sbi
+2026-02-06 06:30:20 INFO  o.h.controller.StockDataController - Request received for stock: SBIN.NS
+2026-02-06 06:30:20 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/stocks/SBIN.NS
+2026-02-06 06:30:20 INFO  o.h.controller.StockDataController - Successfully fetched stock data for: SBIN.NS
+2026-02-06 06:30:20 INFO  o.h.controller.StockDataController - Request received for stock: SBIN.NS
+2026-02-06 06:30:20 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/stocks/SBIN.NS
+2026-02-06 06:30:20 INFO  o.h.controller.StockDataController - Request received for history: SBIN.NS with period: 1mo, interval: 1h
+2026-02-06 06:30:20 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/SBIN.NS?period=1MO&interval=1h
+2026-02-06 06:30:20 INFO  o.h.controller.StockDataController - Successfully fetched history for: SBIN.NS (1mo, 1h)
+2026-02-06 06:30:20 INFO  o.h.controller.StockDataController - Request received for history: SBIN.NS with period: 1mo, interval: 1h
+2026-02-06 06:30:20 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/SBIN.NS?period=1MO&interval=1h
+2026-02-06 06:30:20 INFO  o.h.controller.StockDataController - Successfully fetched history for: SBIN.NS (1mo, 1h)
+2026-02-06 06:30:20 INFO  o.h.controller.StockDataController - Successfully fetched stock data for: SBIN.NS
+2026-02-06 06:30:38 INFO  o.h.controller.StockDataController - Request received for history: SBIN.NS with period: max, interval: 1mo
+2026-02-06 06:30:38 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/SBIN.NS?period=MAX&interval=1mo
+2026-02-06 06:30:38 INFO  o.h.controller.StockDataController - Successfully fetched history for: SBIN.NS (max, 1mo)
+2026-02-06 06:30:57 INFO  o.h.controller.StockDataController - Stock analysis request for: SBIN.NS (inPortfolio=false, buyPrice=null)
+2026-02-06 06:30:57 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/stock/SBIN.NS/analysis?inPortfolio=false
+2026-02-06 06:31:00 INFO  o.h.controller.StockDataController - Stock analysis completed successfully for: SBIN.NS
+2026-02-06 06:31:42 INFO  o.h.controller.StockDataController - Request received for history: AMZN with period: 1mo, interval: 1h
+2026-02-06 06:31:42 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/AMZN?period=1MO&interval=1h
+2026-02-06 06:31:42 INFO  o.h.controller.StockDataController - Successfully fetched history for: AMZN (1mo, 1h)
+2026-02-06 06:31:42 INFO  o.h.controller.StockDataController - Request received for history: AMZN with period: 1mo, interval: 1h
+2026-02-06 06:31:42 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/AMZN?period=1MO&interval=1h
+2026-02-06 06:31:42 INFO  o.h.controller.StockDataController - Successfully fetched history for: AMZN (1mo, 1h)
+2026-02-06 06:31:43 INFO  o.h.controller.StockDataController - Stock analysis request for: AMZN (inPortfolio=true, buyPrice=232.93)
+2026-02-06 06:31:43 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/stock/AMZN/analysis?inPortfolio=true&buyPrice=232.93
+2026-02-06 06:31:46 INFO  o.h.controller.StockDataController - Stock analysis completed successfully for: AMZN
+2026-02-06 06:31:53 INFO  o.h.controller.StockDataController - Request received for history: POWERINDIA.NS with period: 1mo, interval: 1h
+2026-02-06 06:31:53 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/POWERINDIA.NS?period=1MO&interval=1h
+2026-02-06 06:31:53 INFO  o.h.controller.StockDataController - Successfully fetched history for: POWERINDIA.NS (1mo, 1h)
+2026-02-06 06:31:53 INFO  o.h.controller.StockDataController - Request received for history: POWERINDIA.NS with period: 1mo, interval: 1h
+2026-02-06 06:31:53 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/POWERINDIA.NS?period=1MO&interval=1h
+2026-02-06 06:31:53 INFO  o.h.controller.StockDataController - Successfully fetched history for: POWERINDIA.NS (1mo, 1h)
+2026-02-06 06:31:54 INFO  o.h.controller.StockDataController - Stock analysis request for: POWERINDIA.NS (inPortfolio=true, buyPrice=21520.0)
+2026-02-06 06:31:54 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/stock/POWERINDIA.NS/analysis?inPortfolio=true&buyPrice=21520.0
+2026-02-06 06:31:55 INFO  o.h.controller.StockDataController - Stock analysis completed successfully for: POWERINDIA.NS
+2026-02-06 06:32:00 INFO  o.h.controller.StockDataController - Request received for history: ITC.NS with period: 1mo, interval: 1h
+2026-02-06 06:32:00 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/ITC.NS?period=1MO&interval=1h
+2026-02-06 06:32:00 INFO  o.h.controller.StockDataController - Successfully fetched history for: ITC.NS (1mo, 1h)
+2026-02-06 06:32:00 INFO  o.h.controller.StockDataController - Request received for history: ITC.NS with period: 1mo, interval: 1h
+2026-02-06 06:32:00 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/ITC.NS?period=1MO&interval=1h
+2026-02-06 06:32:00 INFO  o.h.controller.StockDataController - Successfully fetched history for: ITC.NS (1mo, 1h)
+2026-02-06 06:32:02 INFO  o.h.controller.StockDataController - Stock analysis request for: ITC.NS (inPortfolio=true, buyPrice=310.07500000000005)
+2026-02-06 06:32:02 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/stock/ITC.NS/analysis?inPortfolio=true&buyPrice=310.07500000000005
+2026-02-06 06:32:03 INFO  o.h.controller.StockDataController - Stock analysis completed successfully for: ITC.NS
+2026-02-06 06:32:10 INFO  o.h.controller.StockDataController - Request received for history: GC=F with period: 1mo, interval: 1h
+2026-02-06 06:32:10 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/GC=F?period=1MO&interval=1h
+2026-02-06 06:32:10 INFO  o.h.controller.StockDataController - Successfully fetched history for: GC=F (1mo, 1h)
+2026-02-06 06:32:10 INFO  o.h.controller.StockDataController - Request received for history: GC=F with period: 1mo, interval: 1h
+2026-02-06 06:32:10 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/GC=F?period=1MO&interval=1h
+2026-02-06 06:32:10 INFO  o.h.controller.StockDataController - Successfully fetched history for: GC=F (1mo, 1h)
+2026-02-06 06:32:13 INFO  o.h.controller.StockDataController - Stock analysis request for: GC=F (inPortfolio=true, buyPrice=4840.113567839196)
+2026-02-06 06:32:13 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/stock/GC=F/analysis?inPortfolio=true&buyPrice=4840.113567839196
+2026-02-06 06:32:16 INFO  o.h.controller.StockDataController - Stock analysis completed successfully for: GC=F
