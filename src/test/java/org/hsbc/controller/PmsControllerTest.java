@@ -38,9 +38,9 @@ class PmsControllerTest {
 
         when(service.addAsset(any(PmsEntity.class))).thenReturn(asset);
 
-        mockMvc.perform(post("/pms/add")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(asset)))
+        mockMvc.perform(post("/api/pms/add")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(asset)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.companyName").value("Apple"))
                 .andExpect(jsonPath("$.quantity").value(10));
@@ -51,7 +51,7 @@ class PmsControllerTest {
     void testRemoveAsset() throws Exception {
         doNothing().when(service).removeAsset(1L);
 
-        mockMvc.perform(delete("/pms/remove/1"))
+        mockMvc.perform(delete("/api/pms/remove/1"))
                 .andExpect(status().isOk())
                 .andExpect(content().string("Asset removed successfully"));
     }
@@ -65,8 +65,8 @@ class PmsControllerTest {
 
         when(service.updateQuantity(1L, 20)).thenReturn(updated);
 
-        mockMvc.perform(put("/pms/update-quantity/1")
-                        .param("quantity", "20"))
+        mockMvc.perform(put("/api/pms/update-quantity/1")
+                .param("quantity", "20"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.quantity").value(20));
     }
@@ -76,9 +76,17 @@ class PmsControllerTest {
     void testGetPL() throws Exception {
         when(service.calculatePL(1L)).thenReturn(200.0);
 
-        mockMvc.perform(get("/pms/pl/1"))
+        mockMvc.perform(get("/api/pms/pl/1"))
                 .andExpect(status().isOk())
                 .andExpect(content().string("200.0"));
+    }
+
+    @Test
+    void testGetPL_NotFound() throws Exception {
+        when(service.calculatePL(99L)).thenThrow(new org.hsbc.exception.InvalidPmsIdException("Not Found"));
+
+        mockMvc.perform(get("/api/pms/pl/99"))
+                .andExpect(status().isNotFound());
     }
 
     // 5️⃣ GET /pms/pl-percentage/{id}
@@ -86,7 +94,7 @@ class PmsControllerTest {
     void testGetPLPercentage() throws Exception {
         when(service.calculatePLPercentage(1L)).thenReturn(20.0);
 
-        mockMvc.perform(get("/pms/pl-percentage/1"))
+        mockMvc.perform(get("/api/pms/pl-percentage/1"))
                 .andExpect(status().isOk())
                 .andExpect(content().string("20.0"));
     }
@@ -96,8 +104,41 @@ class PmsControllerTest {
     void testGetTotalValue() throws Exception {
         when(service.getTotalPortfolioValue()).thenReturn(1200.0);
 
-        mockMvc.perform(get("/pms/total-value"))
+        mockMvc.perform(get("/api/pms/total-value"))
                 .andExpect(status().isOk())
                 .andExpect(content().string("1200.0"));
+    }
+
+    @Test
+    void testGetAssetById() throws Exception {
+        PmsEntity asset = new PmsEntity();
+        asset.setId(1L);
+        when(service.getAssetById(1L)).thenReturn(asset);
+
+        mockMvc.perform(get("/api/pms/1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(1));
+    }
+
+    @Test
+    void testGetAssetById_NotFound() throws Exception {
+        when(service.getAssetById(99L)).thenThrow(new org.hsbc.exception.InvalidPmsIdException("Not Found"));
+
+        mockMvc.perform(get("/api/pms/99"))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void testUpdatePrice() throws Exception {
+        PmsEntity asset = new PmsEntity();
+        asset.setSymbol("AAPL");
+        asset.setCurrentPrice(150.0);
+
+        when(service.updateCurrentPrice("AAPL", 150.0)).thenReturn(asset);
+
+        mockMvc.perform(put("/api/pms/update-price/AAPL")
+                .param("price", "150.0"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.currentPrice").value(150.0));
     }
 }
