@@ -43,3 +43,12 @@ build/
 ### VS Code ###
 .vscode/
 Backend/RECOMMENDATION_SERVICE.md
+
+
+# ----------------------------
+# Log files
+# ----------------------------
+logs/
+*.log
+*.log.*
+

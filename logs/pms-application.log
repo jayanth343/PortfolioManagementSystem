@@ -1,0 +1,240 @@
+2026-02-05 13:18:53 INFO  o.hsbc.controller.PmsControllerTest - Starting PmsControllerTest using Java 22.0.2 with PID 13868 (started by Administrator in C:\Users\Administrator\PortfolioManagementSystem)
+2026-02-05 13:18:53 DEBUG o.hsbc.controller.PmsControllerTest - Running with Spring Boot v3.2.4, Spring v6.1.5
+2026-02-05 13:18:53 INFO  o.hsbc.controller.PmsControllerTest - No active profile set, falling back to 1 default profile: "default"
+2026-02-05 13:18:55 INFO  o.s.b.t.m.w.SpringBootMockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-02-05 13:18:55 INFO  o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-02-05 13:18:55 INFO  o.s.t.w.s.TestDispatcherServlet - Completed initialization in 1 ms
+2026-02-05 13:18:55 INFO  o.hsbc.controller.PmsControllerTest - Started PmsControllerTest in 2.331 seconds (process running for 7.338)
+2026-02-05 13:18:56 INFO  o.h.controller.StockDataController - StockDataController initialized
+2026-02-05 13:18:56 INFO  o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-02-05 13:18:56 INFO  o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-02-05 13:18:56 INFO  o.s.t.w.s.TestDispatcherServlet - Completed initialization in 1 ms
+2026-02-05 13:18:56 INFO  o.h.controller.StockDataController - Request received for commodity: GC=F
+2026-02-05 13:18:56 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/commodities/GC=F
+2026-02-05 13:18:56 INFO  o.h.controller.StockDataController - Successfully fetched commodity data for: GC=F
+2026-02-05 13:18:56 INFO  o.h.controller.StockDataController - StockDataController initialized
+2026-02-05 13:18:56 INFO  o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-02-05 13:18:56 INFO  o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-02-05 13:18:56 INFO  o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
+2026-02-05 13:18:56 INFO  o.h.controller.StockDataController - Request received for mutual fund: VFIAX
+2026-02-05 13:18:56 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/mutual-funds/VFIAX
+2026-02-05 13:18:56 INFO  o.h.controller.StockDataController - Successfully fetched mutual fund data for: VFIAX
+2026-02-05 13:18:56 INFO  o.h.controller.StockDataController - StockDataController initialized
+2026-02-05 13:18:56 INFO  o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-02-05 13:18:56 INFO  o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-02-05 13:18:56 INFO  o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
+2026-02-05 13:18:56 INFO  o.h.controller.StockDataController - Request received for history: AAPL with period: 1MO, interval: null
+2026-02-05 13:18:56 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/AAPL?period=1MO
+2026-02-05 13:18:56 INFO  o.h.controller.StockDataController - Successfully fetched history for: AAPL (1MO, null)
+2026-02-05 13:18:56 INFO  o.h.controller.StockDataController - StockDataController initialized
+2026-02-05 13:18:56 INFO  o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-02-05 13:18:56 INFO  o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-02-05 13:18:56 INFO  o.s.t.w.s.TestDispatcherServlet - Completed initialization in 1 ms
+2026-02-05 13:18:56 INFO  o.h.controller.StockDataController - Request received for crypto: BTC
+2026-02-05 13:18:56 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/crypto/BTC
+2026-02-05 13:18:56 INFO  o.h.controller.StockDataController - Successfully fetched crypto data for: BTC
+2026-02-05 13:18:56 INFO  o.h.controller.StockDataController - StockDataController initialized
+2026-02-05 13:18:56 INFO  o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-02-05 13:18:56 INFO  o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-02-05 13:18:56 INFO  o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
+2026-02-05 13:18:56 INFO  o.h.controller.StockDataController - Search request received with query: Apple
+2026-02-05 13:18:56 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/search?q=Apple
+2026-02-05 13:18:56 INFO  o.h.controller.StockDataController - Search completed successfully for query: Apple
+2026-02-05 13:18:56 INFO  o.h.controller.StockDataController - StockDataController initialized
+2026-02-05 13:18:56 INFO  o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-02-05 13:18:56 INFO  o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-02-05 13:18:56 INFO  o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
+2026-02-05 13:18:56 INFO  o.h.controller.StockDataController - Request received for stock: AAPL
+2026-02-05 13:18:56 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/stocks/AAPL
+2026-02-05 13:18:56 ERROR o.h.controller.StockDataController - Error fetching stock data for AAPL: Flask down
+java.lang.RuntimeException: Flask down
+	at org.springframework.web.client.RestTemplate.getForEntity(RestTemplate.java:429)
+	at org.hsbc.controller.StockDataController.getStock(StockDataController.java:42)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:255)
+	at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:188)
+	at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:118)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:925)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:830)
+	at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:87)
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:1089)
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:979)
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1014)
+	at org.springframework.web.servlet.FrameworkServlet.doGet(FrameworkServlet.java:903)
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:564)
+	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:885)
+	at org.springframework.test.web.servlet.TestDispatcherServlet.service(TestDispatcherServlet.java:72)
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:658)
+	at org.springframework.mock.web.MockFilterChain$ServletFilterProxy.doFilter(MockFilterChain.java:165)
+	at org.springframework.mock.web.MockFilterChain.doFilter(MockFilterChain.java:132)
+	at org.springframework.test.web.servlet.MockMvc.perform(MockMvc.java:201)
+	at org.hsbc.controller.StockDataControllerTest.getStock_ServerError(StockDataControllerTest.java:81)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.junit.platform.commons.util.ReflectionUtils.invokeMethod(ReflectionUtils.java:728)
+	at org.junit.jupiter.engine.execution.MethodInvocation.proceed(MethodInvocation.java:60)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain$ValidatingInvocation.proceed(InvocationInterceptorChain.java:131)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.intercept(TimeoutExtension.java:156)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.interceptTestableMethod(TimeoutExtension.java:147)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.interceptTestMethod(TimeoutExtension.java:86)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker$ReflectiveInterceptorCall.lambda$ofVoidMethod$0(InterceptingExecutableInvoker.java:103)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.lambda$invoke$0(InterceptingExecutableInvoker.java:93)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain$InterceptedInvocation.proceed(InvocationInterceptorChain.java:106)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.proceed(InvocationInterceptorChain.java:64)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.chainAndInvoke(InvocationInterceptorChain.java:45)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.invoke(InvocationInterceptorChain.java:37)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.invoke(InterceptingExecutableInvoker.java:92)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.invoke(InterceptingExecutableInvoker.java:86)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.lambda$invokeTestMethod$7(TestMethodTestDescriptor.java:218)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.invokeTestMethod(TestMethodTestDescriptor.java:214)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.execute(TestMethodTestDescriptor.java:139)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.execute(TestMethodTestDescriptor.java:69)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:151)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:141)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:139)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:138)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:95)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:155)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:141)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:139)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:138)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:95)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:155)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:141)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:139)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:138)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:95)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.submit(SameThreadHierarchicalTestExecutorService.java:35)
+	at org.junit.platform.engine.support.hierarchical.HierarchicalTestExecutor.execute(HierarchicalTestExecutor.java:57)
+	at org.junit.platform.engine.support.hierarchical.HierarchicalTestEngine.execute(HierarchicalTestEngine.java:54)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:198)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:169)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:93)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.lambda$execute$0(EngineExecutionOrchestrator.java:58)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.withInterceptedStreams(EngineExecutionOrchestrator.java:141)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:57)
+	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:103)
+	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:85)
+	at org.junit.platform.launcher.core.DelegatingLauncher.execute(DelegatingLauncher.java:47)
+	at org.apache.maven.surefire.junitplatform.LazyLauncher.execute(LazyLauncher.java:56)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.execute(JUnitPlatformProvider.java:184)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.invokeAllTests(JUnitPlatformProvider.java:148)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.invoke(JUnitPlatformProvider.java:122)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:385)
+	at org.apache.maven.surefire.booter.ForkedBooter.execute(ForkedBooter.java:162)
+	at org.apache.maven.surefire.booter.ForkedBooter.run(ForkedBooter.java:507)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:495)
+2026-02-05 13:18:56 INFO  o.h.controller.StockDataController - StockDataController initialized
+2026-02-05 13:18:56 INFO  o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-02-05 13:18:56 INFO  o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-02-05 13:18:56 INFO  o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
+2026-02-05 13:18:56 INFO  o.h.controller.StockDataController - Request received for stock: AAPL
+2026-02-05 13:18:56 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/stocks/AAPL
+2026-02-05 13:18:56 INFO  o.h.controller.StockDataController - Successfully fetched stock data for: AAPL
+2026-02-05 13:18:57 INFO  o.h.controller.StockDataController - StockDataController initialized
+2026-02-05 13:18:57 INFO  o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-02-05 13:18:57 INFO  o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-02-05 13:18:57 INFO  o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
+2026-02-05 13:18:57 INFO  o.h.controller.StockDataController - Request received for stock: UNKNOWN
+2026-02-05 13:18:57 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/stocks/UNKNOWN
+2026-02-05 13:18:57 WARN  o.h.controller.StockDataController - Stock not found: UNKNOWN
+2026-02-05 13:18:57 INFO  o.h.controller.StockDataController - StockDataController initialized
+2026-02-05 13:18:57 INFO  o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-02-05 13:18:57 INFO  o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-02-05 13:18:57 INFO  o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
+2026-02-05 13:18:57 INFO  o.h.controller.StockDataController - Search request received with query: 
+2026-02-05 13:18:57 WARN  o.h.controller.StockDataController - Empty search query received
+2026-02-05 13:18:57 INFO  o.h.controller.StockDataController - StockDataController initialized
+2026-02-05 13:18:57 INFO  o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-02-05 13:18:57 INFO  o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-02-05 13:18:57 INFO  o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
+2026-02-05 13:18:57 INFO  o.h.controller.StockDataController - Request received for news: AAPL
+2026-02-05 13:18:57 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/news/AAPL
+2026-02-05 13:18:57 INFO  o.h.controller.StockDataController - Successfully fetched news for: AAPL
+2026-02-05 13:18:57 INFO  o.h.controller.StockDataController - StockDataController initialized
+2026-02-05 13:18:57 INFO  o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-02-05 13:18:57 INFO  o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-02-05 13:18:57 INFO  o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
+2026-02-05 13:18:57 INFO  o.h.controller.StockDataController - Request received for history: AAPL with period: 1Y, interval: null
+2026-02-05 13:18:57 DEBUG o.h.controller.StockDataController - Calling Flask API: http://localhost:5000/api/history/AAPL?period=1Y
+2026-02-05 13:18:57 INFO  o.h.controller.StockDataController - Successfully fetched history for: AAPL (1Y, null)
+2026-02-05 13:18:57 INFO  o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-02-05 13:18:57 INFO  o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-02-05 13:18:57 INFO  o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
+2026-02-05 13:18:57 INFO  o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-02-05 13:18:57 INFO  o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-02-05 13:18:57 INFO  o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
+2026-02-05 13:18:57 INFO  o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-02-05 13:18:57 INFO  o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-02-05 13:18:57 INFO  o.s.t.w.s.TestDispatcherServlet - Completed initialization in 1 ms
+2026-02-05 13:18:57 INFO  o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-02-05 13:18:57 INFO  o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-02-05 13:18:57 INFO  o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
+2026-02-05 13:18:57 INFO  o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-02-05 13:18:57 INFO  o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-02-05 13:18:57 INFO  o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
+2026-02-05 13:18:57 INFO  o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-02-05 13:18:57 INFO  o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-02-05 13:18:57 INFO  o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
+2026-02-05 13:18:57 INFO  o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [org.hsbc.PortfolioManagementSystemApplicationTests]: PortfolioManagementSystemApplicationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-02-05 13:18:57 INFO  o.s.b.t.c.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration org.hsbc.PortfolioManagementSystemApplication for test class org.hsbc.PortfolioManagementSystemApplicationTests
+2026-02-05 13:18:58 INFO  o.h.PortfolioManagementSystemApplicationTests - Starting PortfolioManagementSystemApplicationTests using Java 22.0.2 with PID 13868 (started by Administrator in C:\Users\Administrator\PortfolioManagementSystem)
+2026-02-05 13:18:58 DEBUG o.h.PortfolioManagementSystemApplicationTests - Running with Spring Boot v3.2.4, Spring v6.1.5
+2026-02-05 13:18:58 INFO  o.h.PortfolioManagementSystemApplicationTests - No active profile set, falling back to 1 default profile: "default"
+2026-02-05 13:18:58 INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-02-05 13:18:58 INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 92 ms. Found 3 JPA repository interfaces.
+2026-02-05 13:18:59 INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-02-05 13:18:59 INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.4.4.Final
+2026-02-05 13:18:59 INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2026-02-05 13:18:59 INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-02-05 13:18:59 INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2026-02-05 13:19:00 INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@1928930
+2026-02-05 13:19:00 INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2026-02-05 13:19:01 INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-02-05 13:19:01 INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-02-05 13:19:02 INFO  o.s.d.j.r.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-02-05 13:19:02 INFO  o.h.controller.StockDataController - StockDataController initialized
+2026-02-05 13:19:03 WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-02-05 13:19:03 INFO  o.h.PortfolioManagementSystemApplicationTests - Started PortfolioManagementSystemApplicationTests in 5.63 seconds (process running for 15.668)
+2026-02-05 13:19:04 INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-02-05 13:19:04 INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2026-02-05 13:19:04 INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2026-02-05 13:22:21 INFO  o.h.PortfolioManagementSystemApplication - Starting PortfolioManagementSystemApplication using Java 22.0.2 with PID 4240 (C:\Users\Administrator\PortfolioManagementSystem\target\classes started by Administrator in C:\Users\Administrator\PortfolioManagementSystem)
+2026-02-05 13:22:21 DEBUG o.h.PortfolioManagementSystemApplication - Running with Spring Boot v3.2.4, Spring v6.1.5
+2026-02-05 13:22:21 INFO  o.h.PortfolioManagementSystemApplication - No active profile set, falling back to 1 default profile: "default"
+2026-02-05 13:22:22 INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-02-05 13:22:22 INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 61 ms. Found 3 JPA repository interfaces.
+2026-02-05 13:22:22 INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2026-02-05 13:22:22 INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-02-05 13:22:22 INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.19]
+2026-02-05 13:22:23 INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-02-05 13:22:23 INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1891 ms
+2026-02-05 13:22:23 INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-02-05 13:22:23 INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.4.4.Final
+2026-02-05 13:22:23 INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2026-02-05 13:22:23 INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-02-05 13:22:23 INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2026-02-05 13:22:24 INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@64f3991e
+2026-02-05 13:22:24 INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2026-02-05 13:22:25 INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-02-05 13:22:25 INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-02-05 13:22:26 INFO  o.s.d.j.r.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-02-05 13:22:26 INFO  o.h.controller.StockDataController - StockDataController initialized
+2026-02-05 13:22:27 WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-02-05 13:22:27 INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path ''
+2026-02-05 13:22:27 INFO  o.h.PortfolioManagementSystemApplication - Started PortfolioManagementSystemApplication in 7.273 seconds (process running for 7.744)
