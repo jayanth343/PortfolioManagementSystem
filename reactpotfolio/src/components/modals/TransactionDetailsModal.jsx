@@ -83,17 +83,18 @@ const TransactionDetailsModal = ({ transaction, onClose }) => {
                     {/* Details Grid */}
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
                         <div className="stat-card-dark">
-                            <div className="text-muted text-sm">Asset</div>
+                            <div className="text-muted text-sm">Symbol</div>
                             <div style={{ fontWeight: 'bold', fontSize: '1.1rem', marginTop: '5px' }}>{transaction.symbol}</div>
-                            <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>{transaction.assetType}</div>
                         </div>
                         <div className="stat-card-dark">
                             <div className="text-muted text-sm">Date</div>
                             <div style={{ fontWeight: 'bold', fontSize: '1.1rem', marginTop: '5px' }}>
-                                {transaction.timestamp ? new Date(transaction.timestamp).toLocaleDateString() : 'Just now'}
+                                {transaction.date ? new Date(transaction.date).toLocaleDateString() : 
+                                 transaction.timestamp ? new Date(transaction.timestamp).toLocaleDateString() : 'Just now'}
                             </div>
                             <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
-                                {transaction.timestamp ? new Date(transaction.timestamp).toLocaleTimeString() : ''}
+                                {transaction.date ? new Date(transaction.date).toLocaleTimeString() :
+                                 transaction.timestamp ? new Date(transaction.timestamp).toLocaleTimeString() : ''}
                             </div>
                         </div>
                         <div className="stat-card-dark">

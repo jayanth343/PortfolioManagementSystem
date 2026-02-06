@@ -2,6 +2,7 @@ package org.hsbc.service;
 
 //Import statemnts
 import org.hsbc.entity.PmsEntity;
+import org.hsbc.entity.TransactionEntity;
 import org.hsbc.exception.InvalidPmsIdException;
 import org.hsbc.repo.PmsRepository;
 import org.slf4j.Logger;
@@ -121,14 +122,103 @@ public class PmsServiceimp implements PmsService {
         }
         throw new org.hsbc.exception.ResourceNotFoundException("Asset not found with symbol " + symbol);
     }
-    //
-    // public PmsEntity findAllPms(long id) throws InvalidException {
-    // Optional<PmsEntity> optProduct = repository.findById(id);
-    // PmsEntity pmsEntity = optProduct.orElseThrow(
-    // ()->new InvalidException("Id is not valid: " + id)
-    // );
-    //
-    // return pmsEntity;
-    // }
+
+    @Override
+    public PmsEntity buyAsset(String symbol, String companyName, int quantity, double price, String assetType) {
+        // Calculate total cost and deduct from wallet
+        double totalCost = price * quantity;
+        walletService.deductMoney(totalCost);
+        
+        // Check if asset already exists
+        Optional<PmsEntity> existingAsset = repository.findBySymbol(symbol);
+        
+        PmsEntity asset;
+        if (existingAsset.isPresent()) {
+            // Update existing asset
+            asset = existingAsset.get();
+            int newQuantity = asset.getQuantity() + quantity;
+            
+            // Calculate weighted average buy price
+            double totalValue = (asset.getBuyPrice() * asset.getQuantity()) + (price * quantity);
+            double avgBuyPrice = totalValue / newQuantity;
+            
+            asset.setQuantity(newQuantity);
+            asset.setBuyPrice(avgBuyPrice);
+            asset.setBuyingValue(totalValue);
+            asset.setCurrentPrice(price);
+        } else {
+            // Create new asset
+            asset = new PmsEntity();
+            asset.setSymbol(symbol);
+            asset.setCompanyName(companyName);
+            asset.setQuantity(quantity);
+            asset.setBuyPrice(price);
+            asset.setCurrentPrice(price);
+            asset.setBuyingValue(price * quantity);
+            asset.setAssetType(assetType);
+            asset.setPurchaseDate(LocalDate.now());
+        }
+        
+        PmsEntity savedAsset = repository.save(asset);
+        
+        // Record transaction
+        TransactionEntity transaction = new TransactionEntity(
+            symbol,
+            quantity,
+            price,
+            java.time.LocalDateTime.now(),
+            "BUY"
+        );
+        transactionService.addTransaction(transaction);
+        
+        return savedAsset;
+    }
+
+    @Override
+    public PmsEntity sellAsset(String symbol, int quantity) {
+        Optional<PmsEntity> optAsset = repository.findBySymbol(symbol);
+        
+        if (optAsset.isEmpty()) {
+            throw new ResponseStatusException(
+                HttpStatus.NOT_FOUND,
+                "Asset not found with symbol " + symbol
+            );
+        }
+        
+        PmsEntity asset = optAsset.get();
+        
+        if (quantity > asset.getQuantity()) {
+            throw new ResponseStatusException(
+                HttpStatus.BAD_REQUEST,
+                "Cannot sell more than owned quantity. Available: " + asset.getQuantity()
+            );
+        }
+        
+        // Calculate sale proceeds and add to wallet
+        double saleProceeds = asset.getCurrentPrice() * quantity;
+        walletService.addMoney(saleProceeds);
+        
+        // Record transaction
+        TransactionEntity transaction = new TransactionEntity(
+            symbol,
+            quantity,
+            asset.getCurrentPrice(),
+            java.time.LocalDateTime.now(),
+            "SELL"
+        );
+        transactionService.addTransaction(transaction);
+        
+        if (quantity == asset.getQuantity()) {
+            // Sell entire position
+            repository.delete(asset);
+            return null;
+        } else {
+            // Reduce quantity
+            int newQuantity = asset.getQuantity() - quantity;
+            asset.setQuantity(newQuantity);
+            asset.setBuyingValue(asset.getBuyPrice() * newQuantity);
+            return repository.save(asset);
+        }
+    }
 
 }

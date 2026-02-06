@@ -5,10 +5,9 @@ import {
     Toolbar, 
     Typography, 
     Box, 
-    TextField, 
-    IconButton, 
-    Chip,
+    TextField,
     InputAdornment,
+    Chip,
     Container
 } from '@mui/material';
 import { Search, AccountBalanceWallet, TrendingUp } from '@mui/icons-material';
@@ -140,7 +139,7 @@ const Header = () => {
 
                     {/* Navigation */}
                     <Box sx={{ display: 'flex', gap: 1 }}>
-                        <NavLink to="/" end>
+                        <NavLink to="/dashboard">
                             {({ isActive }) => (
                                 <Box sx={navLinkStyle(isActive)}>
                                     Dashboard
@@ -158,6 +157,13 @@ const Header = () => {
                             {({ isActive }) => (
                                 <Box sx={navLinkStyle(isActive)}>
                                     Transactions
+                                </Box>
+                            )}
+                        </NavLink>
+                        <NavLink to="/search">
+                            {({ isActive }) => (
+                                <Box sx={navLinkStyle(isActive)}>
+                                    Search
                                 </Box>
                             )}
                         </NavLink>

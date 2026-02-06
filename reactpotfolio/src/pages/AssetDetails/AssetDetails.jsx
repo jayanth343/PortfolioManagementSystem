@@ -20,6 +20,7 @@ import {
     Modal,
     TextField,
     Link,
+    Snackbar,
 } from '@mui/material';
 import {
     ArrowBack,
@@ -34,6 +35,7 @@ import {
     Close,
 } from '@mui/icons-material';
 import { getStockData, getCryptoData, getMutualFundData, getCommodityData } from '../../api/marketApi';
+import { buyAsset } from '../../api/assetsApi';
 import PriceChart from '../../components/charts/PriceChart';
 import { formatCurrency } from '../../utils/formatCurrency';
 import { formatPercentage } from '../../utils/formatPercentage';
@@ -53,6 +55,7 @@ const AssetDetails = () => {
     const [priceTimestamp, setPriceTimestamp] = useState(null);
     const [buyLoading, setBuyLoading] = useState(false);
     const [buyError, setBuyError] = useState(null);
+    const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
     const [analysis, setAnalysis] = useState(null);
     const [analysisLoading, setAnalysisLoading] = useState(false);
     const [analysisError, setAnalysisError] = useState(null);
@@ -170,66 +173,32 @@ const AssetDetails = () => {
 
         try {
             const price = livePrice || asset.currentPrice || asset.nav;
-            const totalCost = price * quantity;
+            
+            // Use new buyAsset function that handles wallet deduction and transaction recording
+            await buyAsset(
+                asset.tickerSymbol || asset.symbol,
+                asset.name,
+                quantity,
+                price,
+                type
+            );
 
-            // First, add the asset to PMS (this will automatically deduct from wallet)
-            const pmsResponse = await fetch(`http://localhost:8080/api/pms/add`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    symbol: asset.tickerSymbol || asset.symbol,
-                    companyName: asset.name,
-                    quantity: quantity,
-                    buyPrice: price,
-                    currentPrice: price,
-                    assetType: type,
-                    currency: asset.currency || 'USD',
-                    exchange: asset.exchange || asset.exchangeName || 'N/A',
-                    industry: asset.industry || asset.sector || 'N/A',
-                }),
+            setSnackbar({
+                open: true,
+                message: `Successfully added ${quantity} shares of ${asset.name} to your portfolio`,
+                severity: 'success'
             });
-
-            if (!pmsResponse.ok) {
-                const errorData = await pmsResponse.json().catch(() => ({}));
-                // Check for insufficient balance error
-                if (pmsResponse.status === 400 && errorData.message && errorData.message.includes('Insufficient balance')) {
-                    throw new Error('Insufficient wallet balance. Please add funds to your wallet.');
-                }
-                throw new Error(errorData.message || 'Failed to complete purchase');
-            }
-
-            const pmsResult = await pmsResponse.json();
-
-            // Then, record the transaction with exact timestamp
-            const now = new Date();
-            const transactionResponse = await fetch(`http://localhost:8080/transactions/add`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    symbol: asset.tickerSymbol || asset.symbol,
-                    quantity: quantity,
-                    buyPrice: price,
-                    transactionDate: now.toISOString(), // Send full ISO timestamp
-                    transactionType: 'BUY',
-                }),
-            });
-
-            if (!transactionResponse.ok) {
-                console.warn('Asset added but failed to record transaction');
-            }
-
-            alert(`Successfully purchased ${quantity} shares of ${asset.name}`);
             handleBuyClose();
             
-            // Dispatch event to update credit balance
+            // Dispatch event to update wallet balance in header
             window.dispatchEvent(new Event('transactionUpdated'));
         } catch (err) {
             console.error('Buy error:', err);
-            setBuyError(err.message || 'Failed to complete purchase');
+            if (err.message && err.message.includes('Insufficient')) {
+                setBuyError('Insufficient wallet balance. Please add funds to your wallet.');
+            } else {
+                setBuyError(err.message || 'Failed to add asset to portfolio');
+            }
         } finally {
             setBuyLoading(false);
         }
@@ -525,8 +494,8 @@ const AssetDetails = () => {
                     >
                         <Tab label="Fundamentals" />
                         <Tab label="News" />
-                        <Tab label="Analyst Ratings" />
-                        <Tab label="AI Analysis" />
+                        <Tab label="Expert Opinions" />
+                        {type?.toLowerCase() !== 'mutualfund' && <Tab label="AI Analysis" />}
                     </Tabs>
 
                     {/* Fundamentals Tab */}
@@ -705,51 +674,160 @@ const AssetDetails = () => {
                     {/* Recommendations Tab */}
                     {tabValue === 2 && (
                         <Box sx={{ p: 4 }}>
-                            <Typography variant="h5" fontWeight="700" mb={3} sx={{ color: '#fff' }}>
-                                Analyst Recommendations
+                            <Typography variant="h5" fontWeight="700" mb={1} sx={{ color: '#fff' }}>
+                                What Experts Think
                             </Typography>
-                            {asset.recommendations && asset.recommendations.length > 0 ? (
-                                <Stack spacing={2}>
-                                    {asset.recommendations.map((rec, index) => (
-                                        <Card 
-                                            key={index} 
-                                            sx={{ 
-                                                p: 3, 
-                                                bgcolor: '#000',
-                                                border: '1px solid rgba(255,255,255,0.05)',
-                                                borderRadius: 2,
-                                            }}
-                                        >
-                                            <Stack direction="row" spacing={2} alignItems="center" mb={2}>
-                                                <Typography variant="h6" sx={{ color: '#fff', fontWeight: '600' }}>
-                                                    {rec.firm || 'Analyst'}
+                            <Typography variant="body2" sx={{ color: '#999', mb: 4 }}>
+                                Professional analyst opinions on this stock
+                            </Typography>
+                            
+                            {asset.recommendationsSummary && asset.recommendationsSummary.length > 0 ? (
+                                <Stack spacing={4}>
+                                    {/* Current Month Summary */}
+                                    {(() => {
+                                        const current = asset.recommendationsSummary[0];
+                                        const total = (current.strongBuy || 0) + (current.buy || 0) + (current.hold || 0) + (current.sell || 0) + (current.strongSell || 0);
+                                        const positive = (current.strongBuy || 0) + (current.buy || 0);
+                                        const negative = (current.sell || 0) + (current.strongSell || 0);
+                                        const neutral = current.hold || 0;
+                                        
+                                        const positivePercent = total > 0 ? (positive / total) * 100 : 0;
+                                        const neutralPercent = total > 0 ? (neutral / total) * 100 : 0;
+                                        const negativePercent = total > 0 ? (negative / total) * 100 : 0;
+                                        
+                                        return (
+                                            <Card sx={{ bgcolor: '#000', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 2, p: 3 }}>
+                                                <Typography variant="h6" sx={{ color: '#fff', mb: 3, fontWeight: '600' }}>
+                                                    Current Expert Consensus ({total} analysts)
                                                 </Typography>
-                                                {rec.toGrade && (
-                                                    <Chip 
-                                                        label={rec.toGrade} 
-                                                        size="small"
-                                                        sx={{ 
-                                                            bgcolor: rec.toGrade.toLowerCase().includes('buy') ? 'rgba(16, 185, 129, 0.2)' : 
-                                                                     rec.toGrade.toLowerCase().includes('sell') ? 'rgba(239, 68, 68, 0.2)' : 
-                                                                     'rgba(255, 255, 255, 0.1)',
-                                                            color: rec.toGrade.toLowerCase().includes('buy') ? '#10b981' : 
-                                                                   rec.toGrade.toLowerCase().includes('sell') ? '#ef4444' : '#fff',
-                                                        }}
-                                                    />
-                                                )}
-                                            </Stack>
-                                            <Typography variant="body2" sx={{ color: '#999' }}>
-                                                {rec.action && `Action: ${rec.action}`}
-                                                {rec.fromGrade && ` | From: ${rec.fromGrade}`}
-                                                {rec.epochGradeDate && ` | Date: ${new Date(rec.epochGradeDate * 1000).toLocaleDateString()}`}
-                                            </Typography>
-                                        </Card>
-                                    ))}
+                                                
+                                                {/* Visual Summary */}
+                                                <Stack spacing={3}>
+                                                    {/* Positive */}
+                                                    <Box>
+                                                        <Stack direction="row" justifyContent="space-between" mb={1}>
+                                                            <Typography variant="body2" sx={{ color: '#10b981', fontWeight: '600' }}>
+                                                                👍 Recommend Buying
+                                                            </Typography>
+                                                            <Typography variant="body2" sx={{ color: '#10b981', fontWeight: '600' }}>
+                                                                {positive} analysts ({positivePercent.toFixed(0)}%)
+                                                            </Typography>
+                                                        </Stack>
+                                                        <Box sx={{ 
+                                                            height: 8, 
+                                                            bgcolor: 'rgba(255,255,255,0.05)', 
+                                                            borderRadius: 1,
+                                                            overflow: 'hidden'
+                                                        }}>
+                                                            <Box sx={{ 
+                                                                width: `${positivePercent}%`, 
+                                                                height: '100%', 
+                                                                bgcolor: '#10b981',
+                                                                transition: 'width 0.5s ease'
+                                                            }} />
+                                                        </Box>
+                                                        {(current.strongBuy > 0 || current.buy > 0) && (
+                                                            <Stack direction="row" spacing={2} mt={1}>
+                                                                {current.strongBuy > 0 && (
+                                                                    <Typography variant="caption" sx={{ color: '#666' }}>
+                                                                        Strong Buy: {current.strongBuy}
+                                                                    </Typography>
+                                                                )}
+                                                                {current.buy > 0 && (
+                                                                    <Typography variant="caption" sx={{ color: '#666' }}>
+                                                                        Buy: {current.buy}
+                                                                    </Typography>
+                                                                )}
+                                                            </Stack>
+                                                        )}
+                                                    </Box>
+                                                    
+                                                    {/* Neutral */}
+                                                    <Box>
+                                                        <Stack direction="row" justifyContent="space-between" mb={1}>
+                                                            <Typography variant="body2" sx={{ color: '#f59e0b', fontWeight: '600' }}>
+                                                                🤔 Suggest Holding
+                                                            </Typography>
+                                                            <Typography variant="body2" sx={{ color: '#f59e0b', fontWeight: '600' }}>
+                                                                {neutral} analysts ({neutralPercent.toFixed(0)}%)
+                                                            </Typography>
+                                                        </Stack>
+                                                        <Box sx={{ 
+                                                            height: 8, 
+                                                            bgcolor: 'rgba(255,255,255,0.05)', 
+                                                            borderRadius: 1,
+                                                            overflow: 'hidden'
+                                                        }}>
+                                                            <Box sx={{ 
+                                                                width: `${neutralPercent}%`, 
+                                                                height: '100%', 
+                                                                bgcolor: '#f59e0b',
+                                                                transition: 'width 0.5s ease'
+                                                            }} />
+                                                        </Box>
+                                                    </Box>
+                                                    
+                                                    {/* Negative */}
+                                                    <Box>
+                                                        <Stack direction="row" justifyContent="space-between" mb={1}>
+                                                            <Typography variant="body2" sx={{ color: '#ef4444', fontWeight: '600' }}>
+                                                                👎 Recommend Selling
+                                                            </Typography>
+                                                            <Typography variant="body2" sx={{ color: '#ef4444', fontWeight: '600' }}>
+                                                                {negative} analysts ({negativePercent.toFixed(0)}%)
+                                                            </Typography>
+                                                        </Stack>
+                                                        <Box sx={{ 
+                                                            height: 8, 
+                                                            bgcolor: 'rgba(255,255,255,0.05)', 
+                                                            borderRadius: 1,
+                                                            overflow: 'hidden'
+                                                        }}>
+                                                            <Box sx={{ 
+                                                                width: `${negativePercent}%`, 
+                                                                height: '100%', 
+                                                                bgcolor: '#ef4444',
+                                                                transition: 'width 0.5s ease'
+                                                            }} />
+                                                        </Box>
+                                                        {(current.strongSell > 0 || current.sell > 0) && (
+                                                            <Stack direction="row" spacing={2} mt={1}>
+                                                                {current.sell > 0 && (
+                                                                    <Typography variant="caption" sx={{ color: '#666' }}>
+                                                                        Sell: {current.sell}
+                                                                    </Typography>
+                                                                )}
+                                                                {current.strongSell > 0 && (
+                                                                    <Typography variant="caption" sx={{ color: '#666' }}>
+                                                                        Strong Sell: {current.strongSell}
+                                                                    </Typography>
+                                                                )}
+                                                            </Stack>
+                                                        )}
+                                                    </Box>
+                                                </Stack>
+                                                
+                                                {/* Interpretation */}
+                                                <Box sx={{ mt: 3, p: 2, bgcolor: 'rgba(255,255,255,0.02)', borderRadius: 1 }}>
+                                                    <Typography variant="body2" sx={{ color: '#999', lineHeight: 1.6 }}>
+                                                        💡 <strong style={{ color: '#fff' }}>What this means:</strong> {
+                                                            positivePercent >= 60 ? "Most experts believe this is a good investment opportunity." :
+                                                            negativePercent >= 60 ? "Most experts suggest avoiding or selling this stock." :
+                                                            neutralPercent >= 50 ? "Experts are divided - waiting for clearer signals." :
+                                                            "Experts have mixed opinions on this stock."
+                                                        }
+                                                    </Typography>
+                                                </Box>
+                                            </Card>
+                                        );
+                                    })()}
                                 </Stack>
                             ) : (
-                                <Typography variant="body1" sx={{ color: '#666', textAlign: 'center', py: 4 }}>
-                                    No analyst recommendations available
-                                </Typography>
+                                <Card sx={{ bgcolor: '#000', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 2, p: 4 }}>
+                                    <Typography variant="body1" sx={{ color: '#666', textAlign: 'center' }}>
+                                        📊 No analyst ratings available for this stock yet
+                                    </Typography>
+                                </Card>
                             )}
                         </Box>
                     )}
@@ -837,7 +915,10 @@ const AssetDetails = () => {
                                                 Recommendation
                                             </Typography>
                                             <Chip 
-                                                label={analysis.action || 'N/A'}
+                                                label={(() => {
+                                                    const action = analysis.action || 'N/A';
+                                                    return action.includes('HOLD') ? 'WATCH' : action;
+                                                })()}
                                                 sx={{
                                                     bgcolor: analysis.action?.includes('BUY') ? 'rgba(16, 185, 129, 0.2)' : 
                                                              analysis.action?.includes('SELL') ? 'rgba(239, 68, 68, 0.2)' : 
@@ -963,6 +1044,23 @@ const AssetDetails = () => {
                                             </Typography>
                                         </Card>
                                     </Box>
+
+                                    {/* Disclaimer */}
+                                    <Box sx={{
+                                        mt: 3,
+                                        p: 2,
+                                        border: '1px solid rgba(251, 191, 36, 0.3)',
+                                        borderRadius: 2,
+                                        bgcolor: 'rgba(251, 191, 36, 0.05)',
+                                        display: 'flex',
+                                        gap: 1.5,
+                                        alignItems: 'flex-start'
+                                    }}>
+                                        <Typography sx={{ fontSize: '1.2rem', flexShrink: 0 }}>⚠️</Typography>
+                                        <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.7)', lineHeight: 1.6 }}>
+                                            <strong style={{ color: '#fbbf24' }}>Disclaimer:</strong> This is an AI-generated recommendation for informational purposes only. Investment decisions should not be made solely based on this advice. Please conduct your own research and consider consulting with a financial advisor before making any investment decisions.
+                                        </Typography>
+                                    </Box>
                                 </Stack>
                             ) : (
                                 <Typography variant="body1" sx={{ color: '#666', textAlign: 'center', py: 8 }}>
@@ -1009,7 +1107,7 @@ const AssetDetails = () => {
                     </IconButton>
 
                     <Typography variant="h5" fontWeight="700" mb={3} sx={{ color: '#fff' }}>
-                        Buy {asset?.name}
+                        Add {asset?.name} to Portfolio
                     </Typography>
 
                     <Stack spacing={3}>
@@ -1082,12 +1180,28 @@ const AssetDetails = () => {
                                     '&:disabled': { bgcolor: '#333', color: '#666' }
                                 }}
                             >
-                                {buyLoading ? 'Processing...' : 'Confirm Purchase'}
+                                {buyLoading ? 'Processing...' : 'Confirm Addition'}
                             </Button>
                         </Stack>
                     </Stack>
                 </Paper>
             </Modal>
+
+            {/* Success Notification Snackbar */}
+            <Snackbar 
+                open={snackbar.open} 
+                autoHideDuration={6000} 
+                onClose={() => setSnackbar({ ...snackbar, open: false })}
+                anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+            >
+                <Alert 
+                    onClose={() => setSnackbar({ ...snackbar, open: false })} 
+                    severity={snackbar.severity}
+                    sx={{ width: '100%' }}
+                >
+                    {snackbar.message}
+                </Alert>
+            </Snackbar>
         </Box>
     );
 };
